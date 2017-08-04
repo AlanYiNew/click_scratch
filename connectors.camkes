@@ -1,0 +1,4 @@
+connector seL4MultiSharedData {
+     from Dataports template "seL4MultiSharedData-from.template.c";
+     to Dataport template "seL4MultiSharedData-to.template.c";
+}  
