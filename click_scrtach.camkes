@@ -58,7 +58,7 @@ assembly {
  }
 
  configuration {
-    rump_ether0.rump_config = { "rump_net": 1,
+    rump_ether0.rump_config = { "rump_net": 3,
                                 "rumprunbake_config": "sel4_ethernet", 
                                 "cmdline": "echo 6666",
                                 "pci_config_interface" : "pci_config",
@@ -77,6 +77,7 @@ assembly {
                                 "addr" : "192.168.1.1",
                                 "mask" : "30",
                                 "interfaces_to_expose": ["camkes_buffer", "camkes_ev", "camkes_ev1"] };
+
 
 
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether0, 0)

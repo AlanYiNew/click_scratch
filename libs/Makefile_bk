@@ -1,0 +1,26 @@
+CURRENT_DIR := $(abspath $(lastword $(MAKEFILE_LIST)))
+
+
+include ${RUMPRUN_BASE_DIR}/platform/sel4/rumprunlibs.mk
+CLICK_CCFILES:=$(wildcard ${SOURCE_DIR}/libs/src/*.cc)
+CLICK_HHFILES:=$(wildcard ${SOURCE_DIR}/libs/src/*.hh)
+CLICK_OBJS :=$(patsubst %.cc,%.o,$(wildcard ${SOURCE_DIR}/libs/src/*.cc))
+CLICK_LIBS := libclick.a
+
+
+
+# $(CLICK_OBJS):$(CLICK_CCFILES) $(CLICK_HHFILES)
+%.o: %.cc $(CLICK_HHFILES)
+	@echo "Making $^"
+	$(RUMPRUN_CXX) -c \
+		-I${SOURCE_DIR}/include \
+		$^ -o $@
+
+
+$(CLICK_LIBS):$(CLICK_OBJS)
+	@echo Making $@ 
+	ar rcs $@ $(CLICK_OBJS)
+
+.PHONY:clean
+clean:
+	rm libclick.a

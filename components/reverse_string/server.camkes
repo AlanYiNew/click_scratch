@@ -13,7 +13,7 @@
 #include <buffer.h>
 
 component Server {
-    include <porttype.h>;
+    include "porttype.h";
     control;
     dataport Buf(REVERSE_STRING_BUFSIZE) buffer0;
     dataport Buf(REVERSE_STRING_BUFSIZE) buffer1;
