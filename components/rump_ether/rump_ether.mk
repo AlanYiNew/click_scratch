@@ -24,9 +24,11 @@ rumprun_ether_rumpbin := click
 #-include  ${SOURCE_DIR}/include/click/config.h
 #click: $(CLICK_LIBS) $(ELEMENTS_OBJS) $(ELEMENTS_HHFILES) $(cfiles) $(hfiles) 	
 
-click: $(cfiles) $(hfiles)  #\
-		#$(SOURCE_DIR)/elements/standard/classifier.o \
+click: $(cfiles) $(hfiles) \
+		$(SOURCE_DIR)/elements/standard/classifier.o \
 		$(SOURCE_DIR)/elements/standard/classifier.hh \
+		$(SOURCE_DIR)/elements/standard/print.o \
+		$(SOURCE_DIR)/elements/standard/print.hh \
 		$(SOURCE_DIR)/elements/standard/classification.hh \
 		$(SOURCE_DIR)/elements/standard/alignmentinfo.o \
 		$(SOURCE_DIR)/elements/standard/errorelement.o \

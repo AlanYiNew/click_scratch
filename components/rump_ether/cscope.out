@@ -1,53 +1,57 @@
-cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/components/rump_ether               0000294015
+cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/components/rump_ether               0000296908
 	@ether_server.cxx
 
-27 
+28 
 	~<¡dio.h
 >
 
-28 
+29 
 	~<¡dlib.h
 >
 
-30 
+31 
 	~<Ãt/if_‘h”.h
 >
 
-31 
+32 
 	~<sys/ty³s.h
 >
 
-32 
+33 
 	~<sys/sock‘.h
 >
 
-33 
+34 
 	~<Ãtš‘/š.h
 >
 
-34 
+35 
 	~<¬·/š‘.h
 >
 
-35 
+36 
 	~<Ãt/if.h
 >
 
-36 
+37 
 	~<uni¡d.h
 >
 
-37 
+38 
 	~<bufãr.h
 >
 
-38 
+39 
 	~<pÿp/pÿp.h
 >
 
-39 
+40 
 	~"h—d”_¡ruù.h
 "
+
+41 
+	~<pÜ‰y³.h
+>
 
 42 
 	#Ú_”rÜ
@@ -65,41 +69,65 @@ __VA_ARGS__
 
 	)
 
-47 *
+45 
+	~<şick/ÿmkes_cÚfig.hh
+>
+
+46 
+	~<şick/cÚfig.h
+>
+
+47 
+	~"–em’ts/¡ªd¬d/şassif›r.hh
+"
+
+48 
+	~"–em’ts/¡ªd¬d/´št.hh
+"
+
+49 
+	~<şick/–em’t.hh
+>
+
+50 
+	~<şick/”rÜ.hh
+>
+
+56 *
 ÿmkes_bufãr
 ;
 
-48 
+57 
 ÿmkes_ev_em™
 ();
 
-49 
+58 
 ÿmkes_ev1_wa™
 ();
 
-50 *
+59 *
 ÿmkes_»ady
 ;
 
-51 #´agm¨
+61 #´agm¨
 w—k
  
 ÿmkes_bufãr
 
 
-52 #´agm¨
+62 #´agm¨
 w—k
  
 ÿmkes_ev_em™
 
 
-53 #´agm¨
+63 #´agm¨
 w—k
  
 ÿmkes_ev1_wa™
 
 
-57 
+67 
 	$maš
  (
 ¬gc
@@ -107,41 +135,53 @@ w—k
 ¬gv
 []) {
 
-59 *
+69 
+mes§ge_t
+ * 
 bufãr_¡r
- = (*)
+ = (mes§ge_t*)
 ÿmkes_bufãr
 ;
 
-61 
+70 
+bufãr_¡r
+->
+»ady
+ = 1;
+
+71 
 	`¢´štf
 (
 bufãr_¡r
+->
+cÚ‹Á
 , 
 REVERSE_STRING_MAX_LEN
 , "Hello, World!");
 
-62 
+72 
 	`´štf
 ("S’dšg sŒšg: %s\n", 
 bufãr_¡r
+->
+cÚ‹Á
 );
 
-65 
+74 
 	`ÿmkes_ev_em™
 ();
 
-66 
+75 
 	`ÿmkes_ev1_wa™
 ();
 
-68 
+77 
 	`´štf
 ("%s\n", 
 bufãr_¡r
 );
 
-70 *
+79 *
 dev
 , 
 ”rbuf
@@ -149,7 +189,7 @@ dev
 PCAP_ERRBUF_SIZE
 ];
 
-72 
+81 
 dev
  = 
 	`pÿp_lookupdev
@@ -157,13 +197,13 @@ dev
 ”rbuf
 );
 
-73 ià(
+82 ià(
 dev
  =ğ
 NULL
 ) {
 
-74 
+83 
 	`årštf
 (
 ¡d”r
@@ -171,37 +211,193 @@ NULL
 ”rbuf
 );
 
-77 
+86 
 	`´štf
 ("Deviû: %s\n", 
 dev
 );
 
-79 
+88 
 pÿp_t
 * 
 desü
 ;
 
-80 cÚ¡ 
+89 cÚ¡ 
 u_ch¬
  *
 ·ck‘
 ;
 
-81 
+90 
 pÿp_pkthdr
  
 hdr
 ;
 
-82 
+91 
 ‘h”_h—d”
  *
 •Œ
 ;
 
-87 
+97 
+FeE¼ÜHªdËr
+ 
+	`ãh
+(
+¡d”r
+,"");
+
+99 
+Pršt
+ 
+´št
+;
+
+100 
+VeùÜ
+<
+SŒšg
+> 
+´št_cÚfig
+;
+
+101 
+´št_cÚfig
+.
+	`push_back
+("ok");
+
+102 
+´št
+.
+	`cÚfigu»
+(
+´št_cÚfig
+,&
+ãh
+);
+
+103 cÚ¡ 
+š_v
+[1] = {1};
+
+104 
+Camkes_cÚfig
+::
+	`cÚÃù_pÜt
+(
+´št
+,´št.
+	`š™aize_pÜts
+(
+š_v
+,in_v);
+
+106 
+CÏssif›r
+ 
+şsf
+;
+
+109 
+VeùÜ
+<
+SŒšg
+> 
+şsf_cÚfig
+;
+
+110 
+şsf_cÚfig
+.
+	`push_back
+("12/0806 20/0001");
+
+111 
+şsf_cÚfig
+.
+	`push_back
+("12/0806 20/0002");
+
+112 
+şsf_cÚfig
+.
+	`push_back
+("12/0800");
+
+113 
+şsf_cÚfig
+.
+	`push_back
+("-");
+
+114 
+şsf
+.
+	`cÚfigu»
+(
+şsf_cÚfig
+,&
+ãh
+);
+
+115 cÚ¡ 
+şsf_š_v
+[1] = {1};
+
+116 cÚ¡ 
+şsf_out_v
+[3] = {1,1,1};
+
+117 
+Camkes_cÚfig
+::
+	`š™Ÿlize_pÜts
+(
+şsf
+,
+şsf_š_v
+,
+şsf_out_v
+);
+
+118 
+Camkes_cÚfig
+::
+	`cÚÃù_pÜt
+(
+şsf
+,
+Œue
+,0,&
+´št
+,0);
+
+119 
+Camkes_cÚfig
+::
+	`cÚÃù_pÜt
+(
+şsf
+,
+Œue
+,1,&
+´št
+,0);
+
+120 
+Camkes_cÚfig
+::
+	`cÚÃù_pÜt
+(
+şsf
+,2,&
+´št
+,0);
+
+124 
 desü
  = 
 	`pÿp_İ’_live
@@ -213,23 +409,23 @@ BUFSIZ
 ”rbuf
 );
 
-89 if(
+126 if(
 desü
  =ğ
 NULL
 )
 
-91 
+128 
 	`´štf
 ("pÿp_İ’_live(): %s\n",
 ”rbuf
 );
 
-92 
+129 
 	`ex™
 (1);
 
-104 
+141 
 ·ck‘
  = 
 	`pÿp_Ãxt
@@ -239,25 +435,47 @@ desü
 hdr
 );
 
-106 if(
+143 if(
 ·ck‘
  =ğ
 NULL
 ){
 
-117 cÚ¡ 
+154 cÚ¡ 
 ¢iff_‘h”Ãt
  *
 ‘h”Ãt
 ;
 
-118 cÚ¡ 
+155 cÚ¡ 
 ¢iff_
  *
 
 ;
 
-120 
+157 
+Pack‘
+ *
+p
+ = Pack‘::
+	`make
+(
+·ck‘
+,
+hdr
+.
+Ën
+);
+
+158 
+şsf
+.
+	`push
+(0,
+p
+);
+
+159 
 
  = (
 ¢iff_
@@ -267,7 +485,7 @@ NULL
 SIZE_ETHERNET
 );
 
-121 
+160 
 	`´štf
 ("G¿bbed…ack‘ oàËngth %d from %s\n",
 hdr
@@ -281,7 +499,7 @@ hdr
 _¤c
 ));
 
-122 
+161 
 	`´štf
 ("Rec›ved‡ˆ..... %s\n",
 	`ùime
@@ -295,13 +513,13 @@ ts
 tv_£c
 ));
 
-123 
+162 
 	`´štf
 ("Eth”Ãˆadd»s Ëngth i %d\n",
 ETHER_HDR_LEN
 );
 
-129 
+168 
 	}
 }
 
@@ -14347,6 +14565,322 @@ __fÜtify_funùiÚ
 
 1166 
 __END_DECLS
+
+
+	@elements/standard/classifier.hh
+
+1 #iâdeà
+CLICK_CLASSIFIER_HH
+
+
+2 
+	#CLICK_CLASSIFIER_HH
+
+
+	)
+
+3 
+	~<şick/–em’t.hh
+>
+
+4 
+	~"şassifiÿtiÚ.hh
+"
+
+5 
+CLICK_DECLS
+
+
+75 şas 
+	cCÏssif›r
+ : 
+public
+ 
+EËm’t
+ {…ublic:
+
+77 
+	$CÏssif›r
+(è
+CLICK_COLD
+;
+
+79 cÚ¡ *
+	$şass_Çme
+() const {  "Classifier"; }
+
+80 cÚ¡ *
+	$pÜt_couÁ
+(ècÚ¡ {  "1/-"; 
+	}
+}
+
+81 cÚ¡ *
+	$´oûssšg
+(ècÚ¡ {  
+PUSH
+; 
+	}
+}
+
+83 cÚ¡ *
+	$æags
+(ècÚ¡ {  "A"; 
+	}
+}
+
+84 
+boŞ
+ 
+	$ÿn_live_»cÚfigu»
+(ècÚ¡ {  
+Œue
+; 
+	}
+}
+
+86 
+cÚfigu»
+(
+VeùÜ
+<
+SŒšg
+> &
+cÚf
+, 
+E¼ÜHªdËr
+ *
+”rh
+è
+	gCLICK_COLD
+;
+
+87 
+	$add_hªdËrs
+(è
+CLICK_COLD
+;
+
+89 
+	`push
+(
+pÜt
+, 
+Pack‘
+ *);
+
+91 
+CÏssifiÿtiÚ
+::
+WÜdwi£
+::
+Prog¿m
+ 
+	$em±y_´og¿m
+(
+E¼ÜHªdËr
+ *
+”rh
+) const;
+
+92 
+	`·r£_´og¿m
+(
+CÏssifiÿtiÚ
+::
+WÜdwi£
+::
+Prog¿m
+ &
+´og
+,
+
+93 
+VeùÜ
+<
+SŒšg
+> &
+cÚf
+, 
+E¼ÜHªdËr
+ *
+”rh
+);
+
+95 
+´Ùeùed
+:
+
+97 
+CÏssifiÿtiÚ
+::
+WÜdwi£
+::
+Prog¿m
+ 
+_´og
+;
+
+99 
+SŒšg
+ 
+	`´og¿m_¡ršg
+(
+EËm’t
+ *, *);
+
+101 
+	}
+};
+
+103 
+	gCLICK_ENDDECLS
+
+
+	@elements/standard/print.hh
+
+1 #iâdeà
+CLICK_PRINT_HH
+
+
+2 
+	#CLICK_PRINT_HH
+
+
+	)
+
+3 
+	~<şick/–em’t.hh
+>
+
+4 
+	~<şick/¡ršg.hh
+>
+
+5 
+CLICK_DECLS
+
+
+70 şas 
+	cPršt
+ : 
+public
+ 
+EËm’t
+ {…ublic:
+
+72 
+	$Pršt
+(è
+CLICK_COLD
+;
+
+74 cÚ¡ *
+	$şass_Çme
+() const {  "Print"; }
+
+75 cÚ¡ *
+	$pÜt_couÁ
+(ècÚ¡ {  
+PORTS_1_1
+; 
+	}
+}
+
+77 
+cÚfigu»
+(
+VeùÜ
+<
+SŒšg
+> &, 
+E¼ÜHªdËr
+ *è
+	gCLICK_COLD
+;
+
+78 
+boŞ
+ 
+	$ÿn_live_»cÚfigu»
+(ècÚ¡ {  
+Œue
+; 
+	}
+}
+
+79 
+	$add_hªdËrs
+(è
+CLICK_COLD
+;
+
+81 
+Pack‘
+ *
+	`sim¶e_aùiÚ
+(Packet *);
+
+83 
+´iv©e
+:
+
+85 
+SŒšg
+ 
+_Ïb–
+;
+
+86 
+_by‹s
+;
+
+87 
+boŞ
+ 
+_aùive
+;
+
+88 
+boŞ
+ 
+_time¡amp
+ : 1;
+
+89 
+boŞ
+ 
+_h—droom
+ : 1;
+
+90 #ifdeà
+CLICK_LINUXMODULE
+
+
+91 
+boŞ
+ 
+_ıu
+ : 1;
+
+93 
+boŞ
+ 
+_´št_ªno
+;
+
+94 
+ušt8_t
+ 
+_cÚ‹Ás
+;
+
+96 
+	}
+};
+
+98 
+	gCLICK_ENDDECLS
 
 
 	@/usr/include/alloca.h
@@ -51482,8 +52016,8 @@ __ASM_GENERIC_SOCKIOS_H
 .
 1
 /usr/include
-73
-1940
+75
+1999
 ether_server.cxx
 header_struct.h
 /usr/include/arpa/inet.h
@@ -51494,6 +52028,8 @@ header_struct.h
 /usr/include/sys/socket.h
 /usr/include/sys/types.h
 /usr/include/unistd.h
+elements/standard/classifier.hh
+elements/standard/print.hh
 /usr/include/alloca.h
 /usr/include/bits/byteswap.h
 /usr/include/bits/confname.h

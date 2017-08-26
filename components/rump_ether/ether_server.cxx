@@ -24,6 +24,7 @@
  */
 
 /* Modifications made by Data61 */
+
 #include <stdio.h>
 #include <stdlib.h>
 //#include <net/if_packet.h>
@@ -37,17 +38,26 @@
 #include <buffer.h>
 #include <pcap/pcap.h>
 #include "header_struct.h"
-//#include <click/config.h>
-//#include "elements/standard/classifier.hh"
+#include <porttype.h>
 #define on_error(...) { fprintf(stderr, __VA_ARGS__); fflush(stderr); exit(1); }
+
+//Click realated header
+#include <click/camkes_config.hh>
+#include <click/config.h>
+#include "elements/standard/classifier.hh"
+#include "elements/standard/print.hh"
+#include <click/element.hh>
+#include <click/error.hh>
 
 
 /* XXX: CAmkES symbols that are linked in after this file is compiled.
    They need to be marked as weak and this is the current hacky way it is done */
-extern void *camkes_buffer;
-void camkes_ev_emit(void);
-void camkes_ev1_wait(void);
-extern void *camkes_ready;
+extern "C" {
+    void *camkes_buffer;
+    void camkes_ev_emit(void); 
+    void camkes_ev1_wait(void);
+    void *camkes_ready;
+}
 #pragma weak camkes_buffer
 #pragma weak camkes_ev_emit
 #pragma weak camkes_ev1_wait
@@ -56,11 +66,10 @@ extern void *camkes_ready;
 
 int main (int argc, char *argv[]) {
 
-    char *buffer_str = (char*)camkes_buffer;
-
-    snprintf(buffer_str, REVERSE_STRING_MAX_LEN, "Hello, World!");
-    printf("Sending string: %s\n", buffer_str);
-
+    message_t * buffer_str = (message_t*)camkes_buffer;
+    buffer_str->ready = 1;
+    snprintf(buffer_str->content, REVERSE_STRING_MAX_LEN, "Hello, World!");
+    printf("Sending string: %s\n", buffer_str->content);
     /* Signal the string reverse server and wait for response */
     camkes_ev_emit();
     camkes_ev1_wait();
@@ -82,8 +91,36 @@ int main (int argc, char *argv[]) {
     struct ether_header *eptr;  /* net/ethernet.h */
 
 
-    //Classifier clsf;
+    
+    
+    //Create a std erro handler for outputing message
+    FileErrorHandler feh(stderr,"");
 
+    Print print;
+    Vector<String> print_config;
+    print_config.push_back("ok");
+    print.configure(print_config,&feh);
+    const int in_v[1] = {1};
+    Camkes_config::initialize_ports(&print,in_v,in_v); //one input three output
+    //Try creating a classifer 
+    Classifier clsf;
+    
+    //At the moment hard code a vector to configure it
+    Vector<String> clsf_config;
+    clsf_config.push_back("12/0806 20/0001"); 
+    clsf_config.push_back("12/0806 20/0002");
+    clsf_config.push_back("12/0800");
+    clsf_config.push_back("-");
+    clsf.configure(clsf_config,&feh);
+    const int clsf_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
+    const int clsf_out_v[3] = {1,1,1};
+    Camkes_config::initialize_ports(&clsf,clsf_in_v,clsf_out_v); //one input three output
+    Camkes_config::connect_port(&clsf,true,0,&print,0);//true int Elment int
+    Camkes_config::connect_port(&clsf,true,1,&print,0);
+    Camkes_config::connect_port(&clsf,true,2,&print,0);
+    
+
+    //open pccap
     descr = pcap_open_live(dev,BUFSIZ,0,-1,errbuf);
 
     if(descr == NULL)
@@ -117,6 +154,8 @@ int main (int argc, char *argv[]) {
             const struct sniff_ethernet *ethernet; /* The ethernet header */
             const struct sniff_ip *ip; /* The IP header */
 
+            Packet *p = Packet::make(packet,hdr.len);
+            clsf.push(0,p);
             ip = (struct sniff_ip*)(packet+SIZE_ETHERNET);
             printf("Grabbed packet of length %d from %s\n",hdr.len,inet_ntoa(ip->ip_src));
             printf("Recieved at ..... %s\n",ctime((const time_t*)&hdr.ts.tv_sec)); 

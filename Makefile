@@ -14,6 +14,7 @@
 TARGETS := $(notdir ${SOURCE_DIR}).cdl
 ADL := click_scrtach.camkes
 TEMPLATES += ../../projects/global-components/templates/
+TEMPLATES += templates 
 
 PROJECT_BASE := $(PWD)
 RUMPRUN_BASE_DIR := $(PWD)/libs/rumprun

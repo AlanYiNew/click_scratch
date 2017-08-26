@@ -23,4 +23,7 @@ component rumprun_ether {
     dataport Buf(REVERSE_STRING_BUFSIZE) camkes_buffer;
     emits SomethingHappenedEvent camkes_ev;
     consumes SomethingHappenedEvent camkes_ev1;
+
+    attribute string server_global_endpoint;
+    attribute string server_badge;
 }

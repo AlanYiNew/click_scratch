@@ -2,3 +2,11 @@ connector seL4MultiSharedData {
      from Dataports template "seL4MultiSharedData-from.template.c";
      to Dataport template "seL4MultiSharedData-to.template.c";
 }  
+connector seL4MultiNotification {
+     from Events template "seL4MultiNotification-from.template.c";
+     to Event template "seL4MultiNotification-to.template.c";
+}
+connector seL4GlobalMultiAsynch {
+     from Events template "seL4GlobalMultiAsynch-from.template.c";
+     to Event template "seL4GlobalMultiAsynch-to.template.c";
+}

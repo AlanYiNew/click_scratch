@@ -39,14 +39,13 @@ assembly {
 
      connection seL4RPCCall serial_pci_config(from pci_config.putchar, to rrpl.putchar);
 
-     connection seL4SharedData conn0(from rump_ether0.camkes_buffer, to server.buffer0);
-     connection seL4SharedData conn1(from rump_ether1.camkes_buffer, to server.buffer1);
+     connection seL4MultiSharedData conn0(from rump_ether0.camkes_buffer, to server.buffer);
+     connection seL4MultiSharedData conn1(from rump_ether1.camkes_buffer, to server.buffer);
 
-
-     connection seL4NotificationNative simpleEvent1(from rump_ether0.camkes_ev, to server.ev);
+     connection seL4MultiNotification simpleEvent1(from rump_ether0.camkes_ev, to server.ev);
      connection seL4Notification simpleEvent2(from server.ev1, to rump_ether0.camkes_ev1);
 
-     connection seL4NotificationNative simpleEvent3(from rump_ether1.camkes_ev, to server.ev);
+     connection seL4MultiNotification simpleEvent3(from rump_ether1.camkes_ev, to server.ev);
      connection seL4Notification simpleEvent4(from server.ev2, to rump_ether1.camkes_ev1);
 
      connection seL4RPCCall pciconfig0(from rump_ether0.pci_config, to pci_config.pci_config);
@@ -83,14 +82,26 @@ assembly {
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether0, 0)
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether1, 1)
 
+    //
+    server.ev_global_endpoint = "central_server";
+    server.ev_badge = "1";
+
+    rump_ether0.camkes_ev_global_endpoint = "central_server";
+    rump_ether0.camkes_ev_badge = "1";
+
+    rump_ether1.camkes_ev_global_endpoint = "central_server";
+    rump_ether1.camkes_ev_badge = "1";
 
     //memory mapped region for xxxxx,xxxxx,native ethernet card
     rump_ether0.untyped_mmios = ["0xfebc0000:17", "0xf7f39000:12", "0xf7f00000:17"];
     rump_ether1.untyped_mmios = ["0xf7b00000:20"];
 
     //badge for demultiplexing to decide where the message comes from
-    rump_ether0.ready_attributes = "0";
-    rump_ether1.ready_attributes = "1";
+    //rump_ether0.ready_attributes = 0;
+    //rump_ether1.ready_attributes = 1;
+
+    rump_ether0.camkes_buffer_attributes = "0";
+    rump_ether1.camkes_buffer_attributes = "1";
 
     //I forgot if they are necessary
     //rump_ether0.rump_id = 1;

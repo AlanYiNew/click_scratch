@@ -305,7 +305,8 @@ class Element { public:
     static String read_handlers_handler(Element *e, void *user_data);
     void add_default_handlers(bool writable_config);
     inline void add_data_handlers(const char *name, int flags, HandlerCallback callback, void *data);
-
+    
+    friend class Camkes_config;
     friend class Router;
 #if CLICK_STATS >= 2
     friend class Task;

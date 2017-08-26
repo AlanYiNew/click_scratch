@@ -19,18 +19,20 @@
 #define NUM_COMPONENT 2
 
 message_t *section[NUM_COMPONENT];
-emitfun_t ev[NUM_COMPONENT];
+emitfun_t ev_func[NUM_COMPONENT];
 
 int run(void) {
+    
+    int c = 0;
     while(true) {
         /* Wait for event */
         ev_wait();
 
-        int c = 0;
         char *buffer_str;
-        for (;!section[c]->ready && c < NUM_COMPONENT; c++);
-        buffer_str = section[c]->content;
+        for (;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c++);
         
+            
+        buffer_str = ((message_t *)buffer_buf(c))->content;
 
         printf("Got string: %s from \n", buffer_str);
 
@@ -43,9 +45,9 @@ int run(void) {
         }
 
         /* Signal to client that we are finished */
-        ev[c](); 
+        ev_func[c](); 
 
-        section[c]->ready=0;
+        ((message_t *)buffer_buf(0))->ready=0;
     }
 
     return 0;
@@ -53,9 +55,9 @@ int run(void) {
 
 void pre_init(){
     //too lazy to write a template to generalise this, so use pre_init to hack this portion
-    section[0] = (message_t*)buffer0;
-    section[1] = (message_t*)buffer1;
+    //section[0] = (message_t*)buffer0;
+    //section[1] = (message_t*)buffer1;
 
-    ev[0] = ev1_emit;
-    ev[1] = ev2_emit;
+    ev_func[0] = ev1_emit;
+    ev_func[1] = ev2_emit;
 }
