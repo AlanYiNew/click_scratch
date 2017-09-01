@@ -29,7 +29,7 @@ int run(void) {
         ev_wait();
 
         char *buffer_str;
-        for (;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c++);
+        for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c++);
         
             
         buffer_str = ((message_t *)buffer_buf(c))->content;

@@ -28,6 +28,7 @@ CLICK_CXX_PROTECT
 # include <linux/sched.h>
 CLICK_CXX_UNPROTECT
 # include <click/cxxunprotect.h>
+#include <iostream>
 #endif
 CLICK_DECLS
 

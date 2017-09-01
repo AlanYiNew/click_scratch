@@ -591,12 +591,13 @@ Element::set_nports(int new_ninputs, int new_noutputs)
     // exit on bad counts, or if already initialized
     if (new_ninputs < 0 || new_noutputs < 0)
 	return -EINVAL;
+#ifdef UNDER_CAMKES
     if (_router && _router->_have_connections) {
 	if (_router->_state >= Router::ROUTER_PREINITIALIZE)
 	    return -EBUSY;
 	_router->_have_connections = false;
     }
-
+#endif
     // decide if inputs & outputs were inlined
     bool old_in_inline =
 	(_ports[0] >= _inline_ports && _ports[0] <= _inline_ports + INLINE_PORTS);

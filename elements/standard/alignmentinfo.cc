@@ -100,9 +100,11 @@ AlignmentInfo::query1(const Element *e, int port, int &chunk, int &offset) const
 bool
 AlignmentInfo::query(const Element *e, int port, int &chunk, int &offset)
 {
+#if !UNDER_CAMKES
   if (void *a = e->router()->attachment("AlignmentInfo"))
     return ((AlignmentInfo *)a)->query1(e, port, chunk, offset);
   else
+#endif
     return false;
 }
 

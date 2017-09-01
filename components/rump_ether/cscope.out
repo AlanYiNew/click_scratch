@@ -1,4 +1,4 @@
-cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/components/rump_ether               0000296908
+cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/components/rump_ether               0000310097
 	@ether_server.cxx
 
 28 
@@ -22,38 +22,42 @@ cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/components/r
 >
 
 34 
-	~<√töë/ö.h
+	~<sys/io˘l.h
 >
 
 35 
-	~<¨∑/öë.h
+	~<√töë/ö.h
 >
 
 36 
-	~<√t/if.h
+	~<¨∑/öë.h
 >
 
 37 
-	~<uni°d.h
+	~<√t/if.h
 >
 
 38 
-	~<buf„r.h
+	~<uni°d.h
 >
 
 39 
-	~<pˇp/pˇp.h
+	~<buf„r.h
 >
 
 40 
+	~<pˇp/pˇp.h
+>
+
+41 
 	~"hódî_°ru˘.h
 "
 
-41 
+42 
 	~<p‹ây≥.h
 >
 
-42 
+43 
 	#⁄_îr‹
 (...Ë{ 
 	`Ârötf
@@ -69,65 +73,291 @@ __VA_ARGS__
 
 	)
 
-45 
+46 
 	~<˛ick/ˇmkes_c⁄fig.hh
 >
 
-46 
+47 
 	~<˛ick/c⁄fig.h
 >
 
-47 
+48 
 	~"ñemíts/°™d¨d/˛assifõr.hh
 "
 
-48 
+49 
 	~"ñemíts/°™d¨d/¥öt.hh
 "
 
-49 
+50 
 	~<˛ick/ñemít.hh
 >
 
-50 
+51 
 	~<˛ick/îr‹.hh
 >
 
-56 *
+52 
+	~"ñemíts/°™d¨d/disˇrd.hh
+"
+
+53 
+	~<io°ªam
+>
+
+54 
+	~<iom™ù
+>
+
+58 *
 ˇmkes_buf„r
 ;
 
-57 
+59 
 ˇmkes_ev_emô
 ();
 
-58 
+60 
 ˇmkes_ev1_waô
 ();
 
-59 *
+61 *
 ˇmkes_ªady
 ;
-
-61 #¥agm®
-wók
- 
-ˇmkes_buf„r
-
-
-62 #¥agm®
-wók
- 
-ˇmkes_ev_emô
-
 
 63 #¥agm®
 wók
  
+ˇmkes_buf„r
+
+
+64 #¥agm®
+wók
+ 
+ˇmkes_ev_emô
+
+
+65 #¥agm®
+wók
+ 
 ˇmkes_ev1_waô
 
 
-67 
+67 
+ölöe
+ 
+	$debuggög
+(c⁄° * 
+s
+,
+vÆ
+){
+
+68 
+°d
+::
+cout
+ << "###### " << std::
+À·
+ <<°d::
+	`£tw
+(40Ë<< 
+s
+ << ": " << 
+vÆ
+ << " #####" << std::
+ídl
+;
+
+69 
+	}
+}
+
+71 
+	$debug_puΩo£
+(
+ëhî_hódî
+ * 
+ëh_hódî
+){
+
+73 i‡(
+	`¡ohs
+(
+ëh_hódî
+->
+ëhî_ty≥
+Ë=
+ETHERTYPE_IP
+) {
+
+74 
+	`¥ötf
+("IP\n");
+
+75 } i‡(
+	`¡ohs
+(
+ëh_hódî
+->
+ëhî_ty≥
+Ë=
+ETHERTYPE_ARP
+) {
+
+76 
+	`¥ötf
+("ARP\n");
+
+77 } i‡(
+	`¡ohs
+(
+ëh_hódî
+->
+ëhî_ty≥
+Ë=
+ETHERTYPE_REVARP
+) {
+
+78 
+	`¥ötf
+("Reverse ARP\n");
+
+80 
+	`¥ötf
+("Unknow¿ty≥ %x\n",
+	`¡ohs
+(
+ëh_hódî
+->
+ëhî_ty≥
+));
+
+83 c⁄° 
+¢iff_ù
+ *
+ù
+;
+
+87 
+ù
+ = (
+¢iff_ù
+*)(
+∑ckë
++(
+ëhî_hódî
+));
+
+88 
+	`¥ötf
+("GøbbedáÖackë from ip_§c: %s,Éth_§c: %†\n",
+	`öë_¡ﬂ
+(
+ù
+->
+ù_§c
+),
+
+89 
+	`ëhî_¡ﬂ
+((c⁄° 
+ëhî_addr
+*)(
+ëh_hódî
+->
+ëhî_sho°
+)));
+
+90 
+	`¥ötf
+("TheÖacket has infoás ip_dst: %s,Éth_dst: %s\n",
+
+91 
+	`öë_¡ﬂ
+(
+ù
+->
+ù_d°
+),
+
+92 
+	`ëhî_¡ﬂ
+((c⁄° 
+ëhî_addr
+*)(
+ëh_hódî
+->
+ëhî_dho°
+)));
+
+93 
+	`¥ötf
+("Thi†∑ckë ha†®Àngth o‡%d \n",
+hódî
+->
+Àn
+);
+
+94 
+	`¥ötf
+("Ethî√àaddªs†Àngth i†%d\n\n",
+ETHER_HDR_LEN
+);
+
+97 
+	}
+}
+
+100 
+	$my_∑ckë_h™dÀr
+(
+
+101 
+u_ch¨
+ *
+¨gs
+,
+
+102 c⁄° 
+pˇp_pkthdr
+* 
+hódî
+,
+
+103 c⁄° 
+u_ch¨
+* 
+∑ckë
+
+
+105 
+ëhî_hódî
+ *
+ëh_hódî
+;
+
+113 
+ëh_hódî
+ = (
+ëhî_hódî
+ *Ë
+∑ckë
+;
+
+115 
+Cœssi„r
+ * 
+˛sf
+ = (Cœssi„∏*)
+¨gs
+;
+
+117 
+	}
+}
+
+122 
 	$maö
  (
 ¨gc
@@ -135,7 +365,7 @@ wók
 ¨gv
 []) {
 
-69 
+124 
 mesßge_t
  * 
 buf„r_°r
@@ -143,13 +373,13 @@ buf„r_°r
 ˇmkes_buf„r
 ;
 
-70 
+125 
 buf„r_°r
 ->
 ªady
  = 1;
 
-71 
+126 
 	`¢¥ötf
 (
 buf„r_°r
@@ -159,7 +389,7 @@ c⁄ã¡
 REVERSE_STRING_MAX_LEN
 , "Hello, World!");
 
-72 
+127 
 	`¥ötf
 ("Sídög såög: %s\n", 
 buf„r_°r
@@ -167,81 +397,197 @@ buf„r_°r
 c⁄ã¡
 );
 
-74 
+129 
 	`ˇmkes_ev_emô
 ();
 
-75 
+131 
 	`ˇmkes_ev1_waô
 ();
 
-77 
+133 
 	`¥ötf
 ("%s\n", 
 buf„r_°r
 );
 
-79 *
-dev
-, 
+135 
 îrbuf
 [
 PCAP_ERRBUF_SIZE
 ];
 
-81 
-dev
+137 
+pˇp_t
+* 
+des¸
+;
+
+139 *
+devi˚
+;
+
+140 
+ù
+[13];
+
+141 
+sub√t_mask
+[13];
+
+143 
+bpf_u_öt32
+ 
+ù_øw
+;
+
+144 
+bpf_u_öt32
+ 
+sub√t_mask_øw
+;
+
+145 
+lookup_ªtu∫_code
+;
+
+146 
+ö_addr
+ 
+addªss
+;
+
+149 
+devi˚
  = 
 	`pˇp_lookupdev
 (
 îrbuf
 );
 
-82 i‡(
-dev
+150 i‡(
+devi˚
  =
 NULL
 ) {
 
-83 
-	`Ârötf
-(
-°dîr
-, "Couldn'àföd deÁu… devi˚: %s\n", 
+151 
+	`¥ötf
+("%s\n", 
 îrbuf
 );
 
-86 
+156 
+lookup_ªtu∫_code
+ = 
+	`pˇp_looku≤ë
+(
+
+157 
+devi˚
+,
+
+158 &
+ù_øw
+,
+
+159 &
+sub√t_mask_øw
+,
+
+160 
+îrbuf
+
+
+162 i‡(
+lookup_ªtu∫_code
+ == -1) {
+
+163 
 	`¥ötf
-("Devi˚: %s\n", 
-dev
+("%s\n", 
+îrbuf
 );
 
-88 
-pˇp_t
-* 
-des¸
+167 
+addªss
+.
+s_addr
+ = 
+ù_øw
 ;
 
-89 c⁄° 
-u_ch¨
- *
-∑ckë
+168 
+	`°r˝y
+(
+ù
+, 
+	`öë_¡ﬂ
+(
+addªss
+));
+
+169 i‡(
+ù
+ =
+NULL
+) {
+
+170 
+	`≥º‹
+("inet_ntoa");
+
+175 
+addªss
+.
+s_addr
+ = 
+sub√t_mask_øw
 ;
 
-90 
-pˇp_pkthdr
- 
-hdr
-;
+176 
+	`°r˝y
+(
+sub√t_mask
+, 
+	`öë_¡ﬂ
+(
+addªss
+));
 
-91 
-ëhî_hódî
- *
-ïå
-;
+177 i‡(
+sub√t_mask
+ =
+NULL
+) {
 
-97 
+178 
+	`≥º‹
+("inet_ntoa");
+
+182 
+	`¥ötf
+("Devi˚: %s\n", 
+devi˚
+);
+
+183 
+	`¥ötf
+("IPáddªss: %s\n", 
+ù
+);
+
+184 
+	`¥ötf
+("Sub√àmask: %s\n", 
+sub√t_mask
+);
+
+190 
+ª
+ = 0;
+
+193 
 FûeEº‹H™dÀr
  
 	`„h
@@ -249,13 +595,53 @@ FûeEº‹H™dÀr
 °dîr
 ,"");
 
-99 
+196 
+Disˇrd
+ 
+disˇrd
+;
+
+197 
+ª
+ = 
+Camkes_c⁄fig
+::
+	`£t_≈‹ts
+(&
+disˇrd
+,1,0);
+
+198 
+	`debuggög
+("£âögÇÖ‹t†f‹ disˇrd",
+ª
+);
+
+199 c⁄° 
+dö_v
+[1] = {1};
+
+200 
+Camkes_c⁄fig
+::
+	`öôülize_p‹ts
+(&
+disˇrd
+,
+dö_v
+,din_v);
+
+201 
+	`debuggög
+("No configuration callÅo discard",0);
+
+204 
 Pröt
  
 ¥öt
 ;
 
-100 
+205 
 Ve˘‹
 <
 Såög
@@ -263,13 +649,31 @@ Såög
 ¥öt_c⁄fig
 ;
 
-101 
+206 
 ¥öt_c⁄fig
 .
 	`push_back
 ("ok");
 
-102 
+207 
+ª
+ = 
+Camkes_c⁄fig
+::
+	`£t_≈‹ts
+(&
+¥öt
+,1,1);
+
+208 
+	`debuggög
+("£âögÇÖ‹t†f‹Öröt",
+ª
+);
+
+209 
+ª
+ = 
 ¥öt
 .
 	`c⁄figuª
@@ -279,29 +683,51 @@ Såög
 „h
 );
 
-103 c⁄° 
-ö_v
+210 
+	`debuggög
+("föishög c⁄figuøti⁄ f‹Öröt",
+ª
+);
+
+211 c⁄° 
+pö_v
 [1] = {1};
 
-104 
+212 c⁄° 
+pout_v
+[1] = {1};
+
+213 
+Camkes_c⁄fig
+::
+	`öôülize_p‹ts
+(&
+¥öt
+,
+pö_v
+,
+pout_v
+);
+
+214 
 Camkes_c⁄fig
 ::
 	`c⁄√˘_p‹t
-(
+(&
 ¥öt
-,¥öt.
-	`öôaûize_p‹ts
-(
-ö_v
-,in_v);
+,
+åue
+,0,&
+disˇrd
+,0);
 
-106 
+217 
 Cœssifõr
  
 ˛sf
 ;
 
-109 
+218 
 Ve˘‹
 <
 Såög
@@ -309,31 +735,49 @@ Såög
 ˛sf_c⁄fig
 ;
 
-110 
+219 
 ˛sf_c⁄fig
 .
 	`push_back
 ("12/0806 20/0001");
 
-111 
+220 
 ˛sf_c⁄fig
 .
 	`push_back
 ("12/0806 20/0002");
 
-112 
+221 
 ˛sf_c⁄fig
 .
 	`push_back
 ("12/0800");
 
-113 
+222 
 ˛sf_c⁄fig
 .
 	`push_back
 ("-");
 
-114 
+224 
+ª
+ = 
+Camkes_c⁄fig
+::
+	`£t_≈‹ts
+(&
+˛sf
+,1,4);
+
+225 
+	`debuggög
+("£âögÇÖ‹t†f‹ cœssifõr",
+ª
+);
+
+226 
+ª
+ = 
 ˛sf
 .
 	`c⁄figuª
@@ -343,19 +787,25 @@ Såög
 „h
 );
 
-115 c⁄° 
+227 
+	`debuggög
+("föish c⁄figuøti⁄ f‹ cœssifõr",
+ª
+);
+
+228 c⁄° 
 ˛sf_ö_v
 [1] = {1};
 
-116 c⁄° 
+229 c⁄° 
 ˛sf_out_v
-[3] = {1,1,1};
+[4] = {1,1,1,1};
 
-117 
+230 
 Camkes_c⁄fig
 ::
 	`öôülize_p‹ts
-(
+(&
 ˛sf
 ,
 ˛sf_ö_v
@@ -363,11 +813,11 @@ Camkes_c⁄fig
 ˛sf_out_v
 );
 
-118 
+231 
 Camkes_c⁄fig
 ::
 	`c⁄√˘_p‹t
-(
+(&
 ˛sf
 ,
 åue
@@ -375,11 +825,11 @@ Camkes_c⁄fig
 ¥öt
 ,0);
 
-119 
+232 
 Camkes_c⁄fig
 ::
 	`c⁄√˘_p‹t
-(
+(&
 ˛sf
 ,
 åue
@@ -387,139 +837,69 @@ Camkes_c⁄fig
 ¥öt
 ,0);
 
-120 
+233 
 Camkes_c⁄fig
 ::
 	`c⁄√˘_p‹t
-(
+(&
 ˛sf
+,
+åue
 ,2,&
 ¥öt
 ,0);
 
-124 
+234 
+Camkes_c⁄fig
+::
+	`c⁄√˘_p‹t
+(&
+˛sf
+,
+åue
+,3,&
+¥öt
+,0);
+
+240 
 des¸
  = 
 	`pˇp_›í_live
 (
-dev
+devi˚
 ,
 BUFSIZ
-,0,-1,
+,1,-1,
 îrbuf
 );
 
-126 if(
+242 if(
 des¸
  =
 NULL
 )
 
-128 
+244 
 	`¥ötf
 ("pˇp_›í_live(): %s\n",
 îrbuf
 );
 
-129 
+245 
 	`exô
 (1);
 
-141 
-∑ckë
- = 
-	`pˇp_√xt
+249 
+	`pˇp_lo›
 (
 des¸
-,&
-hdr
-);
-
-143 if(
-∑ckë
- =
-NULL
-){
-
-154 c⁄° 
-¢iff_ëhî√t
- *
-ëhî√t
-;
-
-155 c⁄° 
-¢iff_ù
- *
-ù
-;
-
-157 
-Packë
- *
-p
- = Packë::
-	`make
-(
-∑ckë
-,
-hdr
-.
-Àn
-);
-
-158 
+, -1, 
+my_∑ckë_h™dÀr
+, &
 ˛sf
-.
-	`push
-(0,
-p
 );
 
-159 
-ù
- = (
-¢iff_ù
-*)(
-∑ckë
-+
-SIZE_ETHERNET
-);
-
-160 
-	`¥ötf
-("GøbbedÖackë o‡Àngth %d from %s\n",
-hdr
-.
-Àn
-,
-	`öë_¡ﬂ
-(
-ù
-->
-ù_§c
-));
-
-161 
-	`¥ötf
-("Recõvedáà..... %s\n",
-	`˘ime
-((c⁄° 
-time_t
-*)&
-hdr
-.
-ts
-.
-tv_£c
-));
-
-162 
-	`¥ötf
-("Ethî√àaddªs†Àngth i†%d\n",
-ETHER_HDR_LEN
-);
-
-168 
+253 
 	}
 }
 
@@ -10141,6 +10521,52 @@ __√ed_mÆloc_™d_ˇŒoc
 __END_DECLS
 
 
+	@/usr/include/sys/ioctl.h
+
+18 #i‚def 
+_SYS_IOCTL_H
+
+
+19 
+	#_SYS_IOCTL_H
+ 1
+
+	)
+
+21 
+	~<„©uªs.h
+>
+
+23 
+	g__BEGIN_DECLS
+
+
+26 
+	~<bôs/io˘ls.h
+>
+
+29 
+	~<bôs/io˘l-ty≥s.h
+>
+
+36 
+	~<sys/âydeÁu…s.h
+>
+
+41 
+	$io˘l
+ (
+__fd
+, 
+__ªque°
+, ...Ë
+__THROW
+;
+
+43 
+__END_DECLS
+
+
 	@/usr/include/sys/socket.h
 
 19 #i‚def 
@@ -14734,6 +15160,182 @@ EÀmít
 };
 
 103 
+	gCLICK_ENDDECLS
+
+
+	@elements/standard/discard.hh
+
+1 #i‚de‡
+CLICK_DISCARD_HH
+
+
+2 
+	#CLICK_DISCARD_HH
+
+
+	)
+
+3 
+	~<˛ick/ñemít.hh
+>
+
+4 
+	~<˛ick/èsk.hh
+>
+
+5 
+	~<˛ick/nŸifõr.hh
+>
+
+6 
+CLICK_DECLS
+
+
+54 ˛as†
+	cDisˇrd
+ : 
+public
+ 
+EÀmít
+ {Öublic:
+
+56 
+	$Disˇrd
+(Ë
+CLICK_COLD
+;
+
+58 c⁄° *
+	$˛ass_«me
+() const {  "Discard"; }
+
+59 c⁄° *
+	$p‹t_cou¡
+(Ëc⁄° {  
+PORTS_1_0
+; 
+	}
+}
+
+61 
+c⁄figuª
+(
+Ve˘‹
+<
+Såög
+> &
+c⁄f
+, 
+Eº‹H™dÀr
+ *
+îrh
+Ë
+	gCLICK_COLD
+;
+
+62 
+	$öôülize
+(
+Eº‹H™dÀr
+ *
+îrh
+Ë
+CLICK_COLD
+;
+
+63 
+	$add_h™dÀrs
+(Ë
+CLICK_COLD
+;
+
+65 
+	`push
+(, 
+Packë
+ *);
+
+66 
+boﬁ
+ 
+	`run_èsk
+(
+Task
+ *);
+
+68 
+¥Ÿe˘ed
+:
+
+70 
+Task
+ 
+_èsk
+;
+
+71 
+NŸifõrSig«l
+ 
+_sig«l
+;
+
+73 #i‡
+HAVE_INT64_TYPES
+
+
+74 
+uöt64_t
+ 
+	tcou¡î_t
+;
+
+76 
+uöt32_t
+ 
+	tcou¡î_t
+;
+
+78 
+cou¡î_t
+ 
+_cou¡
+;
+
+80 
+_bur°
+;
+
+81 
+boﬁ
+ 
+_a˘ive
+;
+
+83 íum { 
+h_ª£t_cou¡s
+ = 0, 
+h_a˘ive
+ = 1 
+	}
+};
+
+84 
+	$wrôe_h™dÀr
+(c⁄° 
+Såög
+ &, 
+EÀmít
+ *, *, 
+Eº‹H™dÀr
+ *Ë
+CLICK_COLD
+;
+
+86 
+	}
+};
+
+88 
 	gCLICK_ENDDECLS
 
 
@@ -20176,6 +20778,574 @@ IPV6_DSTOPTS
 241 
 	#IPV6_RTHDR_TYPE_0
  0
+
+	)
+
+	@/usr/include/bits/ioctl-types.h
+
+19 #i‚de‡
+_SYS_IOCTL_H
+
+
+24 
+	~<asm/io˘ls.h
+>
+
+27 
+	swösize
+
+
+29 
+	mws_row
+;
+
+30 
+	mws_cﬁ
+;
+
+31 
+	mws_xpixñ
+;
+
+32 
+	mws_ypixñ
+;
+
+35 
+	#NCC
+ 8
+
+	)
+
+36 
+	sãrmio
+
+
+38 
+	mc_iÊag
+;
+
+39 
+	mc_oÊag
+;
+
+40 
+	mc_cÊag
+;
+
+41 
+	mc_lÊag
+;
+
+42 
+	mc_löe
+;
+
+43 
+	mc_cc
+[
+NCC
+];
+
+47 
+	#TIOCM_LE
+ 0x001
+
+	)
+
+48 
+	#TIOCM_DTR
+ 0x002
+
+	)
+
+49 
+	#TIOCM_RTS
+ 0x004
+
+	)
+
+50 
+	#TIOCM_ST
+ 0x008
+
+	)
+
+51 
+	#TIOCM_SR
+ 0x010
+
+	)
+
+52 
+	#TIOCM_CTS
+ 0x020
+
+	)
+
+53 
+	#TIOCM_CAR
+ 0x040
+
+	)
+
+54 
+	#TIOCM_RNG
+ 0x080
+
+	)
+
+55 
+	#TIOCM_DSR
+ 0x100
+
+	)
+
+56 
+	#TIOCM_CD
+ 
+TIOCM_CAR
+
+
+	)
+
+57 
+	#TIOCM_RI
+ 
+TIOCM_RNG
+
+
+	)
+
+62 
+	#N_TTY
+ 0
+
+	)
+
+63 
+	#N_SLIP
+ 1
+
+	)
+
+64 
+	#N_MOUSE
+ 2
+
+	)
+
+65 
+	#N_PPP
+ 3
+
+	)
+
+66 
+	#N_STRIP
+ 4
+
+	)
+
+67 
+	#N_AX25
+ 5
+
+	)
+
+68 
+	#N_X25
+ 6
+
+	)
+
+69 
+	#N_6PACK
+ 7
+
+	)
+
+70 
+	#N_MASC
+ 8
+
+	)
+
+71 
+	#N_R3964
+ 9
+
+	)
+
+72 
+	#N_PROFIBUS_FDL
+ 10
+
+	)
+
+73 
+	#N_IRDA
+ 11
+
+	)
+
+74 
+	#N_SMSBLOCK
+ 12
+
+	)
+
+75 
+	#N_HDLC
+ 13
+
+	)
+
+76 
+	#N_SYNC_PPP
+ 14
+
+	)
+
+77 
+	#N_HCI
+ 15
+
+	)
+
+	@/usr/include/bits/ioctls.h
+
+18 #i‚de‡
+_SYS_IOCTL_H
+
+
+23 
+	~<asm/io˘ls.h
+>
+
+26 
+	#SIOCADDRT
+ 0x890B
+
+	)
+
+27 
+	#SIOCDELRT
+ 0x890C
+
+	)
+
+28 
+	#SIOCRTMSG
+ 0x890D
+
+	)
+
+31 
+	#SIOCGIFNAME
+ 0x8910
+
+	)
+
+32 
+	#SIOCSIFLINK
+ 0x8911
+
+	)
+
+33 
+	#SIOCGIFCONF
+ 0x8912
+
+	)
+
+34 
+	#SIOCGIFFLAGS
+ 0x8913
+
+	)
+
+35 
+	#SIOCSIFFLAGS
+ 0x8914
+
+	)
+
+36 
+	#SIOCGIFADDR
+ 0x8915
+
+	)
+
+37 
+	#SIOCSIFADDR
+ 0x8916
+
+	)
+
+38 
+	#SIOCGIFDSTADDR
+ 0x8917
+
+	)
+
+39 
+	#SIOCSIFDSTADDR
+ 0x8918
+
+	)
+
+40 
+	#SIOCGIFBRDADDR
+ 0x8919
+
+	)
+
+41 
+	#SIOCSIFBRDADDR
+ 0x891®
+
+	)
+
+42 
+	#SIOCGIFNETMASK
+ 0x891b
+
+	)
+
+43 
+	#SIOCSIFNETMASK
+ 0x891¯
+
+	)
+
+44 
+	#SIOCGIFMETRIC
+ 0x891d
+
+	)
+
+45 
+	#SIOCSIFMETRIC
+ 0x891ê
+
+	)
+
+46 
+	#SIOCGIFMEM
+ 0x891‡
+
+	)
+
+47 
+	#SIOCSIFMEM
+ 0x8920
+
+	)
+
+48 
+	#SIOCGIFMTU
+ 0x8921
+
+	)
+
+49 
+	#SIOCSIFMTU
+ 0x8922
+
+	)
+
+50 
+	#SIOCSIFNAME
+ 0x8923
+
+	)
+
+51 
+	#SIOCSIFHWADDR
+ 0x8924
+
+	)
+
+52 
+	#SIOCGIFENCAP
+ 0x8925
+
+	)
+
+53 
+	#SIOCSIFENCAP
+ 0x8926
+
+	)
+
+54 
+	#SIOCGIFHWADDR
+ 0x8927
+
+	)
+
+55 
+	#SIOCGIFSLAVE
+ 0x8929
+
+	)
+
+56 
+	#SIOCSIFSLAVE
+ 0x8930
+
+	)
+
+57 
+	#SIOCADDMULTI
+ 0x8931
+
+	)
+
+58 
+	#SIOCDELMULTI
+ 0x8932
+
+	)
+
+59 
+	#SIOCGIFINDEX
+ 0x8933
+
+	)
+
+60 
+	#SIOGIFINDEX
+ 
+SIOCGIFINDEX
+
+
+	)
+
+61 
+	#SIOCSIFPFLAGS
+ 0x8934
+
+	)
+
+62 
+	#SIOCGIFPFLAGS
+ 0x8935
+
+	)
+
+63 
+	#SIOCDIFADDR
+ 0x8936
+
+	)
+
+64 
+	#SIOCSIFHWBROADCAST
+ 0x8937
+
+	)
+
+65 
+	#SIOCGIFCOUNT
+ 0x8938
+
+	)
+
+67 
+	#SIOCGIFBR
+ 0x8940
+
+	)
+
+68 
+	#SIOCSIFBR
+ 0x8941
+
+	)
+
+70 
+	#SIOCGIFTXQLEN
+ 0x8942
+
+	)
+
+71 
+	#SIOCSIFTXQLEN
+ 0x8943
+
+	)
+
+76 
+	#SIOCDARP
+ 0x8953
+
+	)
+
+77 
+	#SIOCGARP
+ 0x8954
+
+	)
+
+78 
+	#SIOCSARP
+ 0x8955
+
+	)
+
+81 
+	#SIOCDRARP
+ 0x8960
+
+	)
+
+82 
+	#SIOCGRARP
+ 0x8961
+
+	)
+
+83 
+	#SIOCSRARP
+ 0x8962
+
+	)
+
+87 
+	#SIOCGIFMAP
+ 0x8970
+
+	)
+
+88 
+	#SIOCSIFMAP
+ 0x8971
+
+	)
+
+92 
+	#SIOCADDDLCI
+ 0x8980
+
+	)
+
+93 
+	#SIOCDELDLCI
+ 0x8981
+
+	)
+
+102 
+	#SIOCDEVPRIVATE
+ 0x89F0
+
+	)
+
+108 
+	#SIOCPROTOPRIVATE
+ 0x89E0
 
 	)
 
@@ -36199,6 +37369,338 @@ mö
 
 	)
 
+	@/usr/include/sys/ttydefaults.h
+
+40 #i‚de‡
+_SYS_TTYDEFAULTS_H_
+
+
+41 
+	#_SYS_TTYDEFAULTS_H_
+
+
+	)
+
+46 
+	#TTYDEF_IFLAG
+ (
+BRKINT
+ | 
+ISTRIP
+ | 
+ICRNL
+ | 
+IMAXBEL
+ | 
+IXON
+ | 
+IXANY
+)
+
+	)
+
+47 
+	#TTYDEF_OFLAG
+ (
+OPOST
+ | 
+ONLCR
+ | 
+XTABS
+)
+
+	)
+
+48 
+	#TTYDEF_LFLAG
+ (
+ECHO
+ | 
+ICANON
+ | 
+ISIG
+ | 
+IEXTEN
+ | 
+ECHOE
+|
+ECHOKE
+|
+ECHOCTL
+)
+
+	)
+
+49 
+	#TTYDEF_CFLAG
+ (
+CREAD
+ | 
+CS7
+ | 
+PARENB
+ | 
+HUPCL
+)
+
+	)
+
+50 
+	#TTYDEF_SPEED
+ (
+B9600
+)
+
+	)
+
+55 
+	#CTRL
+(
+x
+Ë(x&037)
+
+	)
+
+56 
+	#CEOF
+ 
+	`CTRL
+('d')
+
+	)
+
+57 #ifde‡
+_POSIX_VDISABLE
+
+
+58 
+	#CEOL
+ 
+_POSIX_VDISABLE
+
+
+	)
+
+60 
+	#CEOL
+ '\0'
+
+	)
+
+62 
+	#CERASE
+ 0177
+
+	)
+
+63 
+	#CINTR
+ 
+	`CTRL
+('c')
+
+	)
+
+64 #ifde‡
+_POSIX_VDISABLE
+
+
+65 
+	#CSTATUS
+ 
+_POSIX_VDISABLE
+
+
+	)
+
+67 
+	#CSTATUS
+ '\0'
+
+	)
+
+69 
+	#CKILL
+ 
+	`CTRL
+('u')
+
+	)
+
+70 
+	#CMIN
+ 1
+
+	)
+
+71 
+	#CQUIT
+ 034
+
+	)
+
+72 
+	#CSUSP
+ 
+	`CTRL
+('z')
+
+	)
+
+73 
+	#CTIME
+ 0
+
+	)
+
+74 
+	#CDSUSP
+ 
+	`CTRL
+('y')
+
+	)
+
+75 
+	#CSTART
+ 
+	`CTRL
+('q')
+
+	)
+
+76 
+	#CSTOP
+ 
+	`CTRL
+('s')
+
+	)
+
+77 
+	#CLNEXT
+ 
+	`CTRL
+('v')
+
+	)
+
+78 
+	#CDISCARD
+ 
+	`CTRL
+('o')
+
+	)
+
+79 
+	#CWERASE
+ 
+	`CTRL
+('w')
+
+	)
+
+80 
+	#CREPRINT
+ 
+	`CTRL
+('r')
+
+	)
+
+81 
+	#CEOT
+ 
+CEOF
+
+
+	)
+
+83 
+	#CBRK
+ 
+CEOL
+
+
+	)
+
+84 
+	#CRPRNT
+ 
+CREPRINT
+
+
+	)
+
+85 
+	#CFLUSH
+ 
+CDISCARD
+
+
+	)
+
+93 #ifde‡
+TTYDEFCHARS
+
+
+94 
+cc_t
+ 
+	gâydefch¨s
+[
+NCCS
+] = {
+
+95 
+CEOF
+, 
+CEOL
+, CEOL, 
+CERASE
+, 
+CWERASE
+, 
+CKILL
+, 
+CREPRINT
+,
+
+96 
+_POSIX_VDISABLE
+, 
+CINTR
+, 
+CQUIT
+, 
+CSUSP
+, 
+CDSUSP
+, 
+CSTART
+, 
+CSTOP
+, 
+CLNEXT
+,
+
+97 
+CDISCARD
+, 
+CMIN
+, 
+CTIME
+, 
+CSTATUS
+, 
+_POSIX_VDISABLE
+
+
+99 #unde‡
+TTYDEFCHARS
+
+
 	@/usr/include/sys/uio.h
 
 18 #i‚de‡
@@ -37818,6 +39320,12 @@ _STATBUF_ST_BLKSIZE
  8192
 
 	)
+
+	@/usr/include/asm/ioctls.h
+
+1 
+	~<asm-gíîic/io˘ls.h
+>
 
 	@/usr/include/asm/socket.h
 
@@ -42358,6 +43866,560 @@ __REDIRECT
 , 
 Æüs
 )
+
+	)
+
+	@/usr/include/asm-generic/ioctls.h
+
+1 #i‚de‡
+__ASM_GENERIC_IOCTLS_H
+
+
+2 
+	#__ASM_GENERIC_IOCTLS_H
+
+
+	)
+
+4 
+	~<löux/io˘l.h
+>
+
+19 
+	#TCGETS
+ 0x5401
+
+	)
+
+20 
+	#TCSETS
+ 0x5402
+
+	)
+
+21 
+	#TCSETSW
+ 0x5403
+
+	)
+
+22 
+	#TCSETSF
+ 0x5404
+
+	)
+
+23 
+	#TCGETA
+ 0x5405
+
+	)
+
+24 
+	#TCSETA
+ 0x5406
+
+	)
+
+25 
+	#TCSETAW
+ 0x5407
+
+	)
+
+26 
+	#TCSETAF
+ 0x5408
+
+	)
+
+27 
+	#TCSBRK
+ 0x5409
+
+	)
+
+28 
+	#TCXONC
+ 0x540A
+
+	)
+
+29 
+	#TCFLSH
+ 0x540B
+
+	)
+
+30 
+	#TIOCEXCL
+ 0x540C
+
+	)
+
+31 
+	#TIOCNXCL
+ 0x540D
+
+	)
+
+32 
+	#TIOCSCTTY
+ 0x540E
+
+	)
+
+33 
+	#TIOCGPGRP
+ 0x540F
+
+	)
+
+34 
+	#TIOCSPGRP
+ 0x5410
+
+	)
+
+35 
+	#TIOCOUTQ
+ 0x5411
+
+	)
+
+36 
+	#TIOCSTI
+ 0x5412
+
+	)
+
+37 
+	#TIOCGWINSZ
+ 0x5413
+
+	)
+
+38 
+	#TIOCSWINSZ
+ 0x5414
+
+	)
+
+39 
+	#TIOCMGET
+ 0x5415
+
+	)
+
+40 
+	#TIOCMBIS
+ 0x5416
+
+	)
+
+41 
+	#TIOCMBIC
+ 0x5417
+
+	)
+
+42 
+	#TIOCMSET
+ 0x5418
+
+	)
+
+43 
+	#TIOCGSOFTCAR
+ 0x5419
+
+	)
+
+44 
+	#TIOCSSOFTCAR
+ 0x541A
+
+	)
+
+45 
+	#FIONREAD
+ 0x541B
+
+	)
+
+46 
+	#TIOCINQ
+ 
+FIONREAD
+
+
+	)
+
+47 
+	#TIOCLINUX
+ 0x541C
+
+	)
+
+48 
+	#TIOCCONS
+ 0x541D
+
+	)
+
+49 
+	#TIOCGSERIAL
+ 0x541E
+
+	)
+
+50 
+	#TIOCSSERIAL
+ 0x541F
+
+	)
+
+51 
+	#TIOCPKT
+ 0x5420
+
+	)
+
+52 
+	#FIONBIO
+ 0x5421
+
+	)
+
+53 
+	#TIOCNOTTY
+ 0x5422
+
+	)
+
+54 
+	#TIOCSETD
+ 0x5423
+
+	)
+
+55 
+	#TIOCGETD
+ 0x5424
+
+	)
+
+56 
+	#TCSBRKP
+ 0x5425
+
+	)
+
+57 
+	#TIOCSBRK
+ 0x5427
+
+	)
+
+58 
+	#TIOCCBRK
+ 0x5428
+
+	)
+
+59 
+	#TIOCGSID
+ 0x5429
+
+	)
+
+60 
+	#TCGETS2
+ 
+	`_IOR
+('T', 0x2A, 
+ãrmios2
+)
+
+	)
+
+61 
+	#TCSETS2
+ 
+	`_IOW
+('T', 0x2B, 
+ãrmios2
+)
+
+	)
+
+62 
+	#TCSETSW2
+ 
+	`_IOW
+('T', 0x2C, 
+ãrmios2
+)
+
+	)
+
+63 
+	#TCSETSF2
+ 
+	`_IOW
+('T', 0x2D, 
+ãrmios2
+)
+
+	)
+
+64 
+	#TIOCGRS485
+ 0x542E
+
+	)
+
+65 #i‚de‡
+TIOCSRS485
+
+
+66 
+	#TIOCSRS485
+ 0x542F
+
+	)
+
+68 
+	#TIOCGPTN
+ 
+	`_IOR
+('T', 0x30, Ë
+
+	)
+
+69 
+	#TIOCSPTLCK
+ 
+	`_IOW
+('T', 0x31, Ë
+
+	)
+
+70 
+	#TIOCGDEV
+ 
+	`_IOR
+('T', 0x32, Ë
+
+	)
+
+71 
+	#TCGETX
+ 0x5432
+
+	)
+
+72 
+	#TCSETX
+ 0x5433
+
+	)
+
+73 
+	#TCSETXF
+ 0x5434
+
+	)
+
+74 
+	#TCSETXW
+ 0x5435
+
+	)
+
+75 
+	#TIOCSIG
+ 
+	`_IOW
+('T', 0x36, Ë
+
+	)
+
+76 
+	#TIOCVHANGUP
+ 0x5437
+
+	)
+
+77 
+	#TIOCGPKT
+ 
+	`_IOR
+('T', 0x38, Ë
+
+	)
+
+78 
+	#TIOCGPTLCK
+ 
+	`_IOR
+('T', 0x39, Ë
+
+	)
+
+79 
+	#TIOCGEXCL
+ 
+	`_IOR
+('T', 0x40, Ë
+
+	)
+
+81 
+	#FIONCLEX
+ 0x5450
+
+	)
+
+82 
+	#FIOCLEX
+ 0x5451
+
+	)
+
+83 
+	#FIOASYNC
+ 0x5452
+
+	)
+
+84 
+	#TIOCSERCONFIG
+ 0x5453
+
+	)
+
+85 
+	#TIOCSERGWILD
+ 0x5454
+
+	)
+
+86 
+	#TIOCSERSWILD
+ 0x5455
+
+	)
+
+87 
+	#TIOCGLCKTRMIOS
+ 0x5456
+
+	)
+
+88 
+	#TIOCSLCKTRMIOS
+ 0x5457
+
+	)
+
+89 
+	#TIOCSERGSTRUCT
+ 0x5458
+
+	)
+
+90 
+	#TIOCSERGETLSR
+ 0x5459
+
+	)
+
+91 
+	#TIOCSERGETMULTI
+ 0x545A
+
+	)
+
+92 
+	#TIOCSERSETMULTI
+ 0x545B
+
+	)
+
+94 
+	#TIOCMIWAIT
+ 0x545C
+
+	)
+
+95 
+	#TIOCGICOUNT
+ 0x545D
+
+	)
+
+101 #i‚de‡
+FIOQSIZE
+
+
+102 
+	#FIOQSIZE
+ 0x5460
+
+	)
+
+106 
+	#TIOCPKT_DATA
+ 0
+
+	)
+
+107 
+	#TIOCPKT_FLUSHREAD
+ 1
+
+	)
+
+108 
+	#TIOCPKT_FLUSHWRITE
+ 2
+
+	)
+
+109 
+	#TIOCPKT_STOP
+ 4
+
+	)
+
+110 
+	#TIOCPKT_START
+ 8
+
+	)
+
+111 
+	#TIOCPKT_NOSTOP
+ 16
+
+	)
+
+112 
+	#TIOCPKT_DOSTOP
+ 32
+
+	)
+
+113 
+	#TIOCPKT_IOCTL
+ 64
+
+	)
+
+115 
+	#TIOCSER_TEMT
+ 0x01
 
 	)
 
@@ -51149,6 +53211,22 @@ __ps
 	}
 }
 
+	@/usr/include/linux/ioctl.h
+
+1 #i‚de‡
+_LINUX_IOCTL_H
+
+
+2 
+	#_LINUX_IOCTL_H
+
+
+	)
+
+4 
+	~<asm/io˘l.h
+>
+
 	@/usr/include/wctype.h
 
 23 #i‚de‡
@@ -52011,13 +54089,425 @@ __ASM_GENERIC_SOCKIOS_H
 
 	)
 
+	@/usr/include/asm/ioctl.h
+
+1 
+	~<asm-gíîic/io˘l.h
+>
+
+	@/usr/include/asm-generic/ioctl.h
+
+1 #i‚de‡
+_ASM_GENERIC_IOCTL_H
+
+
+2 
+	#_ASM_GENERIC_IOCTL_H
+
+
+	)
+
+22 
+	#_IOC_NRBITS
+ 8
+
+	)
+
+23 
+	#_IOC_TYPEBITS
+ 8
+
+	)
+
+30 #i‚de‡
+_IOC_SIZEBITS
+
+
+31 
+	#_IOC_SIZEBITS
+ 14
+
+	)
+
+34 #i‚de‡
+_IOC_DIRBITS
+
+
+35 
+	#_IOC_DIRBITS
+ 2
+
+	)
+
+38 
+	#_IOC_NRMASK
+ ((1 << 
+_IOC_NRBITS
+)-1)
+
+	)
+
+39 
+	#_IOC_TYPEMASK
+ ((1 << 
+_IOC_TYPEBITS
+)-1)
+
+	)
+
+40 
+	#_IOC_SIZEMASK
+ ((1 << 
+_IOC_SIZEBITS
+)-1)
+
+	)
+
+41 
+	#_IOC_DIRMASK
+ ((1 << 
+_IOC_DIRBITS
+)-1)
+
+	)
+
+43 
+	#_IOC_NRSHIFT
+ 0
+
+	)
+
+44 
+	#_IOC_TYPESHIFT
+ (
+_IOC_NRSHIFT
++
+_IOC_NRBITS
+)
+
+	)
+
+45 
+	#_IOC_SIZESHIFT
+ (
+_IOC_TYPESHIFT
++
+_IOC_TYPEBITS
+)
+
+	)
+
+46 
+	#_IOC_DIRSHIFT
+ (
+_IOC_SIZESHIFT
++
+_IOC_SIZEBITS
+)
+
+	)
+
+53 #i‚de‡
+_IOC_NONE
+
+
+54 
+	#_IOC_NONE
+ 0U
+
+	)
+
+57 #i‚de‡
+_IOC_WRITE
+
+
+58 
+	#_IOC_WRITE
+ 1U
+
+	)
+
+61 #i‚de‡
+_IOC_READ
+
+
+62 
+	#_IOC_READ
+ 2U
+
+	)
+
+65 
+	#_IOC
+(
+dú
+,
+ty≥
+,
+ƒ
+,
+size
+) \
+
+66 (((
+dú
+Ë<< 
+_IOC_DIRSHIFT
+) | \
+
+67 ((
+ty≥
+Ë<< 
+_IOC_TYPESHIFT
+) | \
+
+68 ((
+ƒ
+Ë<< 
+_IOC_NRSHIFT
+) | \
+
+69 ((
+size
+Ë<< 
+_IOC_SIZESHIFT
+))
+
+	)
+
+71 
+	#_IOC_TYPECHECK
+(
+t
+Ë(—))
+
+	)
+
+74 
+	#_IO
+(
+ty≥
+,
+ƒ
+Ë
+	`_IOC
+(
+_IOC_NONE
+,—y≥),“r),0)
+
+	)
+
+75 
+	#_IOR
+(
+ty≥
+,
+ƒ
+,
+size
+Ë
+	`_IOC
+(
+_IOC_READ
+,—y≥),“r),(
+	`_IOC_TYPECHECK
+(size)))
+
+	)
+
+76 
+	#_IOW
+(
+ty≥
+,
+ƒ
+,
+size
+Ë
+	`_IOC
+(
+_IOC_WRITE
+,—y≥),“r),(
+	`_IOC_TYPECHECK
+(size)))
+
+	)
+
+77 
+	#_IOWR
+(
+ty≥
+,
+ƒ
+,
+size
+Ë
+	`_IOC
+(
+_IOC_READ
+|
+_IOC_WRITE
+,—y≥),“r),(
+	`_IOC_TYPECHECK
+(size)))
+
+	)
+
+78 
+	#_IOR_BAD
+(
+ty≥
+,
+ƒ
+,
+size
+Ë
+	`_IOC
+(
+_IOC_READ
+,—y≥),“r),(size))
+
+	)
+
+79 
+	#_IOW_BAD
+(
+ty≥
+,
+ƒ
+,
+size
+Ë
+	`_IOC
+(
+_IOC_WRITE
+,—y≥),“r),(size))
+
+	)
+
+80 
+	#_IOWR_BAD
+(
+ty≥
+,
+ƒ
+,
+size
+Ë
+	`_IOC
+(
+_IOC_READ
+|
+_IOC_WRITE
+,—y≥),“r),(size))
+
+	)
+
+83 
+	#_IOC_DIR
+(
+ƒ
+Ë((“rË>> 
+_IOC_DIRSHIFT
+Ë& 
+_IOC_DIRMASK
+)
+
+	)
+
+84 
+	#_IOC_TYPE
+(
+ƒ
+Ë((“rË>> 
+_IOC_TYPESHIFT
+Ë& 
+_IOC_TYPEMASK
+)
+
+	)
+
+85 
+	#_IOC_NR
+(
+ƒ
+Ë((“rË>> 
+_IOC_NRSHIFT
+Ë& 
+_IOC_NRMASK
+)
+
+	)
+
+86 
+	#_IOC_SIZE
+(
+ƒ
+Ë((“rË>> 
+_IOC_SIZESHIFT
+Ë& 
+_IOC_SIZEMASK
+)
+
+	)
+
+90 
+	#IOC_IN
+ (
+_IOC_WRITE
+ << 
+_IOC_DIRSHIFT
+)
+
+	)
+
+91 
+	#IOC_OUT
+ (
+_IOC_READ
+ << 
+_IOC_DIRSHIFT
+)
+
+	)
+
+92 
+	#IOC_INOUT
+ ((
+_IOC_WRITE
+|
+_IOC_READ
+Ë<< 
+_IOC_DIRSHIFT
+)
+
+	)
+
+93 
+	#IOCSIZE_MASK
+ (
+_IOC_SIZEMASK
+ << 
+_IOC_SIZESHIFT
+)
+
+	)
+
+94 
+	#IOCSIZE_SHIFT
+ (
+_IOC_SIZESHIFT
+)
+
+	)
+
 	@
 1
 .
 1
 /usr/include
-75
-1999
+85
+2288
 ether_server.cxx
 header_struct.h
 /usr/include/arpa/inet.h
@@ -52025,16 +54515,20 @@ header_struct.h
 /usr/include/netinet/in.h
 /usr/include/stdio.h
 /usr/include/stdlib.h
+/usr/include/sys/ioctl.h
 /usr/include/sys/socket.h
 /usr/include/sys/types.h
 /usr/include/unistd.h
 elements/standard/classifier.hh
+elements/standard/discard.hh
 elements/standard/print.hh
 /usr/include/alloca.h
 /usr/include/bits/byteswap.h
 /usr/include/bits/confname.h
 /usr/include/bits/environments.h
 /usr/include/bits/in.h
+/usr/include/bits/ioctl-types.h
+/usr/include/bits/ioctls.h
 /usr/include/bits/posix_opt.h
 /usr/include/bits/pthreadtypes.h
 /usr/include/bits/sigset.h
@@ -52060,10 +54554,12 @@ elements/standard/print.hh
 /usr/include/stdint.h
 /usr/include/sys/select.h
 /usr/include/sys/sysmacros.h
+/usr/include/sys/ttydefaults.h
 /usr/include/sys/uio.h
 /usr/include/time.h
 /usr/include/xlocale.h
 /usr/include/_G_config.h
+/usr/include/asm/ioctls.h
 /usr/include/asm/socket.h
 /usr/include/bits/byteswap-16.h
 /usr/include/bits/endian.h
@@ -52081,6 +54577,7 @@ elements/standard/print.hh
 /usr/include/gnu/stubs.h
 /usr/include/stdc-predef.h
 /usr/include/sys/cdefs.h
+/usr/include/asm-generic/ioctls.h
 /usr/include/asm-generic/socket.h
 /usr/include/bits/timex.h
 /usr/include/gconv.h
@@ -52091,5 +54588,8 @@ elements/standard/print.hh
 /usr/include/asm/sockios.h
 /usr/include/bits/wchar-ldbl.h
 /usr/include/bits/wchar2.h
+/usr/include/linux/ioctl.h
 /usr/include/wctype.h
 /usr/include/asm-generic/sockios.h
+/usr/include/asm/ioctl.h
+/usr/include/asm-generic/ioctl.h

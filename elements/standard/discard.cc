@@ -45,10 +45,13 @@ Discard::configure(Vector<String> &conf, ErrorHandler *errh)
 int
 Discard::initialize(ErrorHandler *errh)
 {
+//Pull elements andd notify machanism needs to be rewritten under CAMKES
+#if !UNDER_CAMKES
     if (input_is_pull(0)) {
-	ScheduleInfo::initialize_task(this, &_task, _active, errh);
-	_signal = Notifier::upstream_empty_signal(this, 0, &_task);
+        ScheduleInfo::initialize_task(this, &_task, _active, errh);
+	    _signal = Notifier::upstream_empty_signal(this, 0, &_task);
     }
+#endif
     return 0;
 }
 

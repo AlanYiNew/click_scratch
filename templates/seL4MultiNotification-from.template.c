@@ -21,7 +21,6 @@
 
 void /*? me.interface.name ?*/_emit_underlying(void) {
     /*- for notification in notifications -*/
-    printf("before signaling\n");
     seL4_Signal(/*? notification ?*/);
     /*- endfor -*/
 }

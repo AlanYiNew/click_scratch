@@ -27,8 +27,11 @@ rumprun_ether_rumpbin := click
 click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/standard/classifier.o \
 		$(SOURCE_DIR)/elements/standard/classifier.hh \
+		$(SOURCE_DIR)/elements/standard/alignmentinfo.o \
 		$(SOURCE_DIR)/elements/standard/print.o \
 		$(SOURCE_DIR)/elements/standard/print.hh \
+		$(SOURCE_DIR)/elements/standard/discard.o \
+		$(SOURCE_DIR)/elements/standard/discard.hh \
 		$(SOURCE_DIR)/elements/standard/classification.hh \
 		$(SOURCE_DIR)/elements/standard/alignmentinfo.o \
 		$(SOURCE_DIR)/elements/standard/errorelement.o \
@@ -42,5 +45,6 @@ click: $(cfiles) $(hfiles) \
 		-I${SOURCE_DIR}/include \
 		-I${SOURCE_DIR} \
 		-I${BUILD2_DIR}/x86_64/rumprun/rumprun-x86_64/include/c++ \
+		-DUNDER_CAMKES \
 		-L${SOURCE_DIR}/lib \
 		 $^ -o $@  -lpthread -lpcap

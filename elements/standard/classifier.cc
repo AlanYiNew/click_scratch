@@ -28,6 +28,7 @@
 #include <click/router.hh>
 #endif
 #include <click/standard/alignmentinfo.hh>
+#include <iostream>
 CLICK_DECLS
 
 Classifier::Classifier()
@@ -39,10 +40,10 @@ Classifier::empty_program(ErrorHandler *errh) const
 {
     // set align offset
     int c, o;
-    if (AlignmentInfo::query(this, 0, c, o) && c >= 4)
-	// want 'data - _align_offset' aligned at 4/(o%4)
+    if (AlignmentInfo::query(this, 0, c, o) && c >= 4){
+    // want 'data - _align_offset' aligned at 4/(o%4)
 	o = (4 - (o % 4)) % 4;
-    else {
+    }   else {
 #if !HAVE_INDIFFERENT_ALIGNMENT
 	if (errh) {
 	    errh->warning("alignment unknown, but machine is sensitive to alignment");
@@ -227,10 +228,9 @@ Classifier::configure(Vector<String> &conf, ErrorHandler *errh)
 
     Classification::Wordwise::Program prog = empty_program(errh);
     parse_program(prog, conf, errh);
-
     if (!errh->nerrors()) {
-	prog.warn_unused_outputs(noutputs(), errh);
-	_prog = prog;
+	    prog.warn_unused_outputs(noutputs(), errh);
+        _prog = prog;
 	return 0;
     } else
 	return -1;
@@ -252,6 +252,7 @@ Classifier::add_handlers()
 void
 Classifier::push(int, Packet *p)
 {
+    
     checked_output_push(_prog.match(p), p);
 }
 

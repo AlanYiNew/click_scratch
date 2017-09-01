@@ -16,6 +16,7 @@ ${SOURCE_DIR}/lib/%.o: ${SOURCE_DIR}/lib/%.cc
 		-I${SOURCE_DIR}/include \
 		-DCLICK_USERLEVEL \
 		-DHAVE_IP6 \
+		-DUNDER_CAMKES \
 		$^ -o $@
 
 

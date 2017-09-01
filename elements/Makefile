@@ -53,9 +53,10 @@ ELEMENTS_OBJS :=$(patsubst %.cc,%.o,$(ELEMENTS_CCFILES))
 		-DCLCIK_USERLEVEL \
 		-DHAVE_IP6 \
 		-DHAVE_PCAP \
+		-DHAVE_INDIFFERENT_ALIGNMENT \
+		-DUNDER_CAMKES \
 		-lclick \
 		$< -o $@
-
 
  
 

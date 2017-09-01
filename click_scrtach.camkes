@@ -57,7 +57,7 @@ assembly {
  }
 
  configuration {
-    rump_ether0.rump_config = { "rump_net": 3,
+    rump_ether0.rump_config = { "rump_net": 4,
                                 "rumprunbake_config": "sel4_ethernet", 
                                 "cmdline": "echo 6666",
                                 "pci_config_interface" : "pci_config",
@@ -68,13 +68,14 @@ assembly {
 
     rump_ether1.rump_config = { "rump_net": 2,
                                 "rumprunbake_config": "sel4_ethernet",
-                                "cmdline": "echo 6666",
+                                "cmdline": "ifconfig",
                                 "pci_config_interface" : "pci_config",
                                 "eth_irq_interface" : "eth_irq",
-                                "eth_irq_number" : 12,
+                                "eth_irq_number" : 11,
                                 "wm_val" : "wm0",
-                                "addr" : "192.168.1.1",
-                                "mask" : "30",
+                                "addr" : "192.168.1.98",
+                                "mask" : "24",
+                                "gw" : "192.168.1.2",
                                 "interfaces_to_expose": ["camkes_buffer", "camkes_ev", "camkes_ev1"] };
 
 
@@ -82,18 +83,24 @@ assembly {
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether0, 0)
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether1, 1)
 
-    //
+    //Maybe useless
     server.ev_global_endpoint = "central_server";
     server.ev_badge = "1";
 
+    //Maybe useless
     rump_ether0.camkes_ev_global_endpoint = "central_server";
-    rump_ether0.camkes_ev_badge = "1";
+    rump_ether0.camkes_ev_badge = "0";
 
+    //Maybe useless
     rump_ether1.camkes_ev_global_endpoint = "central_server";
     rump_ether1.camkes_ev_badge = "1";
 
     //memory mapped region for xxxxx,xxxxx,native ethernet card
     rump_ether0.untyped_mmios = ["0xfebc0000:17", "0xf7f39000:12", "0xf7f00000:17"];
+    
+    //wm0:0xf7b00000
+    //wm1:0xf7a00000
+    //wm2:0xf7900000
     rump_ether1.untyped_mmios = ["0xf7b00000:20"];
 
     //badge for demultiplexing to decide where the message comes from
@@ -115,7 +122,7 @@ assembly {
     eth1.irq_irq_type = "pci";
     eth1.irq_irq_ioapic = 0;
     eth1.irq_irq_ioapic_pin = 16;
-    eth1.irq_irq_vector = 16;
+    eth1.irq_irq_vector = 11;
 
 
     pci_config.putchar_attributes = 0;

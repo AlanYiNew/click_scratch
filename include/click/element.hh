@@ -6,6 +6,7 @@
 #include <click/string.hh>
 #include <click/packet.hh>
 #include <click/handler.hh>
+#include <iostream>
 CLICK_DECLS
 class Router;
 class Master;
@@ -436,6 +437,7 @@ inline const Element::Port&
 Element::port(bool isoutput, int port) const
 {
     assert((unsigned) port < (unsigned) _nports[isoutput]);
+    
     return _ports[isoutput][port];
 }
 
