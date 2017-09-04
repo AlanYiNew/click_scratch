@@ -114,7 +114,7 @@ void my_packet_handler(
     eth_header = (struct ether_header *) packet;
 
     Classifier * clsf = (Classifier *)args;
-    //debug_purpose(packet,header);
+    debug_purpose(packet,header);
 
     Packet *p = Packet::make(packet,header->len);
     clsf->push(0,p);
