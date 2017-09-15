@@ -77,6 +77,15 @@ ToDevice::~ToDevice()
 {
 }
 
+#ifdef UNDER_CAMKES
+int
+ToDevice::configure(Vector<String> &conf, ErrorHandler *errh,FromDevice * fd){
+    _fDev = fd;
+    return configure(conf,errh);
+}
+
+#endif
+
 int
 ToDevice::configure(Vector<String> &conf, ErrorHandler *errh)
 {
@@ -130,19 +139,25 @@ ToDevice::configure(Vector<String> &conf, ErrorHandler *errh)
 FromDevice *
 ToDevice::find_fromdevice() const
 {
+#if !UNDER_CAMKES
     Router *r = router();
     for (int ei = 0; ei < r->nelements(); ++ei) {
 	FromDevice *fd = (FromDevice *) r->element(ei)->cast("FromDevice");
 	if (fd && fd->ifname() == _ifname && fd->fd() >= 0)
 	    return fd;
     }
+#else
+    return _fDev;
+#endif    
     return 0;
 }
 
 int
 ToDevice::initialize(ErrorHandler *errh)
 {
+#if !UNDER_CAMKES    
     _timer.initialize(this);
+#endif
 
     FromDevice *fd = find_fromdevice();
     if (fd && _method == method_default) {
@@ -161,6 +176,7 @@ ToDevice::initialize(ErrorHandler *errh)
     }
 
 #if TODEVICE_ALLOW_NETMAP
+    
     // first choice is netmap by default
     if (_method == method_default || _method == method_netmap) {
 	if (fd && fd->netmap()) { // fromdevice already open, reuse
@@ -236,7 +252,7 @@ ToDevice::initialize(ErrorHandler *errh)
     }
 #endif
 
-#if TODEVICE_ALLOW_PCAPFD
+#if !UNDER_CAMKES && TODEVICE_ALLOW_PCAPFD
     if (_method == method_default || _method == method_pcapfd) {
 	FromDevice *fd = find_fromdevice();
 	if (fd && fd->pcap())
@@ -247,6 +263,7 @@ ToDevice::initialize(ErrorHandler *errh)
     }
 #endif
 
+#if !UNDER_CAMKES    
     // check for duplicate writers
     void *&used = router()->force_attachment("device_writer_" + _ifname);
     if (used)
@@ -255,6 +272,7 @@ ToDevice::initialize(ErrorHandler *errh)
 
     ScheduleInfo::join_scheduler(this, &_task, errh);
     _signal = Notifier::upstream_empty_signal(this, 0, &_task);
+#endif
     return 0;
 }
 
@@ -339,6 +357,9 @@ ToDevice::send_packet(Packet *p)
 	return errno ? -errno : -EINVAL;
 }
 
+    
+
+
 bool
 ToDevice::run_task(Task *)
 {
@@ -348,10 +369,12 @@ ToDevice::run_task(Task *)
 
     do {
 	if (!p) {
+        std::cout << class_name() << " pulling" << std::endl;
 	    ++_pulls;
 	    if (!(p = input(0).pull()))
 		break;
 	}
+
 	if ((r = send_packet(p)) >= 0) {
 	    _backoff = 0;
 	    checked_output_push(0, p);
@@ -367,7 +390,9 @@ ToDevice::run_task(Task *)
 
 	if (!_backoff) {
 	    _backoff = 1;
-	    add_select(_fd, SELECT_WRITE);
+#if !UNDER_CAMKES
+        add_select(_fd, SELECT_WRITE);
+#endif
 	} else {
 	    _timer.schedule_after(Timestamp::make_usec(_backoff));
 	    if (_backoff < 256)

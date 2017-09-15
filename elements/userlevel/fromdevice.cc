@@ -53,6 +53,7 @@
 # include <net/ethernet.h>
 #endif
 
+#include <iostream>
 CLICK_DECLS
 
 FromDevice::FromDevice()
@@ -248,6 +249,7 @@ FromDevice::open_pcap(String ifname, int snaplen, bool promisc,
     // create pcap
     char ebuf[PCAP_ERRBUF_SIZE];
     ebuf[0] = 0;
+    //pcap_t *p = pcap_open_live(ifname.c_str(),PCAP_ERRBUF_SIZE,1,-1,ebuf);
     pcap_t* p = pcap_create(ifname.c_str(), ebuf);
     if (!p) {
         // Note: pcap error buffer will contain the interface name
@@ -260,26 +262,30 @@ FromDevice::open_pcap(String ifname, int snaplen, bool promisc,
         errh->warning("%s: error while setting snaplen", ifname.c_str());
     if (pcap_set_promisc(p, promisc))
         errh->warning("%s: error while setting promisc", ifname.c_str());
-
+    if (pcap_set_buffer_size(p,snaplen))
+        errh->warning("%s: error while setting buffer size", ifname.c_str()); 
+    if (pcap_set_tstamp_type(p, PCAP_TSTAMP_HOST))
+        errh->warning("%s: error while setting tstamp type", ifname.c_str());
+    
     // set timeout
     int timeout_msec = 1;
-# if HAVE_PCAP_SETNONBLOCK
+# if !UNDER_CAMKES && HAVE_PCAP_SETNONBLOCK
     // Since the socket will be made nonblocking, set the timeout higher.
     timeout_msec = 500;
 # endif
+
+# if !UNDER_CAMKES    
     if (pcap_set_timeout(p, timeout_msec))
         errh->warning("%s: error while setting timeout", ifname.c_str());
-
 # if TIMESTAMP_NANOSEC && defined(PCAP_TSTAMP_PRECISION_NANO)
     // request nanosecond precision
     (void) pcap_set_tstamp_precision(p, PCAP_TSTAMP_PRECISION_NANO);
 # endif
-
+#endif
 # if HAVE_PCAP_SET_IMMEDIATE_MODE
     if (pcap_set_immediate_mode(p, 1))
         errh->warning("%s: error while setting immediate mode", ifname.c_str());
 # endif
-
     // activate pcap
     int r = pcap_activate(p);
     if (r < 0) {
@@ -288,16 +294,14 @@ FromDevice::open_pcap(String ifname, int snaplen, bool promisc,
         p = 0;
     } else if (r > 0)
         errh->warning("%s: %s", ifname.c_str(), fetch_pcap_error(p, 0));
-
     // set nonblocking
-# if HAVE_PCAP_SETNONBLOCK
+# if !UNDER_CAMKES && HAVE_PCAP_SETNONBLOCK
     if (pcap_setnonblock(p, 1, ebuf) < 0)
 	errh->warning("nonblocking %s: %s", ifname.c_str(), fetch_pcap_error(p, ebuf));
-# else
+#elif !UNDER_CAMKES
     if (fcntl(pcap_fileno(p), F_SETFL, O_NONBLOCK) < 0)
 	errh->warning("nonblocking %s: %s", ifname.c_str(), strerror(errno));
 # endif
-
     return p;
 }
 #endif
@@ -322,21 +326,22 @@ FromDevice::initialize(ErrorHandler *errh)
 #if FROMDEVICE_ALLOW_PCAP
     if (_method == method_default || _method == method_pcap) {
 	assert(!_pcap);
-	_pcap = open_pcap(_ifname, _snaplen, _promisc, errh);
-	if (!_pcap)
+    _pcap = open_pcap(_ifname, _snaplen, _promisc, errh); 
+   
+    
+    if (!_pcap)
 	    return -1;
 	_fd = pcap_fileno(_pcap);
 	char *ifname = _ifname.mutable_c_str();
-
 # if TIMESTAMP_NANOSEC && defined(PCAP_TSTAMP_PRECISION_NANO)
         _pcap_nanosec = false;
         if (pcap_get_tstamp_precision(_pcap) == PCAP_TSTAMP_PRECISION_NANO)
             _pcap_nanosec = true;
 # endif
 
-# if HAVE_PCAP_SETDIRECTION
+# if !UNDER_CAMKES && HAVE_PCAP_SETDIRECTION
 	pcap_setdirection(_pcap, _outbound ? PCAP_D_INOUT : PCAP_D_IN);
-# elif defined(BIOCSSEESENT)
+# elif !UNDER_CAMKES && defined(BIOCSSEESENT)
 	{
 	    int r, accept = _outbound;
 	    if ((r = ioctl(_fd, BIOCSSEESENT, &accept)) == -1)
@@ -345,10 +350,10 @@ FromDevice::initialize(ErrorHandler *errh)
 		errh->warning("%s: BIOCSSEESENT returns %d", ifname, r);
 	}
 # endif
-
-# if defined(BIOCIMMEDIATE) && !defined(__sun) // pcap/bpf ioctl, not in DLPI/bufmod
+# if !UNDER_CAMKES && defined(BIOCIMMEDIATE) && !defined(__sun) // pcap/bpf ioctl, not in DLPI/bufmod
 	{
-	    int r, yes = 1;
+	    
+        int r, yes = 1;
 	    if ((r = ioctl(_fd, BIOCIMMEDIATE, &yes)) == -1)
 		return errh->error("%s: BIOCIMMEDIATE: %s", ifname, strerror(errno));
 	    else if (r != 0)
@@ -356,6 +361,7 @@ FromDevice::initialize(ErrorHandler *errh)
 	}
 # endif
 
+//not sure what the exact usage of the filter at this point TODO//Alan Yi 
         if (_datalink == -1) {  // no ENCAP specified in configure()
             _datalink = pcap_datalink(_pcap);
         } else {
@@ -373,23 +379,22 @@ FromDevice::initialize(ErrorHandler *errh)
 	// Later versions of pcap distributed with linux (e.g. the redhat
 	// linux pcap-0.4-16) want to have a filter installed before they
 	// will pick up any packets.
-
 	// compile the BPF filter
 	struct bpf_program fcode;
-	if (pcap_compile(_pcap, &fcode, _bpf_filter.mutable_c_str(), 0, netmask) < 0)
+    if (pcap_compile(_pcap, &fcode, _bpf_filter.mutable_c_str(), 0, netmask) < 0)
 	    return errh->error("%s: %s", ifname, fetch_pcap_error(_pcap, 0));
-	if (pcap_setfilter(_pcap, &fcode) < 0)
+    if (pcap_setfilter(_pcap, &fcode) < 0)
 	    return errh->error("%s: %s", ifname, fetch_pcap_error(_pcap, 0));
 
 	_datalink = pcap_datalink(_pcap);
 	if (_force_ip && !fake_pcap_dlt_force_ipable(_datalink))
 	    errh->warning("%s: strange data link type %d, FORCE_IP will not work", ifname, _datalink);
-
 	_method = method_pcap;
     }
 #endif
 
 #if FROMDEVICE_ALLOW_LINUX
+
     if (_method == method_default || _method == method_linux) {
 	_fd = open_packet_socket(_ifname, errh);
 	if (_fd < 0)
@@ -408,19 +413,18 @@ FromDevice::initialize(ErrorHandler *errh)
     }
 #endif
 
-#if FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_NETMAP
+#if !UNDER_CAMKES && (FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_NETMAP)
     if (_method == method_pcap || _method == method_netmap)
 	ScheduleInfo::initialize_task(this, &_task, false, errh);
 #endif
-#if FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_LINUX || FROMDEVICE_ALLOW_NETMAP
+#if !UNDER_CAMKES && (FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_LINUX || FROMDEVICE_ALLOW_NETMAP)
     if (_fd >= 0)
 	add_select(_fd, SELECT_READ);
 #endif
-
-    if (!_sniffer)
-	if (KernelFilter::device_filter(_ifname, true, errh) < 0)
-	    _sniffer = true;
-
+    if (!_sniffer){
+	    if (KernelFilter::device_filter(_ifname, true, errh) < 0)
+	        _sniffer = true;
+    }
     return 0;
 }
 
@@ -517,11 +521,22 @@ FromDevice::selected(int, int)
 			this, "nm_dispatch failed");
     }
 #endif
-#if FROMDEVICE_ALLOW_PCAP
+#if !UNDER_CAMKES && FROMDEVICE_ALLOW_PCAP
     if (_method == method_pcap) {
 	// Read and push() at most one burst of packets.
 	int r = pcap_dispatch(_pcap, _burst, FromDevice_get_packet, (u_char *) this);
 	if (r > 0) {
+	    _count += r;
+	    _task.reschedule();
+	} else if (r < 0 && ++_pcap_complaints < 5)
+	    ErrorHandler::default_handler()->error("%p{element}: %s", this, pcap_geterr(_pcap));
+    }
+#endif
+#if UNDER_CAMKES
+    if (_method == method_pcap) {
+	// Read and push() at most one burst of packets.
+    int r = pcap_dispatch(_pcap, _burst, FromDevice_get_packet, (u_char *) this);
+    if (r > 0) {
 	    _count += r;
 	    _task.reschedule();
 	} else if (r < 0 && ++_pcap_complaints < 5)

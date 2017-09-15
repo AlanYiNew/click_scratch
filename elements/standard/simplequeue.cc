@@ -46,6 +46,7 @@ SimpleQueue::configure(Vector<String> &conf, ErrorHandler *errh)
     if (Args(conf, this, errh).read_p("CAPACITY", new_capacity).complete() < 0)
 	return -1;
     _capacity = new_capacity;
+    
     return 0;
 }
 

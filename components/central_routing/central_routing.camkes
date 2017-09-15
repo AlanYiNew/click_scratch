@@ -10,20 +10,21 @@
  * @TAG(DATA61_BSD)
  */
 
-#include <rumprun_camkes.h>
 #include <buffer.h>
+#include <rumprun_camkes.h>
 
 import <rumprun.camkes>;
-
-component rumprun_ether {
+component central_routing {
     include "porttype.h";
     RUMPRUN_COMPONENT_DEFINITION()
     uses PCIConfig pci_config;
-    consumes IRQ eth_irq;
-    dataport message_t camkes_buffer;
-    emits SomethingHappenedEvent camkes_ev;
-    consumes SomethingHappenedEvent camkes_ev1;
-    //attribute string server_global_endpoint;
-    //attribute string server_badge;
-    attribute string wm_val; 
+    control;
+    dataport message_t buffer;
+    consumes SomethingHappenedEvent ev;
+    emits SomethingHappenedEvent ev1;
+    emits SomethingHappenedEvent ev2;
+    //attribute string ip_addr0;
+    attribute string ip_addr1;
+    //attribute string ip_addr2;
+    attribute string rt[];
 }

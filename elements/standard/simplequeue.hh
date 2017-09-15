@@ -3,6 +3,7 @@
 #define CLICK_SIMPLEQUEUE_HH
 #include <click/element.hh>
 #include <click/standard/storage.hh>
+#include <iostream>
 CLICK_DECLS
 
 /*

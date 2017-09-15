@@ -165,6 +165,7 @@ CheckIPHeader::simple_action(Packet *p)
   unsigned plen = p->length() - _offset;
   unsigned hlen, len;
 
+
   // cast to int so very large plen is interpreted as negative
   if ((int)plen < (int)sizeof(click_ip))
     return drop(MINISCULE_PACKET, p);
@@ -172,9 +173,11 @@ CheckIPHeader::simple_action(Packet *p)
   if (ip->ip_v != 4)
     return drop(BAD_VERSION, p);
 
+
   hlen = ip->ip_hl << 2;
   if (hlen < sizeof(click_ip))
     return drop(BAD_HLEN, p);
+
 
   len = ntohs(ip->ip_len);
   if (len > plen || len < hlen)
@@ -201,6 +204,7 @@ CheckIPHeader::simple_action(Packet *p)
    * Configuration string should have listed all subnet
    * broadcast addresses known to this router.
    */
+
   if (find(_bad_src.begin(), _bad_src.end(), IPAddress(ip->ip_src)) < _bad_src.end()
       && find(_good_dst.begin(), _good_dst.end(), IPAddress(ip->ip_dst)) == _good_dst.end())
     return drop(BAD_SADDR, p);

@@ -29,8 +29,8 @@ include PCIConfigIO/PCIConfigIO.mk
 include ${SOURCE_DIR}/lib/Makefile
 include ${SOURCE_DIR}/elements/Makefile
 include ${SOURCE_DIR}/components/rump_ether/rump_ether.mk
-include ${SOURCE_DIR}/components/reverse_string/server.mk
-
+#include ${SOURCE_DIR}/components/reverse_string/server.mk
+include ${SOURCE_DIR}/components/central_routing/central_routing.mk
 
 
 include ${PWD}/tools/camkes/camkes.mk

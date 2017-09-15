@@ -33,10 +33,27 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/standard/discard.o \
 		$(SOURCE_DIR)/elements/standard/discard.hh \
 		$(SOURCE_DIR)/elements/standard/classification.hh \
-		$(SOURCE_DIR)/elements/standard/alignmentinfo.o \
 		$(SOURCE_DIR)/elements/standard/errorelement.o \
 		$(SOURCE_DIR)/elements/standard/classification.o \
 		$(SOURCE_DIR)/elements/standard/addressinfo.o \
+		$(SOURCE_DIR)/elements/ethernet/arpresponder.o \
+		$(SOURCE_DIR)/elements/ethernet/arpresponder.hh \
+		$(SOURCE_DIR)/elements/userlevel/fromdevice.o \
+		$(SOURCE_DIR)/elements/userlevel/fromdevice.hh \
+		$(SOURCE_DIR)/elements/userlevel/fakepcap.o \
+		$(SOURCE_DIR)/elements/userlevel/fakepcap.hh \
+		$(SOURCE_DIR)/elements/userlevel/kernelfilter.o \
+		$(SOURCE_DIR)/elements/userlevel/kernelfilter.hh \
+		$(SOURCE_DIR)/elements/userlevel/todevice.o \
+		$(SOURCE_DIR)/elements/userlevel/todevice.hh \
+		$(SOURCE_DIR)/elements/standard/fullnotequeue.o \
+		$(SOURCE_DIR)/elements/standard/fullnotequeue.hh \
+		$(SOURCE_DIR)/elements/standard/notifierqueue.o \
+		$(SOURCE_DIR)/elements/standard/notifierqueue.hh \
+		$(SOURCE_DIR)/elements/standard/simplequeue.o \
+		$(SOURCE_DIR)/elements/standard/simplequeue.hh \
+		$(SOURCE_DIR)/elements/camkes/camkes_paint.o \
+		$(SOURCE_DIR)/elements/camkes/camkes_paint.hh \
 		$(CLICK_LIBS)
 	@echo ${CURRENT_DIR}
 	$(RUMPRUN_CXX) -no-pie \

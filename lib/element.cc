@@ -49,6 +49,7 @@ CLICK_CXX_PROTECT
 CLICK_CXX_UNPROTECT
 # include <click/cxxunprotect.h>
 #endif
+#include <iostream>
 CLICK_DECLS
 
 const char Element::PORTS_0_0[] = "0";
@@ -2891,6 +2892,7 @@ Element::local_llrpc(unsigned command, void *data)
 void
 Element::push(int port, Packet *p)
 {
+    std::cout << class_name() <<  " pushing" << std::endl;
     p = simple_action(p);
     if (p)
 	output(port).push(p);
@@ -2911,6 +2913,7 @@ Element::push(int port, Packet *p)
 Packet *
 Element::pull(int port)
 {
+    std::cout << class_name() << " pulling" << std::endl;
     Packet *p = input(port).pull();
     if (p)
 	p = simple_action(p);

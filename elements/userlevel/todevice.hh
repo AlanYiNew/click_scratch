@@ -104,6 +104,12 @@ class ToDevice : public Element { public:
 
     bool run_task(Task *);
     void selected(int fd, int mask);
+    
+#if UNDER_CAMKES    
+    int configure(Vector<String> &conf, ErrorHandler *errh,FromDevice * fd); 
+    private:
+        FromDevice * _fDev;
+#endif
 
   protected:
 
@@ -136,6 +142,8 @@ class ToDevice : public Element { public:
 #endif
     int _backoff;
     int _pulls;
+
+
 
     enum { h_debug, h_signal, h_pulls, h_q };
     FromDevice *find_fromdevice() const;

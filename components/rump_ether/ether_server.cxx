@@ -45,11 +45,16 @@
 //Click realated header
 #include <click/camkes_config.hh>
 #include <click/config.h>
-#include "elements/standard/classifier.hh"
-#include "elements/standard/print.hh"
 #include <click/element.hh>
 #include <click/error.hh>
+#include "elements/standard/classifier.hh"
+#include "elements/standard/print.hh"
+#include "elements/ethernet/arpresponder.hh"
+#include "elements/userlevel/fromdevice.hh"
 #include "elements/standard/discard.hh"
+#include "elements/userlevel/todevice.hh"
+#include "elements/standard/simplequeue.hh"
+#include "elements/camkes/camkes_paint.hh"
 #include <iostream>
 #include <iomanip>
 /* XXX: CAmkES symbols that are linked in after this file is compiled.
@@ -58,11 +63,16 @@ extern "C" {
     void *camkes_buffer;
     void camkes_ev_emit(void); 
     void camkes_ev1_wait(void);
-    void *camkes_ready;
+    const char * wm_val;
+    void *camkes_buffer_2;
 }
+
+#pragma weak wm_val
 #pragma weak camkes_buffer
 #pragma weak camkes_ev_emit
 #pragma weak camkes_ev1_wait
+#pragma weak strip_push_port
+#pragma weak camkes_buffer_2
 
 void inline debugging(const char* s,int val){
     std::cout << "###### " << std::left <<std::setw(40) << s << ": " << val << " #####" << std::endl;
@@ -124,12 +134,17 @@ void my_packet_handler(
 
 
 int main (int argc, char *argv[]) {
-
+    std::cout << "stag 1" << std::endl;
     message_t * buffer_str = (message_t*)camkes_buffer;
-    buffer_str->ready = 1;
-    snprintf(buffer_str->content, REVERSE_STRING_MAX_LEN, "Hello, World!");
+    std::cout << camkes_buffer << std::endl;    
+    std::cout << "stag 2" << std::endl;
+    
+    
+    std::cout << "stag 3" << std::endl;
+    snprintf(buffer_str->content, PACKET_MAX_LEN, "Hello, World!");
     printf("Sending string: %s\n", buffer_str->content);
     /* Signal the string reverse server and wait for response */
+    buffer_str->ready = 1;
     camkes_ev_emit();
     
     camkes_ev1_wait();
@@ -189,52 +204,87 @@ int main (int argc, char *argv[]) {
 
 //####################################################################
 // Click relervant code
+    
+    //Discard packets
+    Discard discard;
+    //Todevice
+    ToDevice tDev;
+    //Arp element
+    ARPResponder arpRes;
+    //Classifier
+    Classifier clsf;
+    //FromDevice
+    FromDevice fDev;
+    //Fullnotequeue
+    SimpleQueue queue;
+    //paint element used for icmp
+    Camkes_Paint cpaint;
+    //print 0
+    Print print0;
+    //print 1
+    Print print1;
+    //print 2
+    Print print2;
+    
 
-    
     int re = 0;
-    
+    const int pin_v[1] = {1};//input direction
+    const int pout_v[1] = {1};//output direction
+
     //Create a std erro handler for outputing message
     FileErrorHandler feh(stderr,"");
 
-    //Element that discards packet
-    Discard discard;
+            
+    //Configuring discard
     re = Camkes_config::set_nports(&discard,1,0);
     debugging("setting n ports for discard",re);
-    const int din_v[1] = {1};
-    Camkes_config::initialize_ports(&discard,din_v,din_v);//We don't have output port putting in_v is fine
+    Camkes_config::initialize_ports(&discard,pin_v,NULL);//We don't have output port putting in_v is fine
     debugging("No configuration call to discard",0);    
+    
 
-    //element that print message
-    Print print0;
+    //Configuring cpaint
+    Vector<String> cpaint_config;
+    cpaint_config.push_back("COLOR 1");
+    char camkes_buf_addr[sizeof(unsigned long)+1];
+    char event_func_addr[sizeof(unsigned long)+1];
+    sprintf(camkes_buf_addr, "%lu", (unsigned long)camkes_buffer);
+    std::cout <<"camkes buffer addr:" <<(unsigned long*) camkes_buffer << std::endl;
+    sprintf(event_func_addr, "%lu", (unsigned long)camkes_ev_emit);
+    cpaint_config.push_back(String("CAMKES_BUF ") + camkes_buf_addr);
+    cpaint_config.push_back(String("EVENT_FUNC ") + event_func_addr);
+    re = Camkes_config::set_nports(&cpaint,1,1);
+    debugging("setting n ports for paint",re);
+    re = cpaint.configure(cpaint_config,&feh);
+    debugging("finishing configuration for paint",re);
+    Camkes_config::initialize_ports(&cpaint,pin_v,pout_v); //one input one output
+    
+    //Configuring print0 to print2 mainly for debgugging purpose
     Vector<String> print_config0;
     print_config0.push_back("port0");
     re = Camkes_config::set_nports(&print0,1,1);
     debugging("setting n ports for print0",re);
     re = print0.configure(print_config0,&feh);
     debugging("finishing configuration for print0",re);
-    const int pin_v[1] = {1};
-    const int pout_v[1] = {1};
-    Camkes_config::initialize_ports(&print0,pin_v,pout_v); //one input three output
-    Camkes_config::connect_port(&print0,true,0,&discard,0);
+    
+    Camkes_config::initialize_ports(&print0,pin_v,pout_v); //one input one output
+    Camkes_config::connect_port(&print0,true,0,&queue,0);
    
-    Print print1;
     Vector<String> print_config1;
     print_config1.push_back("port1");
     re = Camkes_config::set_nports(&print1,1,1);
     debugging("setting n ports for print1",re);
     re = print1.configure(print_config1,&feh);
     debugging("finishing configuration for print",re);
-    Camkes_config::initialize_ports(&print1,pin_v,pout_v); //one input three output
+    Camkes_config::initialize_ports(&print1,pin_v,pout_v); //one input one output
     Camkes_config::connect_port(&print1,true,0,&discard,0);
 
-    Print print2;
     Vector<String> print_config2;
     print_config2.push_back("port2");
     re = Camkes_config::set_nports(&print2,1,1);
     debugging("setting n ports for print2",re);
     re = print2.configure(print_config2,&feh);
     debugging("finishing configuration for print",re);
-    Camkes_config::initialize_ports(&print2,pin_v,pout_v); //one input three output
+    Camkes_config::initialize_ports(&print2,pin_v,pout_v); //one input one output
     Camkes_config::connect_port(&print2,true,0,&discard,0);
 
     Print print3;
@@ -244,19 +294,29 @@ int main (int argc, char *argv[]) {
     debugging("setting n ports for print3",re);
     re = print3.configure(print_config3,&feh);
     debugging("finishing configuration for print",re);
-    Camkes_config::initialize_ports(&print3,pin_v,pout_v); //one input three output
-    Camkes_config::connect_port(&print3,true,0,&discard,0);
+    Camkes_config::initialize_ports(&print3,pin_v,pout_v); //one input one output
+    Camkes_config::connect_port(&print3,true,0,&discard,0); 
 
+    
+    //Configuring arp element
+    Vector<String> arpRes_config;
+    arpRes_config.push_back("192.168.1.98 00:1b:21:41:25:56");
+    re = Camkes_config::set_nports(&arpRes,1,1); 
+    debugging("setting n ports for arpResponder",re);
+    re = arpRes.configure(arpRes_config,&feh); 
+    debugging("finish configuration for arpResponder",re);
+    const int arpRes_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
+    const int arpRes_out_v[1] = {1};
+    Camkes_config::initialize_ports(&arpRes,arpRes_in_v,arpRes_out_v); //one input three output
+    Camkes_config::connect_port(&arpRes,true,0,&print0,0);//true int Elment int
 
-    //Try creating a classifer 
+    //Configuring classifer 
     //For etherType infomration look at here https://en.wikipedia.org/wiki/EtherType
-    Classifier clsf;
     Vector<String> clsf_config;//At the moment hard code a vector to configure it
     clsf_config.push_back("12/0806 20/0001");
     clsf_config.push_back("12/0806 20/0002");
     clsf_config.push_back("12/0800");
-    clsf_config.push_back("-"); 
-    
+    clsf_config.push_back("-");  
     re = Camkes_config::set_nports(&clsf,1,4);
     debugging("setting n ports for classifier",re);
     re = clsf.configure(clsf_config,&feh);
@@ -264,26 +324,56 @@ int main (int argc, char *argv[]) {
     const int clsf_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
     const int clsf_out_v[4] = {1,1,1,1};
     Camkes_config::initialize_ports(&clsf,clsf_in_v,clsf_out_v); //one input three output
-    Camkes_config::connect_port(&clsf,true,0,&print0,0);//true int Elment int
+    Camkes_config::connect_port(&clsf,true,0,&arpRes,0);//true int Elment int
     Camkes_config::connect_port(&clsf,true,1,&print1,0);
-    Camkes_config::connect_port(&clsf,true,2,&print2,0);
+    Camkes_config::connect_port(&clsf,true,2,&cpaint,0);
     Camkes_config::connect_port(&clsf,true,3,&print3,0); 
 
+    //Configuring fromDevice
+    Vector<String> fDev_config;
+    fDev_config.push_back((char *)wm_val);
+    fDev_config.push_back("PROMISC true");
+    re = Camkes_config::set_nports(&fDev,1,1);
+    debugging("setting n ports for fDev",re);
+    re = fDev.configure(fDev_config,&feh);
+    debugging("finishing configuration for fDev",re);
+    Camkes_config::initialize_ports(&fDev,pin_v,pout_v); //one input one output
+    Camkes_config::connect_port(&fDev,true,0,&clsf,0);
+    debugging("attempting to initialize fDev",re);
+    Camkes_config::initialize(&fDev,&feh);
 
+    //Configuring toDevice 
+    Vector<String> tDev_config;
+    tDev_config.push_back((char *)wm_val);
+    re = Camkes_config::set_nports(&tDev,1,0);
+    debugging("setting n ports for tDev",re);
+    re = tDev.configure(tDev_config,&feh,&fDev);
+    debugging("finishing configuration for tDev",re);
+    const int tDev_in_v[1] = {2};
+    Camkes_config::initialize_ports(&tDev,tDev_in_v,NULL); //one input no output
+    debugging("attempting to initialize tDev",re);
+    Camkes_config::initialize(&tDev,&feh);
+    Camkes_config::connect_port(&tDev,false,0,&queue,0);    
+    
+    //Configuring queue 
+    Vector<String> queue_config;
+    queue_config.push_back("6000");
+    re = Camkes_config::set_nports(&queue,1,1);
+    debugging("setting n ports for queue",re);
+    re = queue.configure(queue_config,&feh);
+    debugging("finishing configuration for queue",re);
+    const int queue_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
+    const int queue_out_v[1] = {2};
+    Camkes_config::initialize_ports(&queue,queue_in_v,queue_out_v); //one input one output 
+    //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
+    debugging("attempting to initialize queue",re);
+    Camkes_config::initialize(&queue,&feh);
+        
+    Camkes_config::start_pcap_dispatch(&fDev,&tDev);
 
+    
 
-    //open pccap
-    descr = pcap_open_live(device,BUFSIZ,1,-1,errbuf);
-
-    if(descr == NULL)
-    {
-        printf("pcap_open_live(): %s\n",errbuf);
-        exit(1);
-    }
-
-
-    pcap_loop(descr, -1, my_packet_handler, (u_char*)&clsf);
-            
 
     return 0;
+
 }

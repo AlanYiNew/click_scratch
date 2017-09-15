@@ -15,8 +15,8 @@
 component Server {
     include "porttype.h";
     control;
-    dataport Buf(REVERSE_STRING_BUFSIZE) buffer;
-    //dataport Buf(REVERSE_STRING_BUFSIZE) buffer1;
+    dataport Buf(PACKET_BUFSIZE) buffer;
+    //dataport Buf(PACKET_BUFSIZE) buffer1;
     consumes SomethingHappenedEvent ev;
     emits SomethingHappenedEvent ev1;
     emits SomethingHappenedEvent ev2;

@@ -27,6 +27,7 @@
 #if CLICK_USERLEVEL || CLICK_MINIOS
 # include <unistd.h>
 #endif
+#include <iostream>
 CLICK_DECLS
 
 /** @file packet.hh
@@ -358,24 +359,33 @@ WritablePacket::pool_allocate(uint32_t headroom, uint32_t length,
     uint32_t n = headroom + length + tailroom;
     if (n < CLICK_PACKET_POOL_BUFSIZ)
 	n = CLICK_PACKET_POOL_BUFSIZ;
+    
     WritablePacket *p = pool_allocate(n == CLICK_PACKET_POOL_BUFSIZ);
+    
     if (p) {
-	p->initialize();
-	PacketData *pd;
+        
+    p->initialize();
+	
+    PacketData *pd;
 	PacketPool& packet_pool = local_packet_pool();
-	if (n == CLICK_PACKET_POOL_BUFSIZ && (pd = packet_pool.pd)) {
-	    packet_pool.pd = pd->next;
+	
+   
+    if (n == CLICK_PACKET_POOL_BUFSIZ && (pd = packet_pool.pd)) {
+        packet_pool.pd = pd->next;
 	    --packet_pool.pdcount;
 	    p->_head = reinterpret_cast<unsigned char *>(pd);
 	} else if ((p->_head = new unsigned char[n]))
 	    /* OK */;
 	else {
 	    delete p;
+        
 	    return 0;
 	}
 	p->_data = p->_head + headroom;
+
 	p->_tail = p->_data + length;
-	p->_end = p->_head + n;
+	
+    p->_end = p->_head + n;
     }
     return p;
 }
@@ -531,6 +541,7 @@ WritablePacket *
 Packet::make(uint32_t headroom, const void *data,
 	     uint32_t length, uint32_t tailroom)
 {
+
 #if CLICK_LINUXMODULE
     int want = 1;
     if (struct sk_buff *skb = skbmgr_allocate_skbs(headroom, length + tailroom, &want)) {
@@ -551,6 +562,7 @@ Packet::make(uint32_t headroom, const void *data,
 	return 0;
 #else
 # if HAVE_CLICK_PACKET_POOL
+        
     WritablePacket *p = WritablePacket::pool_allocate(headroom, length, tailroom);
     if (!p)
 	return 0;
@@ -558,7 +570,9 @@ Packet::make(uint32_t headroom, const void *data,
     WritablePacket *p = new WritablePacket;
     if (!p)
 	return 0;
+
     p->initialize();
+
     if (!p->alloc_data(headroom, length, tailroom)) {
 	p->_head = 0;
 	delete p;
@@ -625,7 +639,7 @@ Packet::copy(Packet* p, int headroom)
     memcpy(_data,p->data(),p->length());
     _tail = _data + p->length();
     copy_annotations(p);
-    set_mac_header(p->mac_header() ? data() + p->mac_header_offset() : 0);
+    set_mac_header(p->mac_header() ? data() + p->mac_header_offset() : 0); 
     set_network_header(p->network_header() ? data() + p->network_header_offset() : 0, p->network_header_length());
     return true;
 }

@@ -21,6 +21,7 @@
 #ifndef CLICK_PACKET_DEPRECATED_ENUM
 # define CLICK_PACKET_DEPRECATED_ENUM CLICK_DEPRECATED_ENUM
 #endif
+#include <iostream>
 struct click_ether;
 struct click_ip;
 struct click_icmp;
@@ -31,9 +32,8 @@ CLICK_DECLS
 
 class IP6Address;
 class WritablePacket;
-
 class Packet { public:
-
+    friend class Camkes_config;
     /** @name Data */
     //@{
     // PACKET CREATION
@@ -780,7 +780,7 @@ class Packet { public:
     WritablePacket *expensive_put(uint32_t nbytes);
 
     friend class WritablePacket;
-
+    friend class Camkes_config;
 };
 
 
@@ -821,7 +821,7 @@ class WritablePacket : public Packet { public:
 #endif
 
     friend class Packet;
-
+    friend class Camkes_config;
 };
 
 
