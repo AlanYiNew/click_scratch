@@ -100,6 +100,7 @@ LinearIPLookup::add_route(const IPRoute &r, bool allow_replace, IPRoute* replace
     int found = _t.size();
     for (int i = 0; i < _t.size(); i++)
 	if (!_t[i].real()) {
+
 	    if (found == _t.size())
 		found = i;
 	} else if (_t[i].addr == r.addr && _t[i].mask == r.mask) {
@@ -109,9 +110,12 @@ LinearIPLookup::add_route(const IPRoute &r, bool allow_replace, IPRoute* replace
 		return -EEXIST;
 	    _t[i].gw = r.gw;
 	    _t[i].port = r.port;
+
 	    check();
 	    return 0;
 	}
+
+
 
     // maybe make a new slot
     if (found == _t.size())
@@ -121,9 +125,11 @@ LinearIPLookup::add_route(const IPRoute &r, bool allow_replace, IPRoute* replace
 
     // patch up next pointers
     _t[found].extra = 0x7FFFFFFF;
-    for (int i = found - 1; i >= 0; i--)
-	if (_t[i].contains(r) && _t[i].extra > found)
-	    _t[i].extra = found;
+    for (int i = found - 1; i >= 0; i--){
+	    if (_t[i].contains(r) && _t[i].extra > found){
+            _t[i].extra = found;
+        }
+    }
     for (int i = found + 1; i < _t.size(); i++)
 	if (r.contains(_t[i]) && _t[i].real()) {
 	    _t[found].extra = i;

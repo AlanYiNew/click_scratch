@@ -58,10 +58,7 @@ void Camkes_Paint::push(int port, Packet *p)
         Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf->content));
         while (((volatile message_t*)_camkes_buf)->ready);
         Camkes_config::packet_serialize(dst,p);        
-        _camkes_buf->ready = 1;
-        
-        
-        const click_ip *ip = reinterpret_cast<const click_ip *>((dst->data()) + 14);
+        _camkes_buf->ready = 1; 
         _ev_emit(); 
     }
         

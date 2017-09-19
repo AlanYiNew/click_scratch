@@ -20,7 +20,10 @@ component central_routing {
     uses PCIConfig pci_config;
     control;
     dataport message_t buffer;
+    dataport message_t db_buffer;
     consumes SomethingHappenedEvent ev;
+
+    //output buffer and output downstream event
     emits SomethingHappenedEvent ev1;
     emits SomethingHappenedEvent ev2;
     //attribute string ip_addr0;

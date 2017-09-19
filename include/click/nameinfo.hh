@@ -517,9 +517,17 @@ struct NamedIntArg {
 	: _type(type) {
     }
     bool parse(const String &str, int &value, const ArgContext &args) {
-	return NameInfo::query(_type, args.context(), str,
-			       &value, sizeof(value))
-	    || IntArg().parse(str, value, args);
+//UNDER camkes this shit always fault
+
+
+        auto b2 = IntArg().parse(str, value, args);
+#if !UNDER_CAMKES
+        auto b1 = NameInfo::query(_type, args.context(), str, &value, sizeof(value));
+        return b1 || b2;
+#else
+        return b2;
+#endif
+
     }
     int _type;
 };

@@ -335,18 +335,31 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 {
     NameDB *db;
 
-    // binary-search types
-    size_t l = 0, r = _namedb_roots.size(), m;
-    while (l < r) {
-	m = l + (r - l) / 2;
-	if (type == _namedb_roots[m]->_type)
-	    goto found_root;
-	else if (type < _namedb_roots[m]->_type)
-	    r = m;
-	else
-	    l = m + 1;
-    }
+    std::cout << "namedb0" << std::endl;
 
+    // binary-search types
+    size_t l = 0;
+
+    std::cout << "namedb0.2" << std::endl;
+    size_t r = _namedb_roots.size();
+   
+    
+    std::cout << "namedb0.3" << std::endl;
+    std::cout << "namedb0.4" << std::endl;
+    size_t m;
+    
+    while (l < r) {
+        m = l + (r - l) / 2;
+        if (type == _namedb_roots[m]->_type){
+            std::cout << "namedb0.3" << std::endl;
+            goto found_root;
+        }   else if (type < _namedb_roots[m]->_type){
+            r = m;
+        }   else{
+            l = m + 1;
+        }
+    }
+    std::cout << "namedb1"  << std::endl;
     // type not found
     if (install == install_dynamic_sentinel())
 	install = new DynamicNameDB(type, prefix, vsize);
@@ -359,6 +372,7 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
     } else
 	return 0;
 
+    std::cout << "namedb2" << std::endl;
   found_root:
     // walk tree to find prefix match; keep track of closest prefix
     db = _namedb_roots[m];
@@ -378,6 +392,8 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 	return closest;
     }
 
+    std::cout << "namedb3" << std::endl;
+
     // prefix not found
     if (install == install_dynamic_sentinel())
 	install = new DynamicNameDB(type, prefix, vsize);
@@ -391,6 +407,9 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 	*pp = install;
 	// adopt nodes that should be our children
 	pp = &install->_context_sibling;
+
+    std::cout << "namedb4" << std::endl;
+
 	while (*pp) {
 	    if (prefix.length() < (*pp)->_context.length()
 		&& memcmp((*pp)->_context.data(), prefix.data(), prefix.length()) == 0) {
@@ -413,15 +432,18 @@ NameDB *
 NameInfo::getdb(uint32_t type, const Element *e, size_t vsize, bool create)
 {
     if (e) {
-	if (NameInfo *ni = (create ? e->router()->force_name_info() : e->router()->name_info())) {
-	    NameDB *install = (create ? ni->install_dynamic_sentinel() : 0);
+#if !UNDER_CAMKES	
+    if (NameInfo *ni = (create ? e->router()->force_name_info() : e->router()->name_info())) {
+        NameDB *install = (create ? ni->install_dynamic_sentinel() : 0);
 	    String ename = e->name();
 	    int last_slash = ename.find_right('/');
-	    if (last_slash >= 0)
-		return ni->namedb(type, vsize, ename.substring(0, last_slash + 1), install);
-	    else
-		return ni->namedb(type, vsize, String(), install);
+	    if (last_slash >= 0){
+            return ni->namedb(type, vsize, ename.substring(0, last_slash + 1), install);
+        }   else{
+		    return ni->namedb(type, vsize, String(), install);
+        }
 	}
+#endif
     }
 
     NameDB *install = (create ? the_name_info->install_dynamic_sentinel() : 0);
@@ -497,15 +519,22 @@ bool
 NameInfo::query(uint32_t type, const Element *e, const String &name, void *value, size_t vsize)
 {
     while (1) {
-	NameDB *db = getdb(type, e, vsize, false);
-	while (db) {
-	    if (db->query(name, value, vsize))
-		return true;
-	    db = db->context_parent();
-	}
-	if (!e)
-	    return false;
-	e = 0;
+        NameDB *db = getdb(type, e, vsize, false);
+        std::cout << "name info query 1" << std::endl;
+
+        while (db) {
+
+            std::cout << "name info query 2" << std::endl;
+            if (db->query(name, value, vsize)){
+                std::cout << "name info query 3" << std::endl;
+                return true;
+            }
+            db = db->context_parent();
+
+        }
+        if (!e)
+            return false;
+        e = 0;
     }
 }
 

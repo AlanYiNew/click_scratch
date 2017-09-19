@@ -21,9 +21,13 @@ component rumprun_ether {
     uses PCIConfig pci_config;
     consumes IRQ eth_irq;
     dataport message_t camkes_buffer;
+    dataport message_t db_buffer;
     emits SomethingHappenedEvent camkes_ev;
     consumes SomethingHappenedEvent camkes_ev1;
     //attribute string server_global_endpoint;
     //attribute string server_badge;
     attribute string wm_val; 
+    attribute string camkes_id_attributes;
+    attribute string ip_addr;
+    attribute string mac;
 }

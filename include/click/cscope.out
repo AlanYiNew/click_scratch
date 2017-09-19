@@ -1,4 +1,4 @@
-cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/include/click               0001102725
+cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/include/click               0001102995
 	@algorithm.hh
 
 1 #i‚de‡
@@ -13789,18 +13789,22 @@ _mask
 	~<˛ick/ñemít.hh
 >
 
-3 ˛as†
+2 
+	~<˛ick/h™dÀr.hh
+>
+
+4 ˛as†
 	cCamkes_c⁄fig
 {
 
-4 
+5 
 	mpublic
 :
 
-5 
+6 
 ölöe
  
-	$£t_c⁄√˘i⁄
+	$c⁄√˘_p‹t
 (
 EÀmít
 * 
@@ -13817,7 +13821,7 @@ e
 e_p‹t
 ){
 
-6  
+7  
 èr
 ->
 	`c⁄√˘_p‹t
@@ -13831,10 +13835,10 @@ e
 e_p‹t
 );
 
-9 
+10 
 ölöe
  
-	$öôülize
+	$öôülize_p‹ts
 (
 EÀmít
 * 
@@ -13845,17 +13849,71 @@ EÀmít
 ouçut_codes
 ){
 
-10 
+11 
 èr
 ->
-	`öôülize
+	`öôülize_p‹ts
 (
 öput_codes
 ,
 ouçut_codes
 );
 
-11 
+12 
+	}
+}
+
+14 
+ölöe
+ 
+	$£t_≈‹ts
+(
+EÀmít
+* 
+èr
+,
+nöputs
+,
+nouçuts
+){
+
+15  
+èr
+->
+	`£t_≈‹ts
+(
+nöputs
+,
+nouçuts
+);
+
+16 
+	}
+}
+
+18 
+ölöe
+ 
+	$öôülize
+(
+EÀmít
+* 
+èr
+, 
+Eº‹H™dÀr
+ * 
+eh
+){
+
+19 
+èr
+->
+	`öôülize
+(
+eh
+);
+
+20 
 	}
 }
 
@@ -27127,75 +27185,79 @@ CLICK_ELEMENT_HH
 	~<˛ick/h™dÀr.hh
 >
 
-9 
+9 
+	~<io°ªam
+>
+
+10 
 CLICK_DECLS
 
 
-10 
+11 
 ˛ass
  
 	gRouãr
 ;
 
-11 
+12 
 ˛ass
  
 	gMa°î
 ;
 
-12 
+13 
 ˛ass
  
 	gRouãrThªad
 ;
 
-13 
+14 
 ˛ass
  
 	gTask
 ;
 
-14 
+15 
 ˛ass
  
 	gTimî
 ;
 
-15 
+16 
 ˛ass
  
 	gNŸifõrSig«l
 ;
 
-16 
+17 
 ˛ass
  
 	gEÀmít
 ;
 
-17 
+18 
 ˛ass
  
 	gEº‹H™dÀr
 ;
 
-18 
+19 
 ˛ass
  
 	gBôve˘‹
 ;
 
-19 
+20 
 ˛ass
  
 	gEthîAddªss
 ;
 
-25 #i‚de‡
+26 #i‚de‡
 CLICK_ELEMENT_DEPRECATED
 
 
-26 
+27 
 	#CLICK_ELEMENT_DEPRECATED
  
 CLICK_DEPRECATED
@@ -27203,27 +27265,27 @@ CLICK_DEPRECATED
 
 	)
 
-29 ˛as†
+30 ˛as†
 	cEÀmít
  { 
 	mpublic
 :
 
-31 
+32 
 EÀmít
 ();
 
-32 
+33 
 	mvútuÆ
  ~
 EÀmít
 ();
 
-33 
+34 
 	m√Àmíts_Æloˇãd
 ;
 
-36 
+37 
 vútuÆ
  
 push
@@ -27235,7 +27297,7 @@ Packë
 p
 );
 
-37 
+38 
 vútuÆ
  
 Packë
@@ -27247,7 +27309,7 @@ p‹t
 CLICK_WARN_UNUSED_RESULT
 ;
 
-38 
+39 
 vútuÆ
  
 Packë
@@ -27257,7 +27319,7 @@ Packë
 p
 );
 
-40 
+41 
 vútuÆ
  
 boﬁ
@@ -27269,7 +27331,7 @@ Task
 èsk
 );
 
-41 
+42 
 vútuÆ
  
 	`run_timî
@@ -27279,17 +27341,17 @@ Timî
 timî
 );
 
-42 #i‡
+43 #i‡
 CLICK_USERLEVEL
 
 
-43 íum { 
+44 íum { 
 SELECT_READ
  = 1, 
 SELECT_WRITE
  = 2 };
 
-44 
+45 
 vútuÆ
  
 	`£À˘ed
@@ -27299,7 +27361,7 @@ fd
 mask
 );
 
-45 
+46 
 vútuÆ
  
 	`£À˘ed
@@ -27307,7 +27369,7 @@ vútuÆ
 fd
 );
 
-48 
+49 
 ölöe
  
 	$checked_ouçut_push
@@ -27319,7 +27381,7 @@ Packë
 p
 ) const;
 
-49 
+50 
 ölöe
  
 Packë
@@ -27329,91 +27391,91 @@ Packë
 p‹t
 ) const;
 
-52 
+53 
 vútuÆ
  c⁄° *
 	$˛ass_«me
 () const = 0;
 
-54 
+55 
 vútuÆ
  c⁄° *
 	$p‹t_cou¡
 () const;
 
-55 c⁄° 
+56 c⁄° 
 PORTS_0_0
 [];
 
-56 c⁄° 
+57 c⁄° 
 PORTS_0_1
 [];
 
-57 c⁄° 
+58 c⁄° 
 PORTS_1_0
 [];
 
-58 c⁄° 
+59 c⁄° 
 PORTS_1_1
 [];
 
-59 c⁄° 
+60 c⁄° 
 PORTS_1_1X2
 [];
 
-61 
+62 
 vútuÆ
  c⁄° *
 	$¥o˚ssög
 () const;
 
-62 c⁄° 
+63 c⁄° 
 AGNOSTIC
 [];
 
-63 c⁄° 
+64 c⁄° 
 PUSH
 [];
 
-64 c⁄° 
+65 c⁄° 
 PULL
 [];
 
-65 c⁄° 
+66 c⁄° 
 PUSH_TO_PULL
 [];
 
-66 c⁄° 
+67 c⁄° 
 PULL_TO_PUSH
 [];
 
-67 c⁄° 
+68 c⁄° 
 PROCESSING_A_AH
 [];
 
-69 
+70 
 vútuÆ
  c⁄° *
 	$Êow_code
 () const;
 
-70 c⁄° 
+71 c⁄° 
 COMPLETE_FLOW
 [];
 
-72 
+73 
 vútuÆ
  c⁄° *
 	$Êags
 () const;
 
-73 
+74 
 	$Êag_vÆue
 (
 Êag
 ) const;
 
-75 
+76 
 vútuÆ
  *
 	`ˇ°
@@ -27421,7 +27483,7 @@ vútuÆ
 «me
 );
 
-76 
+77 
 vútuÆ
  *
 	`p‹t_ˇ°
@@ -27435,41 +27497,41 @@ p‹t
 «me
 );
 
-79 
+80 
 	eC⁄figuªPha£
  {
 
-80 
+81 
 CONFIGURE_PHASE_FIRST
  = 0,
 
-81 
+82 
 CONFIGURE_PHASE_INFO
  = 20,
 
-82 
+83 
 CONFIGURE_PHASE_PRIVILEGED
  = 90,
 
-83 
+84 
 CONFIGURE_PHASE_DEFAULT
  = 100,
 
-84 
+85 
 CONFIGURE_PHASE_LAST
  = 2000
 
-85 
+86 
 	}
 };
 
-86 
+87 
 vútuÆ
  
 	$c⁄figuª_pha£
 () const;
 
-88 
+89 
 vútuÆ
  
 	`c⁄figuª
@@ -27485,13 +27547,13 @@ Eº‹H™dÀr
 îrh
 );
 
-90 
+91 
 vútuÆ
  
 	`add_h™dÀrs
 ();
 
-92 
+93 
 vútuÆ
  
 	`öôülize
@@ -27501,7 +27563,7 @@ Eº‹H™dÀr
 îrh
 );
 
-94 
+95 
 vútuÆ
  
 	`èke_°©e
@@ -27515,7 +27577,7 @@ Eº‹H™dÀr
 îrh
 );
 
-95 
+96 
 vútuÆ
  
 EÀmít
@@ -27523,49 +27585,49 @@ EÀmít
 	$hŸsw≠_ñemít
 () const;
 
-97 
+98 
 	eCÀ™upSège
  {
 
-98 
+99 
 CLEANUP_NO_ROUTER
 ,
 
-99 
+100 
 CLEANUP_BEFORE_CONFIGURE
  = 
 CLEANUP_NO_ROUTER
 ,
 
-100 
+101 
 CLEANUP_CONFIGURE_FAILED
 ,
 
-101 
+102 
 CLEANUP_CONFIGURED
 ,
 
-102 
+103 
 CLEANUP_INITIALIZE_FAILED
 ,
 
-103 
+104 
 CLEANUP_INITIALIZED
 ,
 
-104 
+105 
 CLEANUP_ROUTER_INITIALIZED
 ,
 
-105 
+106 
 CLEANUP_MANUAL
 
 
-106 
+107 
 	}
 };
 
-107 
+108 
 vútuÆ
  
 ˛ónup
@@ -27575,25 +27637,25 @@ CÀ™upSège
 °age
 );
 
-109 
+110 
 ölöe
  
 °©ic_öôülize
 ();
 
-110 
+111 
 ölöe
  
 °©ic_˛ónup
 ();
 
-113 
+114 
 Såög
  
 	$«me
 () const;
 
-114 
+115 
 vútuÆ
  
 Såög
@@ -27601,7 +27663,7 @@ Såög
 	$de˛¨©i⁄
 () const;
 
-116 
+117 
 ölöe
  
 Rouãr
@@ -27609,13 +27671,13 @@ Rouãr
 	$rouãr
 () const;
 
-117 
+118 
 ölöe
  
 	$eödex
 () const;
 
-118 
+119 
 ölöe
  
 	$eödex
@@ -27625,7 +27687,7 @@ Rouãr
 r
 ) const;
 
-121 
+122 
 ölöe
  
 Ma°î
@@ -27633,7 +27695,7 @@ Ma°î
 	$ma°î
 () const;
 
-123 
+124 
 ölöe
  
 	$©èch_rouãr
@@ -27645,29 +27707,29 @@ r
 eödex
 ) {
 
-124 
+125 
 	`as£π
 (!
 _rouãr
 );
 
-125 
+126 
 _rouãr
  = 
 r
 ;
 
-126 
+127 
 _eödex
  = 
 eödex
 ;
 
-127 
+128 
 	}
 }
 
-130 
+131 
 ölöe
  
 	$≈‹ts
@@ -27677,25 +27739,25 @@ boﬁ
 isouçut
 ) const;
 
-131 
+132 
 ölöe
  
 	$nöputs
 () const;
 
-132 
+133 
 ölöe
  
 	$nouçuts
 () const;
 
-134 
+135 
 ˛ass
  
 P‹t
 ;
 
-135 
+136 
 ölöe
  c⁄° 
 P‹t
@@ -27709,7 +27771,7 @@ isouçut
 p‹t
 ) const;
 
-136 
+137 
 ölöe
  c⁄° 
 P‹t
@@ -27719,7 +27781,7 @@ P‹t
 p‹t
 ) const;
 
-137 
+138 
 ölöe
  c⁄° 
 P‹t
@@ -27729,7 +27791,7 @@ P‹t
 p‹t
 ) const;
 
-139 
+140 
 ölöe
  
 boﬁ
@@ -27743,7 +27805,7 @@ isouçut
 p‹t
 ) const;
 
-140 
+141 
 ölöe
  
 boﬁ
@@ -27753,7 +27815,7 @@ boﬁ
 p‹t
 ) const;
 
-141 
+142 
 ölöe
  
 boﬁ
@@ -27763,7 +27825,7 @@ boﬁ
 p‹t
 ) const;
 
-142 
+143 
 ölöe
  
 boﬁ
@@ -27773,7 +27835,7 @@ boﬁ
 p‹t
 ) const;
 
-143 
+144 
 ölöe
  
 boﬁ
@@ -27783,7 +27845,7 @@ boﬁ
 p‹t
 ) const;
 
-144 
+145 
 	$p‹t_Êow
 (
 boﬁ
@@ -27795,13 +27857,13 @@ p‹t
 Bôve˘‹
 *) const;
 
-147 
+148 
 Såög
  
 	$c⁄figuøti⁄
 () const;
 
-149 
+150 
 vútuÆ
  
 boﬁ
@@ -27809,7 +27871,7 @@ boﬁ
 	$ˇn_live_ªc⁄figuª
 () const;
 
-150 
+151 
 vútuÆ
  
 	`live_ªc⁄figuª
@@ -27821,17 +27883,17 @@ Såög
 Eº‹H™dÀr
 *);
 
-152 
+153 
 RouãrThªad
  *
 	$home_thªad
 () const;
 
-154 #i‡
+155 #i‡
 CLICK_USERLEVEL
 
 
-156 
+157 
 	`add_£À˘
 (
 fd
@@ -27839,31 +27901,13 @@ fd
 mask
 );
 
-157 
+158 
 	`ªmove_£À˘
 (
 fd
 , 
 mask
 );
-
-161 
-	`add_ªad_h™dÀr
-(c⁄° 
-Såög
- &
-«me
-, 
-RódH™dÀrCÆlback
- 
-ªad_ˇŒback
-, c⁄° *
-u£r_d©a
- = 0, 
-uöt32_t
- 
-Êags
- = 0);
 
 162 
 	`add_ªad_h™dÀr
@@ -27875,6 +27919,24 @@ Såög
 RódH™dÀrCÆlback
  
 ªad_ˇŒback
+, c⁄° *
+u£r_d©a
+ = 0, 
+uöt32_t
+ 
+Êags
+ = 0);
+
+163 
+	`add_ªad_h™dÀr
+(c⁄° 
+Såög
+ &
+«me
+, 
+RódH™dÀrCÆlback
+ 
+ªad_ˇŒback
 , 
 u£r_d©a
 , 
@@ -27883,7 +27945,7 @@ uöt32_t
 Êags
  = 0);
 
-163 
+164 
 	`add_ªad_h™dÀr
 (c⁄° *
 «me
@@ -27892,24 +27954,6 @@ RódH™dÀrCÆlback
  
 ªad_ˇŒback
 , 
-u£r_d©a
- = 0, 
-uöt32_t
- 
-Êags
- = 0);
-
-164 
-	`add_wrôe_h™dÀr
-(c⁄° 
-Såög
- &
-«me
-, 
-WrôeH™dÀrCÆlback
- 
-wrôe_ˇŒback
-, c⁄° *
 u£r_d©a
  = 0, 
 uöt32_t
@@ -27927,6 +27971,24 @@ Såög
 WrôeH™dÀrCÆlback
  
 wrôe_ˇŒback
+, c⁄° *
+u£r_d©a
+ = 0, 
+uöt32_t
+ 
+Êags
+ = 0);
+
+166 
+	`add_wrôe_h™dÀr
+(c⁄° 
+Såög
+ &
+«me
+, 
+WrôeH™dÀrCÆlback
+ 
+wrôe_ˇŒback
 , 
 u£r_d©a
 , 
@@ -27935,7 +27997,7 @@ uöt32_t
 Êags
  = 0);
 
-166 
+167 
 	`add_wrôe_h™dÀr
 (c⁄° *
 «me
@@ -27951,7 +28013,7 @@ uöt32_t
 Êags
  = 0);
 
-167 
+168 
 	`£t_h™dÀr
 (c⁄° 
 Såög
@@ -27969,7 +28031,7 @@ H™dÀrCÆlback
 wrôe_u£r_d©a
  = 0);
 
-168 
+169 
 	`£t_h™dÀr
 (c⁄° 
 Såög
@@ -27987,7 +28049,7 @@ H™dÀrCÆlback
 wrôe_u£r_d©a
  = 0);
 
-169 
+170 
 	`£t_h™dÀr
 (c⁄° *
 «me
@@ -28003,7 +28065,7 @@ H™dÀrCÆlback
 wrôe_u£r_d©a
  = 0);
 
-170 
+171 
 	`£t_h™dÀr_Êags
 (c⁄° 
 Såög
@@ -28015,29 +28077,29 @@ Såög
 ˛ór_Êags
  = 0);
 
-171 íum { 
+172 íum { 
 TASKHANDLER_WRITE_SCHEDULED
  = 1,
 
-172 
+173 
 TASKHANDLER_WRITE_TICKETS
  = 2,
 
-173 
+174 
 TASKHANDLER_WRITE_HOME_THREAD
  = 4,
 
-174 
+175 
 TASKHANDLER_WRITE_ALL
  = 7,
 
-175 
+176 
 TASKHANDLER_DEFAULT
  = 6 
 	}
 };
 
-176 
+177 
 add_èsk_h™dÀrs
 (
 Task
@@ -28055,7 +28117,7 @@ Såög
 ¥efix
  = String());
 
-177 
+178 
 ölöe
  
 add_èsk_h™dÀrs
@@ -28075,7 +28137,7 @@ Såög
 	$Såög
 ()) {
 
-178 
+179 
 	`add_èsk_h™dÀrs
 (
 èsk
@@ -28087,11 +28149,11 @@ TASKHANDLER_DEFAULT
 ¥efix
 );
 
-179 
+180 
 	}
 }
 
-180 
+181 
 ölöe
  
 add_èsk_h™dÀrs
@@ -28107,7 +28169,7 @@ Såög
 	$Såög
 ()) {
 
-181 
+182 
 	`add_èsk_h™dÀrs
 (
 èsk
@@ -28117,11 +28179,11 @@ TASKHANDLER_DEFAULT
 ¥efix
 );
 
-182 
+183 
 	}
 }
 
-184 
+185 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28133,7 +28195,7 @@ uöt8_t
 d©a
 );
 
-185 
+186 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28145,7 +28207,7 @@ boﬁ
 d©a
 );
 
-186 
+187 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28157,7 +28219,7 @@ uöt16_t
 d©a
 );
 
-187 
+188 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28167,7 +28229,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-188 
+189 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28177,7 +28239,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-189 
+190 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28189,7 +28251,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-190 
+191 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28199,7 +28261,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-191 
+192 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28209,11 +28271,11 @@ add_d©a_h™dÀrs
 d©a
 );
 
-192 #i‡
+193 #i‡
 HAVE_LONG_LONG
 
 
-193 
+194 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28223,7 +28285,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-194 
+195 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28233,7 +28295,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-196 
+197 
 add_√t_‹dî_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28245,7 +28307,7 @@ uöt16_t
 d©a
 );
 
-197 
+198 
 add_√t_‹dî_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28257,11 +28319,11 @@ uöt32_t
 d©a
 );
 
-198 #i‡
+199 #i‡
 HAVE_FLOAT_TYPES
 
 
-199 
+200 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28271,7 +28333,7 @@ add_d©a_h™dÀrs
 d©a
 );
 
-201 
+202 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28283,7 +28345,7 @@ Såög
 d©a
 );
 
-202 
+203 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28295,7 +28357,7 @@ IPAddªss
 d©a
 );
 
-203 
+204 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28307,7 +28369,7 @@ EthîAddªss
 d©a
 );
 
-204 
+205 
 add_d©a_h™dÀrs
 (c⁄° *
 «me
@@ -28325,7 +28387,7 @@ is_öãrvÆ
 Ál£
 );
 
-206 
+207 
 Såög
  
 ªad_posôi⁄Æ_h™dÀr
@@ -28333,7 +28395,7 @@ Såög
 EÀmít
 *, *);
 
-207 
+208 
 Såög
  
 ªad_keyw‹d_h™dÀr
@@ -28341,7 +28403,7 @@ Såög
 EÀmít
 *, *);
 
-208 
+209 
 ªc⁄figuª_posôi⁄Æ_h™dÀr
 (c⁄° 
 Såög
@@ -28351,7 +28413,7 @@ EÀmít
 Eº‹H™dÀr
 *);
 
-209 
+210 
 ªc⁄figuª_keyw‹d_h™dÀr
 (c⁄° 
 Såög
@@ -28361,7 +28423,7 @@ EÀmít
 Eº‹H™dÀr
 *);
 
-211 
+212 
 vútuÆ
  
 ŒΩc
@@ -28371,7 +28433,7 @@ comm™d
 ¨g
 );
 
-212 
+213 
 loˇl_ŒΩc
 (
 comm™d
@@ -28379,13 +28441,13 @@ comm™d
 ¨g
 );
 
-214 ˛as†
+215 ˛as†
 	cP‹t
  { 
 	gpublic
 :
 
-216 
+217 
 ölöe
  
 boﬁ
@@ -28393,7 +28455,7 @@ boﬁ
 a˘ive
 () const;
 
-217 
+218 
 ölöe
  
 EÀmít
@@ -28401,13 +28463,13 @@ EÀmít
 ñemít
 () const;
 
-218 
+219 
 ölöe
  
 p‹t
 () const;
 
-220 
+221 
 ölöe
  
 push
@@ -28417,7 +28479,7 @@ Packë
 p
 ) const;
 
-221 
+222 
 ölöe
  
 Packë
@@ -28425,17 +28487,17 @@ Packë
 puŒ
 () const;
 
-223 #i‡
+224 #i‡
 CLICK_STATS
  >= 1
 
-224 
+225 
 ≈ackës
 (Ëc⁄° {  
 	g_∑ckës
 ; }
 
-227 
+228 
 ölöe
  
 assign
@@ -28451,25 +28513,25 @@ e
 p‹t
 );
 
-229 
+230 
 	g¥iv©e
 :
 
-231 
+232 
 EÀmít
 * 
 _e
 ;
 
-232 
+233 
 	g_p‹t
 ;
 
-233 #i‡
+234 #i‡
 HAVE_BOUND_PORT_TRANSFER
 
 
-235 (*
+236 (*
 	gpush
 )(
 EÀmít
@@ -28483,7 +28545,7 @@ Packë
 	gp
 );
 
-236 
+237 
 	gPackë
  *(*
 	gpuŒ
@@ -28495,37 +28557,37 @@ EÀmít
 	gp‹t
 );
 
-237 } 
+238 } 
 	g_bound
 ;
 
-240 #i‡
+241 #i‡
 CLICK_STATS
  >= 1
 
-241 
+242 
 muèbÀ
  
 	g_∑ckës
 ;
 
-243 #i‡
+244 #i‡
 CLICK_STATS
  >= 2
 
-244 
+245 
 EÀmít
 * 
 	g_ow√r
 ;
 
-247 
+248 
 ölöe
  
 P‹t
 ();
 
-248 
+249 
 ölöe
  
 assign
@@ -28543,7 +28605,7 @@ e
 p‹t
 );
 
-250 
+251 
 ‰õnd
  
 ˛ass
@@ -28551,7 +28613,7 @@ p‹t
 	gEÀmít
 ;
 
-256 
+257 
 Såög
  
 	$id
@@ -28559,7 +28621,7 @@ Såög
 CLICK_DEPRECATED
 ;
 
-257 
+258 
 Såög
  
 	$œndm¨k
@@ -28567,23 +28629,23 @@ Såög
 CLICK_DEPRECATED
 ;
 
-260 
+261 
 ¥iv©e
 :
 
-262 íum { 
+263 íum { 
 INLINE_PORTS
  = 4 
 	}
 };
 
-264 
+265 
 P‹t
 * 
 	g_p‹ts
 [2];
 
-265 
+266 
 P‹t
  
 	g_ölöe_p‹ts
@@ -28591,67 +28653,67 @@ P‹t
 INLINE_PORTS
 ];
 
-267 
+268 
 	g_≈‹ts
 [2];
 
-269 
+270 
 Rouãr
 * 
 	g_rouãr
 ;
 
-270 
+271 
 	g_eödex
 ;
 
-272 #i‡
+273 #i‡
 CLICK_STATS
  >= 2
 
-274 
+275 
 	g_x„r_ˇŒs
-;
-
-275 
-˛ick_cy˛es_t
- 
-	g_x„r_own_cy˛es
 ;
 
 276 
 ˛ick_cy˛es_t
  
+	g_x„r_own_cy˛es
+;
+
+277 
+˛ick_cy˛es_t
+ 
 	g_chûd_cy˛es
 ;
 
-278 
+279 
 	g_èsk_ˇŒs
 ;
 
-279 
+280 
 ˛ick_cy˛es_t
  
 	g_èsk_own_cy˛es
 ;
 
-281 
+282 
 	g_timî_ˇŒs
 ;
 
-282 
+283 
 ˛ick_cy˛es_t
  
 	g_timî_own_cy˛es
 ;
 
-284 
+285 
 ölöe
  
 	$ª£t_cy˛es
 () {
 
-285 
+286 
 _x„r_ˇŒs
  = 
 _èsk_ˇŒs
@@ -28659,7 +28721,7 @@ _èsk_ˇŒs
 _timî_ˇŒs
  = 0;
 
-286 
+287 
 _x„r_own_cy˛es
  = 
 _èsk_own_cy˛es
@@ -28669,11 +28731,11 @@ _timî_own_cy˛es
 _chûd_cy˛es
  = 0;
 
-287 
+288 
 	}
 }
 
-288 
+289 
 Såög
  
 ªad_cy˛es_h™dÀr
@@ -28681,7 +28743,7 @@ Såög
 EÀmít
  *, *);
 
-289 
+290 
 wrôe_cy˛es_h™dÀr
 (c⁄° 
 Såög
@@ -28691,11 +28753,11 @@ EÀmít
 Eº‹H™dÀr
  *);
 
-292 
+293 
 EÀmít
 (const Element &);
 
-293 
+294 
 	gEÀmít
  &
 	g›î©‹
@@ -28703,17 +28765,17 @@ EÀmít
 EÀmít
  &);
 
-296 
+297 
 £t_≈‹ts
 (, );
 
-297 
+298 
 nŸify_≈‹ts
 (, , 
 Eº‹H™dÀr
  *);
 
-298 
+299 
 	ePro˚ssög
  { 
 	gVAGNOSTIC
@@ -28723,7 +28785,7 @@ Eº‹H™dÀr
 	gVPULL
  };
 
-299 
+300 
 √xt_¥o˚ssög_code
 (c⁄° *& 
 p
@@ -28733,7 +28795,7 @@ Eº‹H™dÀr
 îrh
 );
 
-300 
+301 
 	$¥o˚ssög_ve˘‹
 (* 
 öput_codes
@@ -28743,7 +28805,7 @@ ouçut_codes
 Eº‹H™dÀr
 *) const;
 
-302 
+303 
 	`öôülize_p‹ts
 (c⁄° * 
 öput_codes
@@ -28751,7 +28813,7 @@ Eº‹H™dÀr
 ouçut_codes
 );
 
-303 
+304 
 	`c⁄√˘_p‹t
 (
 boﬁ
@@ -28763,7 +28825,7 @@ p‹t
 EÀmít
 *, );
 
-305 
+306 
 Såög
  
 	`ªad_h™dÀrs_h™dÀr
@@ -28775,7 +28837,7 @@ e
 u£r_d©a
 );
 
-306 
+307 
 	`add_deÁu…_h™dÀrs
 (
 boﬁ
@@ -28783,7 +28845,7 @@ boﬁ
 wrôabÀ_c⁄fig
 );
 
-307 
+308 
 ölöe
  
 	`add_d©a_h™dÀrs
@@ -28799,15 +28861,15 @@ H™dÀrCÆlback
 d©a
 );
 
-309 
+310 
 ‰õnd
  
 ˛ass
  
 Camkes_c⁄fig
+;
 
-
-310 
+311 
 ‰õnd
  
 ˛ass
@@ -28815,11 +28877,11 @@ Camkes_c⁄fig
 Rouãr
 ;
 
-311 #i‡
+312 #i‡
 CLICK_STATS
  >= 2
 
-312 
+313 
 ‰õnd
  
 ˛ass
@@ -28827,7 +28889,7 @@ CLICK_STATS
 Task
 ;
 
-313 
+314 
 ‰õnd
  
 ˛ass
@@ -28835,7 +28897,7 @@ Task
 Ma°î
 ;
 
-314 
+315 
 ‰õnd
  
 ˛ass
@@ -28843,11 +28905,11 @@ Ma°î
 TimîSë
 ;
 
-315 #i‡
+316 #i‡
 CLICK_USERLEVEL
 
 
-316 
+317 
 ‰õnd
  
 ˛ass
@@ -28855,81 +28917,81 @@ CLICK_USERLEVEL
 Sñe˘Së
 ;
 
-320 
+321 
 	}
 };
 
-350 
+351 
 ölöe
  
 
-351 
+352 
 	gEÀmít
 ::
 	$°©ic_öôülize
 ()
 
-353 
+354 
 	}
 }
 
-378 
+379 
 ölöe
  
 
-379 
+380 
 EÀmít
 ::
 	$°©ic_˛ónup
 ()
 
-381 
+382 
 	}
 }
 
-384 
+385 
 ölöe
  
 Rouãr
 *
 
-385 
+386 
 EÀmít
 ::
 	$rouãr
 () const
 
-387  
+388  
 _rouãr
 ;
 
-388 
+389 
 	}
 }
 
-393 
+394 
 ölöe
  
 
-394 
+395 
 	gEÀmít
 ::
 	$eödex
 () const
 
-396  
+397  
 _eödex
 ;
 
-397 
+398 
 	}
 }
 
-402 
+403 
 ölöe
  
 
-403 
+404 
 	gEÀmít
 ::
 	$eödex
@@ -28939,7 +29001,7 @@ Rouãr
 r
 ) const
 
-405  (
+406  (
 	`rouãr
 (Ë=
 r
@@ -28947,15 +29009,15 @@ r
 _eödex
  : -1);
 
-406 
+407 
 	}
 }
 
-410 
+411 
 ölöe
  
 
-411 
+412 
 	gEÀmít
 ::
 	$≈‹ts
@@ -28965,53 +29027,53 @@ boﬁ
 isouçut
 ) const
 
-413  
+414  
 _≈‹ts
 [
 isouçut
 ];
 
-414 
+415 
 	}
 }
 
-417 
+418 
 ölöe
  
 
-418 
+419 
 	gEÀmít
 ::
 	$nöputs
 () const
 
-420  
+421  
 _≈‹ts
 [0];
 
-421 
+422 
 	}
 }
 
-424 
+425 
 ölöe
  
 
-425 
+426 
 	gEÀmít
 ::
 	$nouçuts
 () const
 
-427  
+428  
 _≈‹ts
 [1];
 
-428 
+429 
 	}
 }
 
-435 
+436 
 ölöe
  c⁄° 
 	gEÀmít
@@ -29019,7 +29081,7 @@ _≈‹ts
 P‹t
 &
 
-436 
+437 
 EÀmít
 ::
 	$p‹t
@@ -29031,7 +29093,7 @@ isouçut
 p‹t
 ) const
 
-438 
+439 
 	`as£π
 ((Ë
 p‹t
@@ -29041,7 +29103,7 @@ _≈‹ts
 isouçut
 ]);
 
-439  
+441  
 _p‹ts
 [
 isouçut
@@ -29049,11 +29111,11 @@ isouçut
 p‹t
 ];
 
-440 
+442 
 	}
 }
 
-448 
+450 
 ölöe
  c⁄° 
 	gEÀmít
@@ -29061,7 +29123,7 @@ p‹t
 P‹t
 &
 
-449 
+451 
 EÀmít
 ::
 	$öput
@@ -29069,7 +29131,7 @@ EÀmít
 p‹t
 ) const
 
-451  
+453  
 EÀmít
 ::
 	`p‹t
@@ -29079,11 +29141,11 @@ EÀmít
 p‹t
 );
 
-452 
+454 
 	}
 }
 
-460 
+462 
 ölöe
  c⁄° 
 	gEÀmít
@@ -29091,7 +29153,7 @@ p‹t
 P‹t
 &
 
-461 
+463 
 EÀmít
 ::
 	$ouçut
@@ -29099,7 +29161,7 @@ EÀmít
 p‹t
 ) const
 
-463  
+465  
 EÀmít
 ::
 	`p‹t
@@ -29109,17 +29171,17 @@ EÀmít
 p‹t
 );
 
-464 
+466 
 	}
 }
 
-474 
+476 
 ölöe
  
 boﬁ
 
 
-475 
+477 
 	gEÀmít
 ::
 	$p‹t_a˘ive
@@ -29131,7 +29193,7 @@ isouçut
 p‹t
 ) const
 
-477  (Ë
+479  (Ë
 p‹t
  < (Ë
 	`≈‹ts
@@ -29139,7 +29201,7 @@ p‹t
 isouçut
 )
 
-478 && 
+480 && 
 _p‹ts
 [
 isouçut
@@ -29149,17 +29211,17 @@ p‹t
 	`a˘ive
 ();
 
-479 
+481 
 	}
 }
 
-484 
+486 
 ölöe
  
 boﬁ
 
 
-485 
+487 
 	gEÀmít
 ::
 	$ouçut_is_push
@@ -29167,7 +29229,7 @@ boﬁ
 p‹t
 ) const
 
-487  
+489  
 	`p‹t_a˘ive
 (
 åue
@@ -29175,17 +29237,17 @@ p‹t
 p‹t
 );
 
-488 
+490 
 	}
 }
 
-493 
+495 
 ölöe
  
 boﬁ
 
 
-494 
+496 
 	gEÀmít
 ::
 	$ouçut_is_puŒ
@@ -29193,7 +29255,7 @@ boﬁ
 p‹t
 ) const
 
-496  (Ë
+498  (Ë
 p‹t
  < (Ë
 	`≈‹ts
@@ -29201,7 +29263,7 @@ p‹t
 åue
 )
 
-497 && !
+499 && !
 _p‹ts
 [1][
 p‹t
@@ -29209,17 +29271,17 @@ p‹t
 	`a˘ive
 ();
 
-498 
+500 
 	}
 }
 
-503 
+505 
 ölöe
  
 boﬁ
 
 
-504 
+506 
 	gEÀmít
 ::
 	$öput_is_puŒ
@@ -29227,7 +29289,7 @@ boﬁ
 p‹t
 ) const
 
-506  
+508  
 	`p‹t_a˘ive
 (
 Ál£
@@ -29235,17 +29297,17 @@ p‹t
 p‹t
 );
 
-507 
+509 
 	}
 }
 
-512 
+514 
 ölöe
  
 boﬁ
 
 
-513 
+515 
 	gEÀmít
 ::
 	$öput_is_push
@@ -29253,7 +29315,7 @@ boﬁ
 p‹t
 ) const
 
-515  (Ë
+517  (Ë
 p‹t
  < (Ë
 	`≈‹ts
@@ -29261,7 +29323,7 @@ p‹t
 Ál£
 )
 
-516 && !
+518 && !
 _p‹ts
 [0][
 p‹t
@@ -29269,15 +29331,15 @@ p‹t
 	`a˘ive
 ();
 
-517 
+519 
 	}
 }
 
-519 #i‡
+521 #i‡
 CLICK_STATS
  >= 2
 
-520 
+522 
 	#PORT_ASSIGN
 (
 o
@@ -29289,11 +29351,11 @@ _ow√r
 
 	)
 
-521 #ñi‡
+523 #ñi‡
 CLICK_STATS
  >= 1
 
-522 
+524 
 	#PORT_ASSIGN
 (
 o
@@ -29303,7 +29365,7 @@ _∑ckës
 
 	)
 
-524 
+526 
 	#PORT_ASSIGN
 (
 o
@@ -29311,11 +29373,11 @@ o
 
 	)
 
-527 
+529 
 ölöe
 
 
-528 
+530 
 	gEÀmít
 ::
 P‹t
@@ -29323,25 +29385,25 @@ P‹t
 	$P‹t
 ()
 
-529 : 
+531 : 
 	`_e
 (0), 
 	`_p‹t
 (-2)
 
-531 
+533 
 	`PORT_ASSIGN
 (0);
 
-532 
+534 
 	}
 }
 
-534 
+536 
 ölöe
  
 
-535 
+537 
 	gEÀmít
 ::
 P‹t
@@ -29359,35 +29421,35 @@ e
 p‹t
 )
 
-537 
+539 
 _e
  = 
 e
 ;
 
-538 
+540 
 _p‹t
  = 
 p‹t
 ;
 
-539 (Ë
+541 (Ë
 isouçut
 ;
 
-540 #i‡
+542 #i‡
 HAVE_BOUND_PORT_TRANSFER
 
 
-541 i‡(
+543 i‡(
 e
 ) {
 
-542 i‡(
+544 i‡(
 isouçut
 ) {
 
-543 (
+545 (
 EÀmít
 ::*
 pushî
@@ -29397,7 +29459,7 @@ Packë
 push
 ;
 
-544 
+546 
 _bound
 .
 push
@@ -29411,7 +29473,7 @@ e
 pushî
 );
 
-546 
+548 
 Packë
  *(
 EÀmít
@@ -29421,7 +29483,7 @@ puŒî
 puŒ
 ;
 
-547 
+549 
 _bound
 .
 puŒ
@@ -29435,15 +29497,15 @@ e
 puŒî
 );
 
-551 
+553 
 	}
 }
 
-553 
+555 
 ölöe
  
 
-554 
+556 
 	gEÀmít
 ::
 P‹t
@@ -29463,13 +29525,13 @@ e
 p‹t
 )
 
-556 
+558 
 	`PORT_ASSIGN
 (
 ow√r
 );
 
-557 
+559 
 	`assign
 (
 isouçut
@@ -29479,17 +29541,17 @@ e
 p‹t
 );
 
-558 
+560 
 	}
 }
 
-564 
+566 
 ölöe
  
 boﬁ
 
 
-565 
+567 
 	gEÀmít
 ::
 P‹t
@@ -29497,21 +29559,21 @@ P‹t
 	$a˘ive
 () const
 
-567  
+569  
 _p‹t
  >= 0;
 
-568 
+570 
 	}
 }
 
-573 
+575 
 ölöe
  
 EÀmít
 *
 
-574 
+576 
 	gEÀmít
 ::
 P‹t
@@ -29519,19 +29581,19 @@ P‹t
 	$ñemít
 () const
 
-576  
+578  
 _e
 ;
 
-577 
+579 
 	}
 }
 
-582 
+584 
 ölöe
  
 
-583 
+585 
 	gEÀmít
 ::
 P‹t
@@ -29539,19 +29601,19 @@ P‹t
 	$p‹t
 () const
 
-585  
+587  
 _p‹t
 ;
 
-586 
+588 
 	}
 }
 
-609 
+611 
 ölöe
  
 
-610 
+612 
 	gEÀmít
 ::
 P‹t
@@ -29563,7 +29625,7 @@ Packë
 p
 ) const
 
-612 
+614 
 	`as£π
 (
 _e
@@ -29571,19 +29633,19 @@ _e
 p
 );
 
-613 #i‡
+615 #i‡
 CLICK_STATS
  >= 1
 
-614 ++
+616 ++
 _∑ckës
 ;
 
-616 #i‡
+618 #i‡
 CLICK_STATS
  >= 2
 
-617 ++
+619 ++
 _e
 ->
 	`öput
@@ -29593,7 +29655,7 @@ _p‹t
 _∑ckës
 ;
 
-618 
+620 
 ˛ick_cy˛es_t
  
 °¨t_cy˛es
@@ -29601,7 +29663,7 @@ _∑ckës
 	`˛ick_gë_cy˛es
 (),
 
-619 
+621 
 °¨t_chûd_cy˛es
  = 
 _e
@@ -29609,11 +29671,11 @@ _e
 _chûd_cy˛es
 ;
 
-620 #i‡
+622 #i‡
 HAVE_BOUND_PORT_TRANSFER
 
 
-621 
+623 
 _bound
 .
 	`push
@@ -29625,7 +29687,7 @@ _p‹t
 p
 );
 
-623 
+625 
 _e
 ->
 	`push
@@ -29635,7 +29697,7 @@ _p‹t
 p
 );
 
-625 
+627 
 ˛ick_cy˛es_t
  
 Æl_dñè
@@ -29645,7 +29707,7 @@ p
 °¨t_cy˛es
 ,
 
-626 
+628 
 own_dñè
  = 
 Æl_dñè
@@ -29657,13 +29719,13 @@ _chûd_cy˛es
 °¨t_chûd_cy˛es
 );
 
-627 
+629 
 _e
 ->
 _x„r_ˇŒs
  += 1;
 
-628 
+630 
 _e
 ->
 _x„r_own_cy˛es
@@ -29671,7 +29733,7 @@ _x„r_own_cy˛es
 own_dñè
 ;
 
-629 
+631 
 _ow√r
 ->
 _chûd_cy˛es
@@ -29679,11 +29741,11 @@ _chûd_cy˛es
 Æl_dñè
 ;
 
-631 #i‡
+633 #i‡
 HAVE_BOUND_PORT_TRANSFER
 
 
-632 
+634 
 _bound
 .
 	`push
@@ -29695,7 +29757,7 @@ _p‹t
 p
 );
 
-634 
+636 
 _e
 ->
 	`push
@@ -29705,17 +29767,17 @@ _p‹t
 p
 );
 
-637 
+639 
 	}
 }
 
-655 
+657 
 ölöe
  
 Packë
 *
 
-656 
+658 
 	gEÀmít
 ::
 P‹t
@@ -29723,17 +29785,17 @@ P‹t
 	$puŒ
 () const
 
-658 
+660 
 	`as£π
 (
 _e
 );
 
-659 #i‡
+661 #i‡
 CLICK_STATS
  >= 2
 
-660 
+662 
 ˛ick_cy˛es_t
  
 °¨t_cy˛es
@@ -29741,7 +29803,7 @@ CLICK_STATS
 	`˛ick_gë_cy˛es
 (),
 
-661 
+663 
 ﬁd_chûd_cy˛es
  = 
 _e
@@ -29749,11 +29811,11 @@ _e
 _chûd_cy˛es
 ;
 
-662 #i‡
+664 #i‡
 HAVE_BOUND_PORT_TRANSFER
 
 
-663 
+665 
 Packë
  *
 p
@@ -29767,7 +29829,7 @@ _e
 _p‹t
 );
 
-665 
+667 
 Packë
  *
 p
@@ -29779,11 +29841,11 @@ _e
 _p‹t
 );
 
-667 i‡(
+669 i‡(
 p
 )
 
-668 
+670 
 _e
 ->
 	`ouçut
@@ -29793,7 +29855,7 @@ _p‹t
 _∑ckës
  += 1;
 
-669 
+671 
 ˛ick_cy˛es_t
  
 Æl_dñè
@@ -29803,7 +29865,7 @@ _∑ckës
 °¨t_cy˛es
 ,
 
-670 
+672 
 own_dñè
  = 
 Æl_dñè
@@ -29815,13 +29877,13 @@ _chûd_cy˛es
 ﬁd_chûd_cy˛es
 );
 
-671 
+673 
 _e
 ->
 _x„r_ˇŒs
  += 1;
 
-672 
+674 
 _e
 ->
 _x„r_own_cy˛es
@@ -29829,7 +29891,7 @@ _x„r_own_cy˛es
 own_dñè
 ;
 
-673 
+675 
 _ow√r
 ->
 _chûd_cy˛es
@@ -29837,11 +29899,11 @@ _chûd_cy˛es
 Æl_dñè
 ;
 
-675 #i‡
+677 #i‡
 HAVE_BOUND_PORT_TRANSFER
 
 
-676 
+678 
 Packë
  *
 p
@@ -29855,7 +29917,7 @@ _e
 _p‹t
 );
 
-678 
+680 
 Packë
  *
 p
@@ -29867,31 +29929,31 @@ _e
 _p‹t
 );
 
-681 #i‡
+683 #i‡
 CLICK_STATS
  >= 1
 
-682 i‡(
+684 i‡(
 p
 )
 
-683 ++
+685 ++
 _∑ckës
 ;
 
-685  
+687  
 p
 ;
 
-686 
+688 
 	}
 }
 
-700 
+702 
 ölöe
  
 
-701 
+703 
 	gEÀmít
 ::
 	$checked_ouçut_push
@@ -29903,13 +29965,13 @@ Packë
 p
 ) const
 
-703 i‡((Ë
+705 i‡((Ë
 p‹t
  < (Ë
 	`nouçuts
 ())
 
-704 
+706 
 _p‹ts
 [1][
 p‹t
@@ -29919,23 +29981,23 @@ p‹t
 p
 );
 
-706 
+708 
 p
 ->
 	`kûl
 ();
 
-707 
+709 
 	}
 }
 
-719 
+721 
 ölöe
  
 Packë
 *
 
-720 
+722 
 	gEÀmít
 ::
 	$checked_öput_puŒ
@@ -29943,13 +30005,13 @@ Packë
 p‹t
 ) const
 
-722 i‡((Ë
+724 i‡((Ë
 p‹t
  < (Ë
 	`nöputs
 ())
 
-723  
+725  
 _p‹ts
 [0][
 p‹t
@@ -29957,15 +30019,15 @@ p‹t
 	`puŒ
 ();
 
-726 
+728 
 	}
 }
 
-728 #unde‡
+730 #unde‡
 PORT_ASSIGN
 
 
-729 
+731 
 	gCLICK_ENDDECLS
 
 

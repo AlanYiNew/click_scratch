@@ -419,6 +419,7 @@ Args::find(const char *keyword, int flags, Slot *&slot_status)
 void
 Args::postparse(bool ok, Slot *slot_status)
 {
+    
     if (!ok && _read_status) {
         error("parse error");
         _read_status = false;
@@ -426,14 +427,17 @@ Args::postparse(bool ok, Slot *slot_status)
     _arg_keyword = 0;
 
     if (ok) {
+
         while (_simple_slotpos < simple_slotbuf_size
                && _simple_slotbuf[_simple_slotpos] != 0)
             _simple_slotpos +=
                 simple_slot_size(_simple_slotbuf[_simple_slotpos]);
     } else {
+
         _status = false;
         if (_simple_slotpos < simple_slotbuf_size)
             _simple_slotbuf[_simple_slotpos] = 0;
+
         while (_slots != slot_status) {
             Slot *slot = _slots;
             _slots = _slots->_next;

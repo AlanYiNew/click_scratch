@@ -54,6 +54,12 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/standard/simplequeue.hh \
 		$(SOURCE_DIR)/elements/camkes/camkes_paint.o \
 		$(SOURCE_DIR)/elements/camkes/camkes_paint.hh \
+		$(SOURCE_DIR)/elements/standard/dropbroadcasts.hh \
+		$(SOURCE_DIR)/elements/standard/dropbroadcasts.o \
+		$(SOURCE_DIR)/elements/standard/checkpaint.hh \
+		$(SOURCE_DIR)/elements/standard/checkpaint.o \
+		$(SOURCE_DIR)/elements/icmp/icmperror.hh \
+		$(SOURCE_DIR)/elements/icmp/icmperror.o \
 		$(CLICK_LIBS)
 	@echo ${CURRENT_DIR}
 	$(RUMPRUN_CXX) -no-pie \

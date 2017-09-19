@@ -9,25 +9,27 @@ CLICK_CCFILES+=$(wildcard ${SOURCE_DIR}/lib/*.c)
 CLICK_OBJS :=$(patsubst %.cc,%.o,$(CLICK_CCFILES))
 CLICK_OBJS :=$(patsubst %.c,%.o,$(CLICK_OBJS))
 CLICK_LIBS :=$(SOURCE_DIR)/lib/libclick.a
+CLICK_HFILES:= $(wildcard ${SOURCE_DIR}/include/click*/*.hh)
 
-${SOURCE_DIR}/lib/%.o: ${SOURCE_DIR}/lib/%.c
+
+${SOURCE_DIR}/lib/%.o: ${SOURCE_DIR}/lib/%.c $(CLICK_HFILES)
 	@echo "Making $@"
 	$(RUMPRUN_CXX) -c \
 		-I${SOURCE_DIR}/include \
 		-DCLICK_USERLEVEL \
 		-DHAVE_IP6 \
 		-DUNDER_CAMKES \
-		$^ -o $@
+		$< -o $@
 
 
-${SOURCE_DIR}/lib/%.o: ${SOURCE_DIR}/lib/%.cc
+${SOURCE_DIR}/lib/%.o: ${SOURCE_DIR}/lib/%.cc $(CLICK_HFILES)
 	@echo "Making $@"
 	$(RUMPRUN_CXX) -c \
 		-I${SOURCE_DIR}/include \
 		-DCLICK_USERLEVEL \
 		-DHAVE_IP6 \
 		-DUNDER_CAMKES \
-		$^ -o $@
+		$< -o $@
 
 
 $(CLICK_LIBS):$(CLICK_OBJS) 

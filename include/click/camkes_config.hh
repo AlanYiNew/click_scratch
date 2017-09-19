@@ -3,82 +3,39 @@
 #include <iostream>
 #include <click/packet.hh>
 #include <clicknet/ip.h>
+#include "porttype.h"
+
+class Camkes_proxy{
+    private:
+    Element * elem;
+    message_t * buffer;
+    public:
+        Camkes_proxy(Element * elemm, message_t * bufferr);
+        void push();
+};
+
+
+
+
 class Camkes_config{
     public:
-        static int connect_port(Element* tar,bool isoutput, int port, Element* e, int e_port){
-            return tar->connect_port(isoutput,port,e,e_port);
-        }
+        static int connect_port(Element* tar,bool isoutput, int port, Element* e, int e_port);
 
-        static void initialize_ports(Element* tar,const int* input_codes, const int* output_codes){
-            tar->initialize_ports(input_codes,output_codes);
-        }
+        static void initialize_ports(Element* tar,const int* input_codes, const int* output_codes);
 
-        static int set_nports(Element* tar,int ninputs,int noutputs){
-            return tar->set_nports(ninputs,noutputs);
-        }
+        static int set_nports(Element* tar,int ninputs,int noutputs);
 
-        static void initialize(Element* tar, ErrorHandler * eh){
-            tar->initialize(eh);
-        }
+        static void initialize(Element* tar, ErrorHandler * eh);
 
-        static void start_pcap_dispatch(Element* recv,Element* send){
-            while (true){
-                recv->selected(0,0);
-                send->run_task(NULL);
-            }
-        }
+        static void start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy * cp,int num);
 
         //Mashalling
-        static int packet_serialize(Packet * dst,Packet *src){
-            /*debugging purpose */
-             
-            
-            
-            
-            
-            dst->_head = reinterpret_cast<unsigned char*>(dst) + sizeof(Packet);
-            //I made the shared memory buffer the size of 4096 - sizeof(int) - sizeof(Packet). It should still be far greater than any buffer_length() whose max value normally may just be 2048
-            dst->_end = reinterpret_cast<unsigned char*>(dst) +  src->buffer_length();
-            if (src->headroom() + src->length() > dst->buffer_length())
-                return false;
-            dst->_data = dst->_head + src->headroom();
-            memcpy(dst->_data,src->data(),src->length());
-                
-            dst->_tail = dst->_data + src->length();
-            dst->copy_annotations(src);
-            if (src->mac_header())
-                dst->set_mac_header(dst->data() + src->mac_header_offset() ); 
-            if (src->network_header())
-                dst->set_network_header(dst->data() + src->network_header_offset(), src->network_header_length()); 
-        }
-
-
+        static int packet_serialize(Packet * dst,Packet *src);
 
         //vtable realted. Be careful.Demarshalling 
-        static void deserialize_packet(Packet* &dst,void* src){
-            Packet * p = reinterpret_cast<Packet*>(src);  
-           
-            int headroom = p->headroom();
-            int length = p->length();
-            int nh_offset = p->network_header_offset();
-            int mac_offset = p->mac_header_offset();
-            int nh_length = p->network_header_length();
-            int buffer_length = p->buffer_length();
+        static void deserialize_packet(Packet* &dst,void* src);
 
-            p->_head = reinterpret_cast<unsigned char*>(src) + sizeof(Packet);
-            p->_end = p->_head + buffer_length;
-            p->_data = p->_head + headroom;
-            p->_tail = p->_data+ length; 
-
-            dst = Packet::make(p->headroom(),p->data(),p->length(),p->tailroom()); 
-            dst->copy_annotations(p); 
-            if (p->mac_header())
-                dst->set_mac_header(dst->data() + mac_offset ); 
-            if (p->network_header())
-                dst->set_network_header(dst->data() + nh_offset, nh_length);
-        }
-
-        static void recycle(Packet * p){
-            delete p;
-        }
+        static void recycle(Packet * p);
 };
+
+

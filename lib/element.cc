@@ -2894,8 +2894,9 @@ Element::push(int port, Packet *p)
 {
     std::cout << class_name() <<  " pushing" << std::endl;
     p = simple_action(p);
-    if (p)
-	output(port).push(p);
+    if (p){
+	    output(port).push(p);
+    }
 }
 
 /** @brief Pull a packet from pull output @a port.

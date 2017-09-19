@@ -190,6 +190,7 @@ DirectIPLookup::Table::find_entry(uint32_t prefix, uint32_t plen) const
 int
 DirectIPLookup::Table::add_route(const IPRoute& route, bool allow_replace, IPRoute* old_route, ErrorHandler *errh)
 {
+
     uint32_t prefix = ntohl(route.addr.addr());
     uint32_t plen = route.prefix_len();
 

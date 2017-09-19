@@ -28,6 +28,7 @@
 #elif HAVE_NETDB_H
 # include <netdb.h>
 #endif
+#include <iostream>
 CLICK_DECLS
 
 /** @file ipaddress.hh
@@ -158,9 +159,9 @@ IPAddressArg::parse(const String &str, IPAddress &result, const ArgContext &args
     unsigned char value[4];
     int nbytes;
     if (basic_parse(str.begin(), str.end(), value, nbytes) == str.end()
-	&& nbytes == 4) {
-	memcpy(&result, value, 4);
-	return true;
+            && nbytes == 4) {
+        memcpy(&result, value, 4);
+        return true;
     }
 #if !CLICK_TOOL
     return AddressInfo::query_ip(str, result.data(), args.context());

@@ -40,10 +40,10 @@ central_routing: $(cfiles) $(hfiles) \
 	$(SOURCE_DIR)/elements/ip/checkipheader.o \
 	$(SOURCE_DIR)/elements/ip/getipaddress.hh \
 	$(SOURCE_DIR)/elements/ip/getipaddress.o \
-	$(SOURCE_DIR)/elements/ip/lookupiproute.hh \
-	$(SOURCE_DIR)/elements/ip/lookupiproute.o \
-	$(SOURCE_DIR)/elements/ip/lineariplookup.hh \
-	$(SOURCE_DIR)/elements/ip/lineariplookup.o \
+	$(SOURCE_DIR)/elements/camkes/camkes_lookupiproute.hh \
+	$(SOURCE_DIR)/elements/camkes/camkes_lookupiproute.o \
+	$(SOURCE_DIR)/elements/camkes/camkes_lineariplookup.hh \
+	$(SOURCE_DIR)/elements/camkes/camkes_lineariplookup.o \
 	$(SOURCE_DIR)/elements/ip/iproutetable.hh \
 	$(SOURCE_DIR)/elements/ip/iproutetable.o \
 	$(CLICK_LIBS) 

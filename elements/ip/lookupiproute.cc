@@ -24,6 +24,7 @@
 #include <click/straccum.hh>
 #include <click/error.hh>
 #include <click/router.hh>
+#include <iostream>
 CLICK_DECLS
 
 StaticIPLookup::StaticIPLookup()
@@ -37,10 +38,13 @@ StaticIPLookup::~StaticIPLookup()
 int
 StaticIPLookup::add_route(const IPRoute& route, bool set, IPRoute* old_route, ErrorHandler *errh)
 {
+
+#if !UNDER_CAMKES   
     if (router()->initialized())
 	return errh->error("can't add routes dynamically");
     else
-	return LinearIPLookup::add_route(route, set, old_route, errh);
+#endif
+    return LinearIPLookup::add_route(route, set, old_route, errh);
 }
 
 int

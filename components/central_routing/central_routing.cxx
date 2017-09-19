@@ -18,7 +18,6 @@
 //2 client component at the moment
 #include <porttype.h>
 #include <click/packet.hh>
-#define NUM_COMPONENT 2
 
 //Click related include
 #include "elements/ip/checkipheader.hh"
@@ -31,11 +30,16 @@
 #include "elements/standard/discard.hh"
 #include "elements/standard/strip.hh"
 #include "elements/ip/getipaddress.hh"
-#include "elements/ip/lookupiproute.hh"
+#include "elements/camkes/camkes_lookupiproute.hh"
+#include <vector>
+#include <string>
+
+void * db_buffer[NUM_COMPONENT+1];//extra 1 port for this machine
+eventfunc_t ev_func[NUM_COMPONENT];//upstream respond emit
+
 
 extern "C" {
     //message_t *section[NUM_COMPONENT];
-    eventfunc_t ev_func[NUM_COMPONENT];
     void ev_wait(void);
     void* buffer_buf(int); 
     void ev1_emit(void);
@@ -43,21 +47,29 @@ extern "C" {
 //    const char *ip_addr0;
     const char *ip_addr1;
 //    const char *ip_addr2;
-    void ** rt;
+    const char * rt[RT_NUM_ENTRY];
+    void* db_buffer_buf(int);
 }
 
 #pragma weak ev1_emit
 #pragma weak ev2_emit
 #pragma weak buffer_buf
+#pragma weak db_buffer_buf
 #pragma weak ev_wait
 #pragma weak ip_addr1
-#pragma weak rt;
+#pragma weak rt
+
+
+
+
 
 void inline debugging(const char* s,int val){
     std::cout << "###### " << std::left <<std::setw(40) << s << ": " << val << " #####" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
+    
+    
     /* Click configuration */
     int re = 0;
     
@@ -79,27 +91,32 @@ int main(int argc, char *argv[]) {
     //GetIPAddress
     GetIPAddress gia;
     //LookIPRoute
-    StaticIPLookup lir;
+    Camkes_StaticIPLookup clir(reinterpret_cast<message_t**>(db_buffer));
 
     //Configuring StaticIPRoute
-    Vector<String> lir_config;
-    lir_config.push_back("16");
-    re = Camkes_config::set_nports(&lir,1,1); 
-    debugging("setting n ports for lir",re);
-    re = strip.configure(lir_config,&feh); 
-    debugging("finish configuration for lir",re);
-    Camkes_config::initialize_ports(&lir,pin_v,pout_v); //one input three output
-    Camkes_config::connect_port(&lir,true,0,&print,0);//true int Element int
+    Vector<String> clir_config;
+    for (int i = 0 ; i < RT_NUM_ENTRY ; i++){
+        clir_config.push_back(rt[i]);
+    }
+    
+
+    re = Camkes_config::set_nports(&clir,1,2); 
+    debugging("setting n ports for clir",re);
+    re = clir.configure(clir_config,&feh); 
+    debugging("finish configuration for clir",re);
+    const int clir_pout_v[NUM_COMPONENT+1] = {1,1};
+    Camkes_config::initialize_ports(&clir,pin_v,pout_v); //one input three output
+    Camkes_config::connect_port(&clir,true,0,&print,0);//true int Element int
     
     //Configuring GetIPAddres
     Vector<String> gia_config;
-    gia_config.push_back("16");
+    gia_config.push_back("OFFSET 16");
     re = Camkes_config::set_nports(&gia,1,1); 
     debugging("setting n ports for gia",re);
-    re = strip.configure(gia_config,&feh); 
+    re = gia.configure(gia_config,&feh); 
     debugging("finish configuration for gia",re);
     Camkes_config::initialize_ports(&gia,pin_v,pout_v); //one input three output
-    Camkes_config::connect_port(&gia,true,0,&lir,0);//true int Element int
+    Camkes_config::connect_port(&gia,true,0,&clir,0);//true int Element int
 
     //Configuring cameks strip
     Vector<String> strip_config;
@@ -144,10 +161,12 @@ int main(int argc, char *argv[]) {
 
         ev_wait();
         
-        char *buffer_str;
-        for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c=(c+1)%NUM_COMPONENT);
-          
         std::cout << "unblocked by id:" << c << std::endl; 
+        char *buffer_str;
+        for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c=(c+1)%NUM_COMPONENT){
+            std::cout << "component: " << c << " ready: " << ((message_t *)buffer_buf(c))->ready << std::endl;
+        }
+          
         message_t * message  = ((message_t *)buffer_buf(c));
 
         if (count-- > 0) {
@@ -170,6 +189,7 @@ int main(int argc, char *argv[]) {
             const click_ip *ip = reinterpret_cast<const click_ip *>(p->data() + 14);
 
             std::cout << "ip->v:" << ip->ip_v << std::endl;
+            
             strip.push(0,p); 
 
         }
@@ -193,6 +213,11 @@ extern "C"{
         //section[0] = (message_t*)buffer0;
         //section[1] = (message_t*)buffer1;
 
+        db_buffer[1] = db_buffer_buf(0);
+        db_buffer[2] = db_buffer_buf(1);
+
+
+        //May get rid of this later;
         ev_func[0] = ev1_emit;
         ev_func[1] = ev2_emit;
     }

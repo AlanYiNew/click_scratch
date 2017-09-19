@@ -80,6 +80,7 @@ CLICK_CXX_UNPROTECT
 #if HAVE_IP6
 # include <click/ip6address.hh>
 #endif
+#include <iostream>
 CLICK_DECLS
 
 enum { tc_ipv4 = 'i', tc_ipv4prefix = 'I', tc_ether = 'e',
@@ -284,6 +285,7 @@ AddressInfo::query_netdevice(const String &s, unsigned char *store,
     // type is one of the tc_ constants
 {
     (void) s, (void) store, (void) type, (void) len, (void) context;
+    
     if (flags & f_nodevice)
         return false;
 
@@ -377,10 +379,12 @@ AddressInfo::query_netdevice(const String &s, unsigned char *store,
 		    found = true;
 		}
 		ip_rt_put(rt);
+
 	    }
 	} else
 	    memcpy(store, addr, type == tc_ipv4 ? 4 : 8);
     }
+
     if (dev)
 	dev_put(dev);
     return found;
@@ -453,42 +457,50 @@ AddressInfo::query_ip(const String &suffixed_s, unsigned char *store,
 {
     String s(suffixed_s);
     int colon = s.find_right(':');
+
     if (colon >= 0) {
-	String typestr = s.substring(colon).lower();
-	s = s.substring(0, colon);
-	union {
-	    uint32_t addr[2];
-	    unsigned char x[8];
-	} u;
-	if (typestr.equals(":ip", 3) || typestr.equals(":ip4", 4))
-	    /* do nothing */;
-	else if (typestr.equals(":bcast", 6)) {
-	    if (query_ip_prefix(s, &u.x[0], &u.x[4], context, flags)) {
-		u.addr[0] |= ~u.addr[1];
-		memcpy(store, u.x, 4);
-		return true;
-	    } else
-		return false;
-	} else if (typestr.equals(":gw", 3)) {
-	    if (NameInfo::query(NameInfo::T_IP_ADDR, context, suffixed_s, store, 4))
-		return true;
-	    else if (NameInfo::query(NameInfo::T_IP_PREFIX, context, s, &u.x[0], 8))
-		/* fall through */;
-	    else if (query_netdevice(s, store, tc_ipv4gw, 4, context, flags))
-		return true;
-	    else if (query_netdevice(s, &u.x[0], tc_ipv4prefix, 8, context, flags))
-		/* fall through */;
-	    else
-		return false;
-	    u.addr[0] = (u.addr[0] & u.addr[1]) | htonl(1);
-	    memcpy(store, u.x, 4);
-	    return true;
-	} else
-	    return false;
+        String typestr = s.substring(colon).lower();
+        s = s.substring(0, colon);
+        union {
+            uint32_t addr[2];
+            unsigned char x[8];
+        } u;
+        if (typestr.equals(":ip", 3) || typestr.equals(":ip4", 4))
+            /* do nothing */;
+        else if (typestr.equals(":bcast", 6)) {
+            if (query_ip_prefix(s, &u.x[0], &u.x[4], context, flags)) {
+                u.addr[0] |= ~u.addr[1];
+                memcpy(store, u.x, 4);
+                return true;
+            } else
+                return false;
+        } else if (typestr.equals(":gw", 3)) {
+            (void)NameInfo::query(NameInfo::T_IP_ADDR, context, suffixed_s, store, 4);
+            (void)NameInfo::query(NameInfo::T_IP_PREFIX, context, s, &u.x[0], 8);
+            (void)query_netdevice(s, store, tc_ipv4gw, 4, context, flags);
+            (void)query_netdevice(s, &u.x[0], tc_ipv4prefix, 8, context, flags);
+            if (NameInfo::query(NameInfo::T_IP_ADDR, context, suffixed_s, store, 4))
+                return true;
+            else if (NameInfo::query(NameInfo::T_IP_PREFIX, context, s, &u.x[0], 8))
+                /* fall through */;
+            else if (query_netdevice(s, store, tc_ipv4gw, 4, context, flags))
+                return true;
+            else if (query_netdevice(s, &u.x[0], tc_ipv4prefix, 8, context, flags))
+                /* fall through */;
+            else
+                return false;
+            u.addr[0] = (u.addr[0] & u.addr[1]) | htonl(1);
+            memcpy(store, u.x, 4);
+            return true;
+        } else
+            return false;
     }
 
-    return NameInfo::query(NameInfo::T_IP_ADDR, context, s, store, 4)
-	|| query_netdevice(s, store, tc_ipv4, 4, context, flags);
+    //bool f1 = NameInfo::query(NameInfo::T_IP_ADDR, context, s, store, 4);
+    bool f2 = query_netdevice(s, store, tc_ipv4, 4, context, flags);
+ 
+    //return 	f1|| f2;
+    return f2;
 }
 
 bool

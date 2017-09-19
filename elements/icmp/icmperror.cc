@@ -26,6 +26,7 @@
 #include <click/glue.hh>
 #include <click/packet_anno.hh>
 #include <click/nameinfo.hh>
+#include <iostream>
 CLICK_DECLS
 
 ICMPError::ICMPError()
@@ -55,6 +56,12 @@ ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
     Vector<IPAddress> bad_addrs;
     bool use_fix_anno = true;
 
+    std::cout << "configuring " << class_name() << std::endl;
+    for (auto &k :conf){
+        errh->warning("conf %s\n",k.c_str());
+    }
+
+
     if (Args(conf, this, errh)
 	.read_mp("SRC", src_ip)
 	.read_mp("TYPE", NamedIntArg(NameInfo::T_ICMP_TYPE), type)
@@ -65,6 +72,9 @@ ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
 	.read("SET_FIX_ANNO", use_fix_anno)
 	.complete() < 0)
 	return -1;
+
+
+    std::cout << "configuring 1" << class_name() << std::endl;
 
     if (type < 0 || type > 255)
 	return errh->error("ICMP type must be between 0 and 255");

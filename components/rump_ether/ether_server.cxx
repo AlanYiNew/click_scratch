@@ -57,6 +57,11 @@
 #include "elements/camkes/camkes_paint.hh"
 #include <iostream>
 #include <iomanip>
+#include "elements/standard/dropbroadcasts.hh"
+#include "elements/standard/checkpaint.hh"
+#include "elements/icmp/icmperror.hh"
+
+
 /* XXX: CAmkES symbols that are linked in after this file is compiled.
    They need to be marked as weak and this is the current hacky way it is done */
 extern "C" {
@@ -64,7 +69,10 @@ extern "C" {
     void camkes_ev_emit(void); 
     void camkes_ev1_wait(void);
     const char * wm_val;
-    void *camkes_buffer_2;
+    void *db_buffer;
+    const char * camkes_id_attributes;
+    const char * ip_addr;
+    const char * mac;
 }
 
 #pragma weak wm_val
@@ -72,7 +80,10 @@ extern "C" {
 #pragma weak camkes_ev_emit
 #pragma weak camkes_ev1_wait
 #pragma weak strip_push_port
-#pragma weak camkes_buffer_2
+#pragma weak db_buffer
+#pragma weak camkes_id_attributes
+#pragma weak ip_addr
+#pragma weak mac
 
 void inline debugging(const char* s,int val){
     std::cout << "###### " << std::left <<std::setw(40) << s << ": " << val << " #####" << std::endl;
@@ -130,17 +141,19 @@ void my_packet_handler(
     clsf->push(0,p);
 }
 
+const int pin_v[1] = {1};//input direction
+const int pout_v[1] = {1};//output direction
 
-
+const int pout_v2[2] = {1,1};
+void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh );
+void setup_icmprd(ICMPError& icmprd,FileErrorHandler &feh );
+ 
 
 int main (int argc, char *argv[]) {
-    std::cout << "stag 1" << std::endl;
     message_t * buffer_str = (message_t*)camkes_buffer;
     std::cout << camkes_buffer << std::endl;    
-    std::cout << "stag 2" << std::endl;
     
     
-    std::cout << "stag 3" << std::endl;
     snprintf(buffer_str->content, PACKET_MAX_LEN, "Hello, World!");
     printf("Sending string: %s\n", buffer_str->content);
     /* Signal the string reverse server and wait for response */
@@ -225,26 +238,39 @@ int main (int argc, char *argv[]) {
     Print print1;
     //print 2
     Print print2;
-    
+    //DropBroadCasts
+    DropBroadcasts db;
+    //CheckPaint
+    CheckPaint checkpaint;
+    //ICMPError redirect
+    ICMPError icmprd;
+
 
     int re = 0;
-    const int pin_v[1] = {1};//input direction
-    const int pout_v[1] = {1};//output direction
-
+    
     //Create a std erro handler for outputing message
     FileErrorHandler feh(stderr,"");
 
-            
+    setup_icmprd(icmprd,feh);
+    Camkes_config::connect_port(&icmprd,true,0,&print0,0);
+
+    setup_checkpaint(checkpaint,feh); 
+    Camkes_config::connect_port(&checkpaint,true,0,&print2,0);
+    Camkes_config::connect_port(&checkpaint,true,1,&print2,0);
+
+    //Configuring dropbroadcast
+    Camkes_config::connect_port(&db,true,0,&checkpaint,0);
+
     //Configuring discard
     re = Camkes_config::set_nports(&discard,1,0);
     debugging("setting n ports for discard",re);
     Camkes_config::initialize_ports(&discard,pin_v,NULL);//We don't have output port putting in_v is fine
     debugging("No configuration call to discard",0);    
     
-
+   
     //Configuring cpaint
     Vector<String> cpaint_config;
-    cpaint_config.push_back("COLOR 1");
+    cpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
     char camkes_buf_addr[sizeof(unsigned long)+1];
     char event_func_addr[sizeof(unsigned long)+1];
     sprintf(camkes_buf_addr, "%lu", (unsigned long)camkes_buffer);
@@ -279,7 +305,7 @@ int main (int argc, char *argv[]) {
     Camkes_config::connect_port(&print1,true,0,&discard,0);
 
     Vector<String> print_config2;
-    print_config2.push_back("port2");
+    print_config2.push_back("db");
     re = Camkes_config::set_nports(&print2,1,1);
     debugging("setting n ports for print2",re);
     re = print2.configure(print_config2,&feh);
@@ -300,7 +326,9 @@ int main (int argc, char *argv[]) {
     
     //Configuring arp element
     Vector<String> arpRes_config;
-    arpRes_config.push_back("192.168.1.98 00:1b:21:41:25:56");
+
+    
+    arpRes_config.push_back(String(ip_addr) + " " + mac);
     re = Camkes_config::set_nports(&arpRes,1,1); 
     debugging("setting n ports for arpResponder",re);
     re = arpRes.configure(arpRes_config,&feh); 
@@ -368,12 +396,36 @@ int main (int argc, char *argv[]) {
     //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
     debugging("attempting to initialize queue",re);
     Camkes_config::initialize(&queue,&feh);
-        
-    Camkes_config::start_pcap_dispatch(&fDev,&tDev);
-
-    
-
+ 
+    Camkes_proxy cp[1] = {{&db,(message_t*)db_buffer}};    
+    Camkes_config::start_pcap_dispatch(&fDev,&tDev,cp,1);
 
     return 0;
+
+}
+void setup_icmprd(ICMPError& icmprd,FileErrorHandler &feh ){
+    //Configuring icmprd
+    int re = 0;
+    Vector<String> icmprd_config;
+    icmprd_config.push_back(ip_addr);
+    icmprd_config.push_back("redirect");
+    icmprd_config.push_back("host");
+    re = Camkes_config::set_nports(&icmprd,1,1);        
+    debugging("setting n ports for icmprd",re);
+    re = icmprd.configure(icmprd_config,&feh);
+    debugging("finishing configuration for icmprd",re);
+    Camkes_config::initialize_ports(&icmprd,pin_v,pout_v2);
+}
+
+void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh ){
+    //Configuring checkpaint
+    int re = 0;
+    Vector<String> checkpaint_config;
+    checkpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
+    debugging("setting n ports for checkpaint",re);
+    re = Camkes_config::set_nports(&checkpaint,1,2);       
+    re = checkpaint.configure(checkpaint_config,&feh);
+    debugging("finishing configuration for checkpaint",re);
+    Camkes_config::initialize_ports(&checkpaint,pin_v,pout_v2);
 
 }

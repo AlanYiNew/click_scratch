@@ -124,11 +124,16 @@ ARPResponder::configure(Vector<String> &conf, ErrorHandler *errh)
     Vector<Entry> v;
     for (int i = 0; i < conf.size(); i++) {
 	PrefixErrorHandler perrh(errh, "argument " + String(i) + ": ");
-	add(v, conf[i], &perrh);
+        add(v, conf[i], &perrh);
     }
+
+    std::cout << "check1" << std::endl;
+    errh->nerrors();
+    std::cout << "check2" << std::endl;
+
     if (!errh->nerrors()) {
-	normalize(v, true, errh);
-	_v.swap(v);
+	    normalize(v, true, errh);
+	    _v.swap(v);
 	return 0;
     } else
 	return -1;

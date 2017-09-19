@@ -26,32 +26,37 @@
 #include <click/straccum.hh>
 #include <click/router.hh>
 #include "iproutetable.hh"
+#include <iostream>
 CLICK_DECLS
 
 bool
 cp_ip_route(String s, IPRoute *r_store, bool remove_route, Element *context)
 {
     IPRoute r;
+
     if (!IPPrefixArg(true).parse(cp_shift_spacevec(s), r.addr, r.mask, context))
 	return false;
     r.addr &= r.mask;
-
+    
     String word = cp_shift_spacevec(s);
-    if (word == "-")
+    
+    if (word == "-"){
 	/* null gateway; do nothing */;
-    else if (IPAddressArg().parse(word, r.gw, context))
-	/* do nothing */;
-    else
-	goto two_words;
+    }   else if (IPAddressArg().parse(word, r.gw, context)){
+        /* do nothing */;
+    }   else{
+	    goto two_words;
+    }
 
     word = cp_shift_spacevec(s);
   two_words:
-    if (IntArg().parse(word, r.port) || (!word && remove_route))
-	if (!cp_shift_spacevec(s)) { // nothing left
-	    *r_store = r;
-	    return true;
-	}
 
+    if (IntArg().parse(word, r.port) || (!word && remove_route)){
+        if (!cp_shift_spacevec(s)) { // nothing left
+            *r_store = r;
+            return true;
+        }
+    }
     return false;
 }
 
@@ -98,21 +103,30 @@ IPRouteTable::cast(const char *name)
 int
 IPRouteTable::configure(Vector<String> &conf, ErrorHandler *errh)
 {
+    for (int i = 0 ; i < conf.size(); i++){
+        std::cout << "addr: "<<conf[i].c_str() << std::endl;
+    }
+    
     int r = 0, r1, eexist = 0;
     IPRoute route;
     for (int i = 0; i < conf.size(); i++) {
-	if (!cp_ip_route(conf[i], &route, false, this)) {
-	    errh->error("argument %d should be %<ADDR/MASK [GATEWAY] OUTPUT%>", i+1);
-	    r = -EINVAL;
-	} else if (route.port < 0 || route.port >= noutputs()) {
-	    errh->error("argument %d bad OUTPUT", i+1);
-	    r = -EINVAL;
-	} else if ((r1 = add_route(route, false, 0, errh)) < 0) {
-	    if (r1 == -EEXIST)
-		++eexist;
-	    else
-		r = r1;
-	}
+        
+        int ret = cp_ip_route(conf[i], &route, false, this);
+
+        if (!ret) {
+            errh->error("argument %d should be %<ADDR/MASK [GATEWAY] OUTPUT%>", i+1);
+            r = -EINVAL;
+        } else if (route.port < 0 || route.port >= noutputs()) {
+            errh->error("argument %d bad OUTPUT", i+1);
+            r = -EINVAL;
+        } else {
+            if ((r1 = add_route(route, false, 0, errh)) < 0) {
+                if (r1 == -EEXIST)
+                    ++eexist;
+                else
+                    r = r1;
+            }
+        }
     }
     if (eexist)
 	errh->warning("%d %s replaced by later versions", eexist, eexist > 1 ? "routes" : "route");
