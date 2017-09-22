@@ -60,7 +60,10 @@
 #include "elements/standard/dropbroadcasts.hh"
 #include "elements/standard/checkpaint.hh"
 #include "elements/icmp/icmperror.hh"
-
+#include "elements/ip/ipgwoptions.hh"
+#include "elements/ip/fixipsrc.hh"
+#include "elements/ip/ipnameinfo.hh"
+#include <click/nameinfo.hh>
 
 /* XXX: CAmkES symbols that are linked in after this file is compiled.
    They need to be marked as weak and this is the current hacky way it is done */
@@ -84,6 +87,9 @@ extern "C" {
 #pragma weak camkes_id_attributes
 #pragma weak ip_addr
 #pragma weak mac
+
+extern void click_export_elements();
+
 
 void inline debugging(const char* s,int val){
     std::cout << "###### " << std::left <<std::setw(40) << s << ": " << val << " #####" << std::endl;
@@ -147,7 +153,7 @@ const int pout_v[1] = {1};//output direction
 const int pout_v2[2] = {1,1};
 void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh );
 void setup_icmprd(ICMPError& icmprd,FileErrorHandler &feh );
- 
+void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh);
 
 int main (int argc, char *argv[]) {
     message_t * buffer_str = (message_t*)camkes_buffer;
@@ -244,22 +250,40 @@ int main (int argc, char *argv[]) {
     CheckPaint checkpaint;
     //ICMPError redirect
     ICMPError icmprd;
-
+    //IPGWOptions
+    IPGWOptions ipgwoptions;
 
     int re = 0;
-    
+   
+    NameInfo::static_initialize();
+
     //Create a std erro handler for outputing message
     FileErrorHandler feh(stderr,"");
+    IPNameInfo::static_initialize(); 
+
+    setup_ipgwoptions(ipgwoptions,feh);
+    Camkes_config::connect_port(&ipgwoptions,true,0,&print2,0);
+
+    std::cout << "errh: " << feh.nerrors() << std::endl;
 
     setup_icmprd(icmprd,feh);
     Camkes_config::connect_port(&icmprd,true,0,&print0,0);
 
+
+    std::cout << "errh: " << feh.nerrors() << std::endl;
+
     setup_checkpaint(checkpaint,feh); 
-    Camkes_config::connect_port(&checkpaint,true,0,&print2,0);
+    Camkes_config::connect_port(&checkpaint,true,0,&ipgwoptions,0);
     Camkes_config::connect_port(&checkpaint,true,1,&print2,0);
+
+
+    std::cout << "errh: " << feh.nerrors() << std::endl;
 
     //Configuring dropbroadcast
     Camkes_config::connect_port(&db,true,0,&checkpaint,0);
+
+    
+    std::cout << "errh: " << feh.nerrors() << std::endl;
 
     //Configuring discard
     re = Camkes_config::set_nports(&discard,1,0);
@@ -267,7 +291,10 @@ int main (int argc, char *argv[]) {
     Camkes_config::initialize_ports(&discard,pin_v,NULL);//We don't have output port putting in_v is fine
     debugging("No configuration call to discard",0);    
     
-   
+  
+
+    std::cout << "errh: " << feh.nerrors() << std::endl;
+
     //Configuring cpaint
     Vector<String> cpaint_config;
     cpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
@@ -283,7 +310,10 @@ int main (int argc, char *argv[]) {
     re = cpaint.configure(cpaint_config,&feh);
     debugging("finishing configuration for paint",re);
     Camkes_config::initialize_ports(&cpaint,pin_v,pout_v); //one input one output
-    
+   
+
+    std::cout << "errh: " << feh.nerrors() << std::endl;
+
     //Configuring print0 to print2 mainly for debgugging purpose
     Vector<String> print_config0;
     print_config0.push_back("port0");
@@ -327,8 +357,8 @@ int main (int argc, char *argv[]) {
     //Configuring arp element
     Vector<String> arpRes_config;
 
-    
-    arpRes_config.push_back(String(ip_addr) + " " + mac);
+    arpRes_config.push_back(String(ip_addr) + String(" ") + String(mac));
+    std::cout << arpRes_config.back().c_str() << std::endl;
     re = Camkes_config::set_nports(&arpRes,1,1); 
     debugging("setting n ports for arpResponder",re);
     re = arpRes.configure(arpRes_config,&feh); 
@@ -428,4 +458,15 @@ void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh ){
     debugging("finishing configuration for checkpaint",re);
     Camkes_config::initialize_ports(&checkpaint,pin_v,pout_v2);
 
+}
+
+void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh){
+    int re = 0;
+    Vector<String> ipgwoptions_config;
+    ipgwoptions_config.push_back(String(ip_addr));
+    debugging("setting n ports for ipgoptions",re);
+    re = Camkes_config::set_nports(&ipgwoptions,1,1);       
+    re = ipgwoptions.configure(ipgwoptions_config,&feh);
+    debugging("finishing configuration for ipgwoptions",re);
+    Camkes_config::initialize_ports(&ipgwoptions,pin_v,pout_v);
 }

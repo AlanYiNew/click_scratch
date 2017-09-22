@@ -169,6 +169,8 @@ StaticNameDB::query(const String &name, void *value, size_t vsize)
 	else
 	    l = m + 1;
     }
+
+    std::cout << "returning false" << std::endl;
     return false;
 }
 
@@ -335,17 +337,13 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 {
     NameDB *db;
 
-    std::cout << "namedb0" << std::endl;
 
     // binary-search types
     size_t l = 0;
 
-    std::cout << "namedb0.2" << std::endl;
     size_t r = _namedb_roots.size();
    
     
-    std::cout << "namedb0.3" << std::endl;
-    std::cout << "namedb0.4" << std::endl;
     size_t m;
     
     while (l < r) {
@@ -359,18 +357,23 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
             l = m + 1;
         }
     }
-    std::cout << "namedb1"  << std::endl;
     // type not found
-    if (install == install_dynamic_sentinel())
-	install = new DynamicNameDB(type, prefix, vsize);
+    if (install == install_dynamic_sentinel()){
+        std::cout << "namedb1.1" << std::endl;
+        install = new DynamicNameDB(type, prefix, vsize);
+    }
     if (install) {
-	assert(!install->_installed);
-	install->_installed = this;
-	_namedbs.push_back(install);
-	_namedb_roots.insert(_namedb_roots.begin() + l, install);
-	return install;
-    } else
-	return 0;
+        assert(!install->_installed);
+        install->_installed = this;
+        _namedbs.push_back(install);
+        //TODO;
+        std::cout << "installing " << install->_type << std::endl;
+        _namedb_roots.insert(_namedb_roots.begin() + l, install);
+        return install;
+    } else{
+        std::cout << "namedb1.5" << std::endl;
+        return 0;
+    }
 
     std::cout << "namedb2" << std::endl;
   found_root:
@@ -431,8 +434,9 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 NameDB *
 NameInfo::getdb(uint32_t type, const Element *e, size_t vsize, bool create)
 {
-    if (e) {
+
 #if !UNDER_CAMKES	
+    if (e) {
     if (NameInfo *ni = (create ? e->router()->force_name_info() : e->router()->name_info())) {
         NameDB *install = (create ? ni->install_dynamic_sentinel() : 0);
 	    String ename = e->name();
@@ -443,11 +447,13 @@ NameInfo::getdb(uint32_t type, const Element *e, size_t vsize, bool create)
 		    return ni->namedb(type, vsize, String(), install);
         }
 	}
-#endif
     }
 
+#endif
     NameDB *install = (create ? the_name_info->install_dynamic_sentinel() : 0);
-    return the_name_info->namedb(type, vsize, String(), install);
+    
+    auto ret = the_name_info->namedb(type, vsize, String(), install);
+    return ret;
 }
 
 void
@@ -519,11 +525,12 @@ bool
 NameInfo::query(uint32_t type, const Element *e, const String &name, void *value, size_t vsize)
 {
     while (1) {
+        std::cout << type << " "<< e->class_name() << " " << name.c_str() << std::endl;
         NameDB *db = getdb(type, e, vsize, false);
-        std::cout << "name info query 1" << std::endl;
+
+        std::cout << "name info query 1: " << db << std::endl;
 
         while (db) {
-
             std::cout << "name info query 2" << std::endl;
             if (db->query(name, value, vsize)){
                 std::cout << "name info query 3" << std::endl;
@@ -532,8 +539,12 @@ NameInfo::query(uint32_t type, const Element *e, const String &name, void *value
             db = db->context_parent();
 
         }
-        if (!e)
+
+        std::cout << "name info query 4 !e: "<< (!e) << std::endl;
+        if (!e){
+            std::cout << "name info query 5" << std::endl;
             return false;
+        }
         e = 0;
     }
 }

@@ -419,12 +419,16 @@ Args::find(const char *keyword, int flags, Slot *&slot_status)
 void
 Args::postparse(bool ok, Slot *slot_status)
 {
-    
+
     if (!ok && _read_status) {
         error("parse error");
         _read_status = false;
     }
+
+
     _arg_keyword = 0;
+
+
 
     if (ok) {
 
@@ -433,6 +437,7 @@ Args::postparse(bool ok, Slot *slot_status)
             _simple_slotpos +=
                 simple_slot_size(_simple_slotbuf[_simple_slotpos]);
     } else {
+
 
         _status = false;
         if (_simple_slotpos < simple_slotbuf_size)
@@ -907,12 +912,14 @@ bool
 FixedPointArg::parse(const String &str, uint32_t &result, const ArgContext &args)
 {
     uint32_t x;
-    if (!underparse(str, false, x))
+    if (!underparse(str, false, x)){
         return false;
-    else if (status == status_range) {
+    }   else if (status == status_range) {
+        
         args.error("out of range, bound %s", cp_unparse_real2(x, fraction_bits).c_str());
         return false;
     } else {
+
         result = x;
         return true;
     }

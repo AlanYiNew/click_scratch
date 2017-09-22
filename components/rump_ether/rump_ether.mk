@@ -60,6 +60,10 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/standard/checkpaint.o \
 		$(SOURCE_DIR)/elements/icmp/icmperror.hh \
 		$(SOURCE_DIR)/elements/icmp/icmperror.o \
+		$(SOURCE_DIR)/elements/ip/ipgwoptions.hh \
+		$(SOURCE_DIR)/elements/ip/ipgwoptions.o \
+		$(SOURCE_DIR)/elements/ip/ipnameinfo.hh \
+		$(SOURCE_DIR)/elements/ip/ipnameinfo.o \
 		$(CLICK_LIBS)
 	@echo ${CURRENT_DIR}
 	$(RUMPRUN_CXX) -no-pie \

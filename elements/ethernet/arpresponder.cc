@@ -78,6 +78,8 @@ ARPResponder::add(Vector<Entry> &v, const String &arg, ErrorHandler *errh) const
     }
     for (int i = old_vsize; i < v.size(); ++i)
 	v[i].ena = ena;
+
+    std::cout << "return succeed" << std::endl;
     return 0;
 }
 
@@ -123,13 +125,11 @@ ARPResponder::configure(Vector<String> &conf, ErrorHandler *errh)
 {
     Vector<Entry> v;
     for (int i = 0; i < conf.size(); i++) {
-	PrefixErrorHandler perrh(errh, "argument " + String(i) + ": ");
+	    PrefixErrorHandler perrh(errh, "argument " + String(i) + ": ");
         add(v, conf[i], &perrh);
     }
 
-    std::cout << "check1" << std::endl;
-    errh->nerrors();
-    std::cout << "check2" << std::endl;
+    
 
     if (!errh->nerrors()) {
 	    normalize(v, true, errh);

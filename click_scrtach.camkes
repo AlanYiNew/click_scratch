@@ -125,8 +125,8 @@ assembly {
     rump_ether0.ip_addr = "192.168.2.98";
     rump_ether1.ip_addr = "192.168.1.98";
    
-    rump_ether0.mac = "00:1b:21:41:25:56";
-    rump_ether1.mac = "00:1b:21:41:25:57";
+    rump_ether0.mac = "00:1b:21:41:25:57";
+    rump_ether1.mac = "00:1b:21:41:25:56";
  
     //Define static routing table
     //0 to this machine 
