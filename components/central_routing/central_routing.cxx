@@ -157,21 +157,23 @@ int main(int argc, char *argv[]) {
 
     int count = 2;
     int c = 0;
-    Camkes_proxy_m cp[1] = {{&clir,icmp_buffer_buf,1}};
+    Camkes_proxy_m cp[2] = {{&clir,icmp_buffer_buf,2},
+        {&strip,buffer_buf,2}};
     while(true) {
         /* Wait for event */
 
         ev_wait();
         
         std::cout << "unblocked by id:" << c << std::endl; 
-        char *buffer_str;
-        for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c=(c+1)%NUM_COMPONENT){
-            std::cout << "component: " << c << " ready: " << ((message_t *)buffer_buf(c))->ready << std::endl;
-        }
           
         message_t * message  = ((message_t *)buffer_buf(c));
 
         if (count-- > 0) {
+            char *buffer_str;
+            for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c=(c+1)%NUM_COMPONENT){
+                std::cout << "component: " << c << " ready: " << ((message_t *)buffer_buf(c))->ready << std::endl;
+            }
+            
             buffer_str = (char*)&(message->content); 
             int len = strnlen(buffer_str, PACKET_MAX_LEN);
             for (int i = 0; i < len / 2; ++i) {
@@ -181,26 +183,18 @@ int main(int argc, char *argv[]) {
                 buffer_str[swap_idx] = tmp;
             }
             printf("result strng:%s\n",buffer_str);
+        
+            ((message_t *)buffer_buf(c))->ready=0;
+        
+            /* Signal to client that we are finished */
+            ev_func[c]();  
         }   else {
-            Packet *p; 
-            //TODO This line will potential cause memory leak, no time to check at the moment
-            Camkes_config::deserialize_packet(p,(void*)(&(message->content)));
-            printf("%s\n",message->content); 
-            printf("Pcaket length %d\n",p->length());
-      
-            const click_ip *ip = reinterpret_cast<const click_ip *>(p->data() + 14);
-
-            std::cout << "ip->v:" << ip->ip_v << std::endl;
-            
-            strip.push(0,p); 
             //A function detects if a pakcet is injected in the corresponding buffer
-            Camkes_config::start_proxy(cp,1); 
+            Camkes_config::start_proxy(cp,2); 
         }
         
-        /* Signal to client that we are finished */
-        ev_func[c](); 
+       
         
-        ((message_t *)buffer_buf(c))->ready=0;
         
         //It's dynamically acllocated in camkes_config
         //Not a good design but haven't found en effective way to do this 

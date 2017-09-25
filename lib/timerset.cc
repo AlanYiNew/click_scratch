@@ -197,4 +197,80 @@ TimerSet::run_timers(RouterThread *thread, Master *master)
     _timer_lock.release();
 }
 
+#if UNDER_CAMKES
+void TimerSet::run_timers(){
+    
+    _timer_check = Timestamp::now_steady();
+    heap_element *th = _timer_heap.begin();
+    if (th != NULL && th->expiry_s <= _timer_check) {
+
+        // potentially adjust timer stride
+        Timestamp adj_expiry = th->expiry_s + Timer::adjustment();
+        if (adj_expiry <= _timer_check) {
+            _timer_count = 0;
+            if (_timer_stride > 1)
+                _timer_stride = (_timer_stride * 4) / 5;
+        } else if (++_timer_count >= 12) {
+            _timer_count = 0;
+            if (++_timer_stride >= _max_timer_stride)
+                _timer_stride = _max_timer_stride;
+        }
+
+
+        // actually run timers
+        int max_timers = 64;
+        do {
+            Timer *t = th->t;
+            assert(t->expiry_steady() == th->expiry_s);
+
+            pop_heap<4>(_timer_heap.begin(), _timer_heap.end(), heap_less(), heap_place());
+            _timer_heap.pop_back();
+            set_timer_expiry();
+            t->_schedpos1 = 0;
+
+            run_one_timer(t);
+        } while (_timer_heap.size() > 0
+                && (th = _timer_heap.begin(), th->expiry_s <= _timer_check)
+                && --max_timers >= 0);
+
+
+
+        // If we ran out of timers to run, then perhaps there's an
+        // infinite timer loop or one timer is very far behind system
+        // time.  Eventually the system would catch up and run all timers,
+        // but in the meantime other timers could starve.  We detect this
+        // case and run ALL expired timers, reducing possible damage.
+        if (max_timers < 0) {
+            _timer_runchunk.reserve(32);
+
+            do {
+                Timer *t = th->t;
+                pop_heap<4>(_timer_heap.begin(), _timer_heap.end(), heap_less(), heap_place());
+                _timer_heap.pop_back();
+                t->_schedpos1 = -_timer_runchunk.size() - 1;
+
+                _timer_runchunk.push_back(t);
+            } while (_timer_heap.size() > 0
+                    && (th = _timer_heap.begin(), th->expiry_s <= _timer_check));
+            set_timer_expiry();
+
+            Vector<Timer*>::iterator i = _timer_runchunk.begin();
+            for (;  i != _timer_runchunk.end(); ++i)
+                if (*i) {
+                    (*i)->_schedpos1 = 0;
+                    run_one_timer(*i);
+                }
+
+            // reschedule unrun timers if stopped early
+            for (; i != _timer_runchunk.end(); ++i)
+                if (*i) {
+                    (*i)->_schedpos1 = 0;
+                    (*i)->schedule_at_steady((*i)->_expiry_s);
+                }
+            _timer_runchunk.clear();
+        }
+    }
+
+}
+#endif
 CLICK_ENDDECLS

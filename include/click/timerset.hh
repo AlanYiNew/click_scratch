@@ -30,6 +30,10 @@ class TimerSet { public:
 
     void run_timers(RouterThread *thread, Master *master);
 
+#if UNDER_CAMKES
+    void run_timers();
+#endif
+
     inline void fence();
   private:
 

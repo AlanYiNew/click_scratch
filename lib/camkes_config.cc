@@ -33,8 +33,13 @@ void Camkes_config::initialize(Element* tar, ErrorHandler * eh){
 
 
 void Camkes_config::start_proxy(Camkes_proxy_m *cp,int num){
-    for (int i = 0; i < num; i++){
-        cp[num].push();
+    while (true){
+        _timerset.run_timers();
+    
+        for (int i = 0; i < num; i++){
+            std::cout << "num " << i <<std::endl;
+            cp[num].push();
+        }
     }
 }
 
@@ -42,6 +47,7 @@ void Camkes_config::start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy
     while (true){
         for (int i = 0 ; i < num ;i++)
             cp[i].push();
+        _timerset.run_timers(); 
         recv->selected(0,0);
         send->run_task(NULL);
     }
@@ -136,6 +142,7 @@ void Camkes_proxy::push(){
 }
 
 Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func ,int nclient){
+    std::cout << "name " << elemm->class_name() << std::endl;
     this->func = func; 
     this->elem = elemm;
     this->nclient = nclient; 
@@ -143,6 +150,7 @@ Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func 
 
 void Camkes_proxy_m::push(){
     for (int i = 0; i < nclient; i++){
+        std::cout << "proxy" << elem->class_name() << std::endl;
         if (((message_t*)func(i))->ready){
             Packet * p;
             Camkes_config::deserialize_packet(p,(void*)(&(((message_t*)func(i))->content)));
