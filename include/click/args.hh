@@ -439,7 +439,6 @@ class Args : public ArgContext {
     }
     template <typename P, typename T>
     Args &read(const char *keyword, int flags, P parser, T &x) {
-        std::cout << "args read" << std::endl;
         args_base_read(this, keyword, flags, parser, x);
         return *this;
     }
@@ -751,11 +750,8 @@ class Args : public ArgContext {
     void base_read(const char *keyword, int flags, P parser, T &variable) {
         Slot *slot_status;
         if (String str = find(keyword, flags, slot_status)) {
-            std::cout << "inside base read" << std::endl;
             T *s = Args_parse_helper<P>::slot(variable, *this);
-            std::cout << "middle_parse_helper "  << std::endl;
             auto val = Args_parse_helper<P>::parse(parser, str, *s, *this);
-            std::cout << "Args_parse_helper " << val << std::endl;
             postparse(s && val, slot_status);
         }
     }
@@ -954,7 +950,6 @@ template<typename P, typename T>
 void args_base_read(Args *args, const char *keyword, int flags,
                     P parser, T &variable)
 {
-    std::cout << "args base read" << std::endl;
     args->base_read(keyword, flags, parser, variable);
 }
 
@@ -1077,7 +1072,6 @@ class IntArg : public NumArg { public:
     template<typename V>
     bool parse(const String &str, V &result, const ArgContext &args = blank_args) {
         V x;
-        std::cout << parse_saturating(str,x ,args) <<std::endl;
         if (!parse_saturating(str, x, args)
             || (status && status != status_range)){
             return false;

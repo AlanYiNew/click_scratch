@@ -59,7 +59,7 @@
 #include <iomanip>
 #include "elements/standard/dropbroadcasts.hh"
 #include "elements/standard/checkpaint.hh"
-#include "elements/icmp/icmperror.hh"
+#include "elements/camkes/camkes_icmperror.hh"
 #include "elements/ip/ipgwoptions.hh"
 #include "elements/ip/fixipsrc.hh"
 #include "elements/ip/ipnameinfo.hh"
@@ -73,6 +73,7 @@ extern "C" {
     void camkes_ev1_wait(void);
     const char * wm_val;
     void *db_buffer;
+    void *icmp_buffer;
     const char * camkes_id_attributes;
     const char * ip_addr;
     const char * mac;
@@ -87,6 +88,7 @@ extern "C" {
 #pragma weak camkes_id_attributes
 #pragma weak ip_addr
 #pragma weak mac
+#pragma weak icmp_buffer;
 
 extern void click_export_elements();
 
@@ -152,10 +154,14 @@ const int pout_v[1] = {1};//output direction
 
 const int pout_v2[2] = {1,1};
 void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh );
-void setup_icmprd(ICMPError& icmprd,FileErrorHandler &feh );
+void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh );
 void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh);
+void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh);
+void setup_clsf(Classifier &clsf,FileErrorHandler &feh);
+void setup_tDev(ToDevice & tDev,FromDevice & fDev, FileErrorHandler & feh);
+void setup_fDev(FromDevice & fDev, FileErrorHandler & feh);
 
-int main (int argc, char *argv[]) {
+    int main (int argc, char *argv[]) {
     message_t * buffer_str = (message_t*)camkes_buffer;
     std::cout << camkes_buffer << std::endl;    
     
@@ -237,19 +243,21 @@ int main (int argc, char *argv[]) {
     //Fullnotequeue
     SimpleQueue queue;
     //paint element used for icmp
-    Camkes_Paint cpaint;
+    Camkes_Paint cpaint((message_t*)camkes_buffer);
     //print 0
     Print print0;
     //print 1
     Print print1;
     //print 2
     Print print2;
+    //print 3 
+    Print print3;
     //DropBroadCasts
     DropBroadcasts db;
     //CheckPaint
     CheckPaint checkpaint;
     //ICMPError redirect
-    ICMPError icmprd;
+    Camkes_ICMPError cicmprd((message_t*)icmp_buffer);
     //IPGWOptions
     IPGWOptions ipgwoptions;
 
@@ -264,55 +272,32 @@ int main (int argc, char *argv[]) {
     setup_ipgwoptions(ipgwoptions,feh);
     Camkes_config::connect_port(&ipgwoptions,true,0,&print2,0);
 
-    std::cout << "errh: " << feh.nerrors() << std::endl;
 
-    setup_icmprd(icmprd,feh);
-    Camkes_config::connect_port(&icmprd,true,0,&print0,0);
-
-
-    std::cout << "errh: " << feh.nerrors() << std::endl;
+    setup_cicmprd(cicmprd,feh);
+    Camkes_config::connect_port(&cicmprd,true,0,&print0,0);
 
     setup_checkpaint(checkpaint,feh); 
     Camkes_config::connect_port(&checkpaint,true,0,&ipgwoptions,0);
     Camkes_config::connect_port(&checkpaint,true,1,&print2,0);
 
-
-    std::cout << "errh: " << feh.nerrors() << std::endl;
-
-    //Configuring dropbroadcast
     Camkes_config::connect_port(&db,true,0,&checkpaint,0);
 
     
-    std::cout << "errh: " << feh.nerrors() << std::endl;
-
     //Configuring discard
     re = Camkes_config::set_nports(&discard,1,0);
     debugging("setting n ports for discard",re);
     Camkes_config::initialize_ports(&discard,pin_v,NULL);//We don't have output port putting in_v is fine
     debugging("No configuration call to discard",0);    
-    
-  
-
-    std::cout << "errh: " << feh.nerrors() << std::endl;
 
     //Configuring cpaint
     Vector<String> cpaint_config;
     cpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
-    char camkes_buf_addr[sizeof(unsigned long)+1];
-    char event_func_addr[sizeof(unsigned long)+1];
-    sprintf(camkes_buf_addr, "%lu", (unsigned long)camkes_buffer);
-    std::cout <<"camkes buffer addr:" <<(unsigned long*) camkes_buffer << std::endl;
-    sprintf(event_func_addr, "%lu", (unsigned long)camkes_ev_emit);
-    cpaint_config.push_back(String("CAMKES_BUF ") + camkes_buf_addr);
-    cpaint_config.push_back(String("EVENT_FUNC ") + event_func_addr);
     re = Camkes_config::set_nports(&cpaint,1,1);
     debugging("setting n ports for paint",re);
     re = cpaint.configure(cpaint_config,&feh);
     debugging("finishing configuration for paint",re);
     Camkes_config::initialize_ports(&cpaint,pin_v,pout_v); //one input one output
    
-
-    std::cout << "errh: " << feh.nerrors() << std::endl;
 
     //Configuring print0 to print2 mainly for debgugging purpose
     Vector<String> print_config0;
@@ -343,7 +328,6 @@ int main (int argc, char *argv[]) {
     Camkes_config::initialize_ports(&print2,pin_v,pout_v); //one input one output
     Camkes_config::connect_port(&print2,true,0,&discard,0);
 
-    Print print3;
     Vector<String> print_config3;
     print_config3.push_back("port3");
     re = Camkes_config::set_nports(&print3,1,1);
@@ -353,64 +337,21 @@ int main (int argc, char *argv[]) {
     Camkes_config::initialize_ports(&print3,pin_v,pout_v); //one input one output
     Camkes_config::connect_port(&print3,true,0,&discard,0); 
 
-    
-    //Configuring arp element
-    Vector<String> arpRes_config;
-
-    arpRes_config.push_back(String(ip_addr) + String(" ") + String(mac));
-    std::cout << arpRes_config.back().c_str() << std::endl;
-    re = Camkes_config::set_nports(&arpRes,1,1); 
-    debugging("setting n ports for arpResponder",re);
-    re = arpRes.configure(arpRes_config,&feh); 
-    debugging("finish configuration for arpResponder",re);
-    const int arpRes_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
-    const int arpRes_out_v[1] = {1};
-    Camkes_config::initialize_ports(&arpRes,arpRes_in_v,arpRes_out_v); //one input three output
+    setup_arpRes(arpRes,feh);  
     Camkes_config::connect_port(&arpRes,true,0,&print0,0);//true int Elment int
 
-    //Configuring classifer 
-    //For etherType infomration look at here https://en.wikipedia.org/wiki/EtherType
-    Vector<String> clsf_config;//At the moment hard code a vector to configure it
-    clsf_config.push_back("12/0806 20/0001");
-    clsf_config.push_back("12/0806 20/0002");
-    clsf_config.push_back("12/0800");
-    clsf_config.push_back("-");  
-    re = Camkes_config::set_nports(&clsf,1,4);
-    debugging("setting n ports for classifier",re);
-    re = clsf.configure(clsf_config,&feh);
-    debugging("finish configuration for classifier",re);
-    const int clsf_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
-    const int clsf_out_v[4] = {1,1,1,1};
-    Camkes_config::initialize_ports(&clsf,clsf_in_v,clsf_out_v); //one input three output
+    setup_clsf(clsf,feh);
     Camkes_config::connect_port(&clsf,true,0,&arpRes,0);//true int Elment int
     Camkes_config::connect_port(&clsf,true,1,&print1,0);
     Camkes_config::connect_port(&clsf,true,2,&cpaint,0);
     Camkes_config::connect_port(&clsf,true,3,&print3,0); 
 
     //Configuring fromDevice
-    Vector<String> fDev_config;
-    fDev_config.push_back((char *)wm_val);
-    fDev_config.push_back("PROMISC true");
-    re = Camkes_config::set_nports(&fDev,1,1);
-    debugging("setting n ports for fDev",re);
-    re = fDev.configure(fDev_config,&feh);
-    debugging("finishing configuration for fDev",re);
-    Camkes_config::initialize_ports(&fDev,pin_v,pout_v); //one input one output
+    setup_fDev(fDev,feh); 
     Camkes_config::connect_port(&fDev,true,0,&clsf,0);
-    debugging("attempting to initialize fDev",re);
-    Camkes_config::initialize(&fDev,&feh);
-
+    
     //Configuring toDevice 
-    Vector<String> tDev_config;
-    tDev_config.push_back((char *)wm_val);
-    re = Camkes_config::set_nports(&tDev,1,0);
-    debugging("setting n ports for tDev",re);
-    re = tDev.configure(tDev_config,&feh,&fDev);
-    debugging("finishing configuration for tDev",re);
-    const int tDev_in_v[1] = {2};
-    Camkes_config::initialize_ports(&tDev,tDev_in_v,NULL); //one input no output
-    debugging("attempting to initialize tDev",re);
-    Camkes_config::initialize(&tDev,&feh);
+    setup_tDev(tDev,fDev,feh);
     Camkes_config::connect_port(&tDev,false,0,&queue,0);    
     
     //Configuring queue 
@@ -433,7 +374,7 @@ int main (int argc, char *argv[]) {
     return 0;
 
 }
-void setup_icmprd(ICMPError& icmprd,FileErrorHandler &feh ){
+void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh ){
     //Configuring icmprd
     int re = 0;
     Vector<String> icmprd_config;
@@ -469,4 +410,60 @@ void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh){
     re = ipgwoptions.configure(ipgwoptions_config,&feh);
     debugging("finishing configuration for ipgwoptions",re);
     Camkes_config::initialize_ports(&ipgwoptions,pin_v,pout_v);
+}
+
+void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh){
+    //Configuring arp element
+    Vector<String> arpRes_config;
+    arpRes_config.push_back(String(ip_addr) + String(" ") + String(mac));
+    int re = Camkes_config::set_nports(&arpRes,1,1); 
+    debugging("setting n ports for arpResponder",re);
+    re = arpRes.configure(arpRes_config,&feh); 
+    debugging("finish configuration for arpResponder",re);
+    const int arpRes_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
+    const int arpRes_out_v[1] = {1};
+    Camkes_config::initialize_ports(&arpRes,arpRes_in_v,arpRes_out_v); //one input three output
+}
+
+void setup_clsf(Classifier &clsf,FileErrorHandler &feh){
+    //Configuring classifer 
+    //For etherType infomration look at here https://en.wikipedia.org/wiki/EtherType
+    Vector<String> clsf_config;//At the moment hard code a vector to configure it
+    clsf_config.push_back("12/0806 20/0001");
+    clsf_config.push_back("12/0806 20/0002");
+    clsf_config.push_back("12/0800");
+    clsf_config.push_back("-");  
+    int re = Camkes_config::set_nports(&clsf,1,4);
+    debugging("setting n ports for classifier",re);
+    re = clsf.configure(clsf_config,&feh);
+    debugging("finish configuration for classifier",re);
+    const int clsf_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
+    const int clsf_out_v[4] = {1,1,1,1};
+    Camkes_config::initialize_ports(&clsf,clsf_in_v,clsf_out_v); //one input four output
+}
+
+void setup_tDev(ToDevice & tDev,FromDevice & fDev, FileErrorHandler & feh){
+    Vector<String> tDev_config;
+    tDev_config.push_back((char *)wm_val);
+    int re = Camkes_config::set_nports(&tDev,1,0);
+    debugging("setting n ports for tDev",re);
+    re = tDev.configure(tDev_config,&feh,&fDev);
+    debugging("finishing configuration for tDev",re);
+    const int tDev_in_v[1] = {2};
+    Camkes_config::initialize_ports(&tDev,tDev_in_v,NULL); //one input no output
+    debugging("attempting to initialize tDev",re);
+    Camkes_config::initialize(&tDev,&feh);
+}
+
+void setup_fDev(FromDevice & fDev, FileErrorHandler & feh){
+    Vector<String> fDev_config;
+    fDev_config.push_back((char *)wm_val);
+    fDev_config.push_back("PROMISC true");
+    int re = Camkes_config::set_nports(&fDev,1,1);
+    debugging("setting n ports for fDev",re);
+    re = fDev.configure(fDev_config,&feh);
+    debugging("finishing configuration for fDev",re);
+    Camkes_config::initialize_ports(&fDev,pin_v,pout_v); //one input one output
+    debugging("attempting to initialize fDev",re);
+    Camkes_config::initialize(&fDev,&feh);
 }

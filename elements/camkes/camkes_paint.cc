@@ -29,9 +29,10 @@
 #include <click/camkes_config.hh>
 CLICK_DECLS
 
-Camkes_Paint::Camkes_Paint()
-{
-}
+Camkes_Paint::Camkes_Paint(){}
+
+Camkes_Paint::Camkes_Paint(message_t* camkes_buf):_camkes_buf(camkes_buf){}
+
 
 int
 Camkes_Paint::configure(Vector<String> &conf, ErrorHandler *errh)
@@ -39,8 +40,6 @@ Camkes_Paint::configure(Vector<String> &conf, ErrorHandler *errh)
     int anno = PAINT_ANNO_OFFSET;
     if (Args(conf, this, errh)
 	.read_mp("COLOR", _color)
-	.read_mp("CAMKES_BUF",reinterpret_cast<unsigned long&>(_camkes_buf))
-    .read_mp("EVENT_FUNC",reinterpret_cast<unsigned long&>(_ev_emit))
     .read_p("ANNO", AnnoArg(1), anno).complete() < 0)
 	return -1;
     _anno = anno;
@@ -59,7 +58,6 @@ void Camkes_Paint::push(int port, Packet *p)
         while (((volatile message_t*)_camkes_buf)->ready);
         Camkes_config::packet_serialize(dst,p);        
         _camkes_buf->ready = 1; 
-        _ev_emit(); 
     }
         
 }

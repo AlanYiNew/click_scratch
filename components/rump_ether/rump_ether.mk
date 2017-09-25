@@ -58,8 +58,8 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/standard/dropbroadcasts.o \
 		$(SOURCE_DIR)/elements/standard/checkpaint.hh \
 		$(SOURCE_DIR)/elements/standard/checkpaint.o \
-		$(SOURCE_DIR)/elements/icmp/icmperror.hh \
-		$(SOURCE_DIR)/elements/icmp/icmperror.o \
+		$(SOURCE_DIR)/elements/camkes/camkes_icmperror.hh \
+		$(SOURCE_DIR)/elements/camkes/camkes_icmperror.o \
 		$(SOURCE_DIR)/elements/ip/ipgwoptions.hh \
 		$(SOURCE_DIR)/elements/ip/ipgwoptions.o \
 		$(SOURCE_DIR)/elements/ip/ipnameinfo.hh \

@@ -22,6 +22,7 @@ component rumprun_ether {
     consumes IRQ eth_irq;
     dataport message_t camkes_buffer;
     dataport message_t db_buffer;
+    dataport message_t icmp_buffer;    
     emits SomethingHappenedEvent camkes_ev;
     consumes SomethingHappenedEvent camkes_ev1;
     //attribute string server_global_endpoint;
@@ -30,4 +31,5 @@ component rumprun_ether {
     attribute string camkes_id_attributes;
     attribute string ip_addr;
     attribute string mac;
+
 }

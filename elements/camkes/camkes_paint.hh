@@ -30,10 +30,9 @@ class Camkes_Paint : public Element { public:
 
     Camkes_Paint() CLICK_COLD;
     message_t *_camkes_buf;
-    eventfunc_t  _ev_emit; 
     const char *class_name() const		{ return "Camkes Paint"; }
     const char *port_count() const		{ return PORTS_1_1; }
-
+    Camkes_Paint(message_t* camkes_buf);
     int configure(Vector<String> &, ErrorHandler *) CLICK_COLD;
     bool can_live_reconfigure() const		{ return true; }
     void add_handlers() CLICK_COLD;

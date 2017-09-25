@@ -49,6 +49,7 @@ extern "C" {
 //    const char *ip_addr2;
     const char * rt[RT_NUM_ENTRY];
     void* db_buffer_buf(int);
+    void* icmp_buffer_buf(int);
 }
 
 #pragma weak ev1_emit
@@ -58,7 +59,7 @@ extern "C" {
 #pragma weak ev_wait
 #pragma weak ip_addr1
 #pragma weak rt
-
+#pragma weak icmp_buffer_buf
 
 
 
@@ -156,6 +157,7 @@ int main(int argc, char *argv[]) {
 
     int count = 2;
     int c = 0;
+    Camkes_proxy_m cp[1] = {{&clir,icmp_buffer_buf,1}};
     while(true) {
         /* Wait for event */
 
@@ -191,7 +193,8 @@ int main(int argc, char *argv[]) {
             std::cout << "ip->v:" << ip->ip_v << std::endl;
             
             strip.push(0,p); 
-
+            //A function detects if a pakcet is injected in the corresponding buffer
+            Camkes_config::start_proxy(cp,1); 
         }
         
         /* Signal to client that we are finished */

@@ -14,7 +14,17 @@ class Camkes_proxy{
         void push();
 };
 
+class Camkes_proxy_m{
+public:
+    using buf_func_t = void* (*)(int);
+    Camkes_proxy_m(Element * elemm, buf_func_t  func,int nclient);
+    void push();
+private:
+    Element * elem;
+    buf_func_t func;
+    int nclient;
 
+};
 
 
 class Camkes_config{
@@ -36,6 +46,9 @@ class Camkes_config{
         static void deserialize_packet(Packet* &dst,void* src);
 
         static void recycle(Packet * p);
+
+        static void  start_proxy(Camkes_proxy_m * camkes_buf,int n);
+ 
 };
 
 

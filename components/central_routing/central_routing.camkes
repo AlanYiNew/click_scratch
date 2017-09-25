@@ -21,6 +21,7 @@ component central_routing {
     control;
     dataport message_t buffer;
     dataport message_t db_buffer;
+    dataport message_t icmp_buffer;
     consumes SomethingHappenedEvent ev;
 
     //output buffer and output downstream event

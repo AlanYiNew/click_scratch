@@ -42,7 +42,9 @@ assembly {
 
      connection seL4MultiSharedData conn0(from rump_ether0.camkes_buffer, to routing.buffer);
      connection seL4MultiSharedData conn1(from rump_ether1.camkes_buffer, to routing.buffer);
-    
+
+      connection seL4MultiSharedData icmp0(from rump_ether0.icmp_buffer, to routing.icmp_buffer);
+     connection seL4MultiSharedData icmp1(from rump_ether1.icmp_buffer, to routing.icmp_buffer);    
 
      connection seL4MultiNotification simpleEvent1(from rump_ether0.camkes_ev, to routing.ev);
      connection seL4Notification simpleEvent2(from routing.ev1, to rump_ether0.camkes_ev1);
@@ -121,6 +123,9 @@ assembly {
 
     rump_erher0.camkes_id_attributes = "0";
     rump_ether1.camkes_id_attributes = "1";
+
+    rump_ether0.icmp_buffer_attributes = "0";
+    rump_ether1.icmp_buffer_attributes = "1";
 
     rump_ether0.ip_addr = "192.168.2.98";
     rump_ether1.ip_addr = "192.168.1.98";

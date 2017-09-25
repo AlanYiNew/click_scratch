@@ -56,13 +56,6 @@ ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
     Vector<IPAddress> bad_addrs;
     bool use_fix_anno = true;
 
-    std::cout << errh->nerrors() <<std::endl;
-
-    std::cout << "configuring " << class_name() << std::endl;
-    for (auto &k :conf){
-        errh->warning("conf %s\n",k.c_str());
-    }
-    std::cout << "type" << NameInfo::T_ICMP_TYPE << std::endl;
 
     std::cout << NameInfo::T_ICMP_TYPE <<std::endl;
     if (Args(conf, this, errh)

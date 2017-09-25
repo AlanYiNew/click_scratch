@@ -528,21 +528,16 @@ NameInfo::query(uint32_t type, const Element *e, const String &name, void *value
         std::cout << type << " "<< e->class_name() << " " << name.c_str() << std::endl;
         NameDB *db = getdb(type, e, vsize, false);
 
-        std::cout << "name info query 1: " << db << std::endl;
 
         while (db) {
-            std::cout << "name info query 2" << std::endl;
             if (db->query(name, value, vsize)){
-                std::cout << "name info query 3" << std::endl;
                 return true;
             }
             db = db->context_parent();
 
         }
 
-        std::cout << "name info query 4 !e: "<< (!e) << std::endl;
         if (!e){
-            std::cout << "name info query 5" << std::endl;
             return false;
         }
         e = 0;

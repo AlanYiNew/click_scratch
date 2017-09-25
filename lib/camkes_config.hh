@@ -24,6 +24,8 @@ class Camkes_config{
         static void deserialize_packet(Packet* &dst,void* src);
 
         static void recycle(Packet * p);
+
+        void Camkes_config::start_proxy(Camkes_proxy_m *cp,int num);
 };
 
 class Camkes_proxy{
@@ -31,8 +33,16 @@ class Camkes_proxy{
     Element * elem;
     message_t * buffer;
     public:
-        Camkes_proxy(Element * elemm, message_t * bufferr):elem(elemm),buffer(bufferr){}
+        Camkes_proxy(Element * elemm, message_t * bufferr):elem(elemm),buffer(bufferr){};
         void push();
 };
 
-
+class Camkes_proxy_m{
+    private:
+    Element * elem;
+    using buf_func_t =  message_t * (*func)(int);
+    buf_func_t func;
+       public:
+        Camkes_proxy(Element * elemm, buf_func_t func):elem(elemm),buffer(bufferr){};
+        void push();
+};

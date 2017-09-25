@@ -23,6 +23,14 @@ void Camkes_config::initialize(Element* tar, ErrorHandler * eh){
     tar->initialize(eh);
 }
 
+
+
+void Camkes_config::start_proxy(Camkes_proxy_m *cp,int num){
+    for (int i = 0; i < num; i++){
+        cp[num].push();
+    }
+}
+
 void Camkes_config::start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy * cp,int num){
     while (true){
         for (int i = 0 ; i < num ;i++)
@@ -120,4 +128,19 @@ void Camkes_proxy::push(){
     }
 }
 
+Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func ,int nclient){
+    this->func = func; 
+    this->elem = elemm;
+    this->nclient = nclient; 
+}
 
+void Camkes_proxy_m::push(){
+    for (int i = 0; i < nclient; i++){
+        if (((message_t*)func(i))->ready){
+            Packet * p;
+            Camkes_config::deserialize_packet(p,(void*)(&(((message_t*)func(i))->content)));
+            ((message_t*)func(i))->ready = 0;
+            elem->push(0,p);
+        }
+    }
+}
