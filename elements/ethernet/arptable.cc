@@ -52,13 +52,19 @@ ARPTable::configure(Vector<String> &conf, ErrorHandler *errh)
 	.read("TIMEOUT", timeout)
 	.complete() < 0)
 	return -1;
+    std::cout << "table1" << std::endl;
     if (_capacity_slim_factor == 0)
 	return errh->error("CAPACITY_SLIM_FACTOR cannot be zero");
     set_timeout(timeout);
+    
+    std::cout << "table2" << std::endl;
     if (_timeout_j) {
+        std::cout << "table3" << std::endl;
 	_expire_timer.initialize(this);
+    std::cout << "table4" << std::endl;
 	_expire_timer.schedule_after_sec(_timeout_j / CLICK_HZ);
     }
+
     return 0;
 }
 

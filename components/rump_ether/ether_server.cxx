@@ -63,7 +63,10 @@
 #include "elements/ip/ipgwoptions.hh"
 #include "elements/ip/fixipsrc.hh"
 #include "elements/ip/ipnameinfo.hh"
-#include <click/nameinfo.hh>
+#include "elements/ip/decipttl.hh"
+#include "elements/ip/ipfragmenter.hh"
+#include <click/nameinfo.hh>"
+#include "elements/ethernet/arpquerier.hh"
 
 /* XXX: CAmkES symbols that are linked in after this file is compiled.
    They need to be marked as weak and this is the current hacky way it is done */
@@ -152,6 +155,7 @@ void my_packet_handler(
 const int pin_v[1] = {1};//input direction
 const int pout_v[1] = {1};//output direction
 
+const int pin_v2[2] = {1,1};
 const int pout_v2[2] = {1,1};
 void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh );
 void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh );
@@ -162,7 +166,13 @@ void setup_tDev(ToDevice & tDev,FromDevice & fDev, FileErrorHandler & feh);
 void setup_fDev(FromDevice & fDev, FileErrorHandler & feh);
 void setup_cpaint(Camkes_Paint& cpaint,FileErrorHandler & feh);
 void setup_queue(SimpleQueue& queue,FileErrorHandler &feh);
-
+void setup_cicmpbp(Camkes_ICMPError& icmpbp,FileErrorHandler &feh );
+void setup_fips(FixIPSrc& fips,FileErrorHandler &feh);
+void setup_dipttl(DecIPTTL &dipttl, FileErrorHandler &feh);
+void setup_cicmpttl(Camkes_ICMPError& icmpttl,FileErrorHandler &feh );
+void setup_ipf(IPFragmenter& ipf,FileErrorHandler &feh );
+void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh );
+void setup_arpQue(ARPQuerier& arpQue,FileErrorHandler &feh );
 int main (int argc, char *argv[]) {
     message_t * buffer_str = (message_t*)camkes_buffer;
     std::cout << camkes_buffer << std::endl;    
@@ -260,24 +270,68 @@ int main (int argc, char *argv[]) {
     CheckPaint checkpaint;
     //ICMPError redirect
     Camkes_ICMPError cicmprd((message_t*)icmp_buffer);
+    //ICMPError parameter problem
+    Camkes_ICMPError cicmpbp((message_t*)icmp_buffer);
+    //ICMPError ttl 
+    Camkes_ICMPError cicmpttl((message_t*)icmp_buffer);
+    //ICMPError must flag 
+    Camkes_ICMPError cicmpmf((message_t*)icmp_buffer); 
     //IPGWOptions
     IPGWOptions ipgwoptions;
+    //IPFixSrc
+    FixIPSrc fips;
+    //DecIPTTL
+    DecIPTTL dipttl;
+    //IPFragmenter
+    IPFragmenter ipf;
+    //ARPQuerier
+    ARPQuerier arpQue;
 
     int re = 0;
    
     NameInfo::static_initialize();
+    IPNameInfo::static_initialize();
+
 
     //Create a std erro handler for outputing message
     FileErrorHandler feh(stderr,"");
     IPNameInfo::static_initialize(); 
 
+    //setup arpQue
+    setup_arpQue(arpQue,feh);
+    Camkes_config::connect_port(&arpQue,true,0,&queue,0);
+    
+    //setup ipf
+    setup_ipf(ipf,feh);
+    Camkes_config::connect_port(&ipf,true,0,&arpQue,0);
+    Camkes_config::connect_port(&ipf,true,1,&cicmpmf,0);
+
+    //setup dipttl
+    setup_dipttl(dipttl,feh);
+    Camkes_config::connect_port(&dipttl,true,0,&ipf,0);
+    Camkes_config::connect_port(&dipttl,true,1,&cicmpttl,0);
+    
+    //setuo fips
+    setup_fips(fips,feh);
+    Camkes_config::connect_port(&fips,true,0,&dipttl,0);
+    
     //setup ipgwoptions
     setup_ipgwoptions(ipgwoptions,feh);
-    Camkes_config::connect_port(&ipgwoptions,true,0,&print2,0);
+    Camkes_config::connect_port(&ipgwoptions,true,0,&fips,0);
+    Camkes_config::connect_port(&ipgwoptions,true,1,&cicmpbp,0);
+
+    //Configuring icmpttl
+    setup_cicmpmf(cicmpmf,feh);
+
+    //Configuring icmpttl
+    setup_cicmpttl(cicmpttl,feh);
 
     //Configuring icmprd
     setup_cicmprd(cicmprd,feh);
     //Camkes_config::connect_port(&cicmprd,true,0,&print0,0);
+
+    //Configuring icmp badparameter
+    setup_cicmpbp(cicmpbp,feh);
 
     //Configuring checkpaint
     setup_checkpaint(checkpaint,feh); 
@@ -342,7 +396,7 @@ int main (int argc, char *argv[]) {
     //Configuring classifer 
     setup_clsf(clsf,feh);
     Camkes_config::connect_port(&clsf,true,0,&arpRes,0);//true int Elment int
-    Camkes_config::connect_port(&clsf,true,1,&print1,0);
+    Camkes_config::connect_port(&clsf,true,1,&arpQue,1);
     Camkes_config::connect_port(&clsf,true,2,&cpaint,0);
     Camkes_config::connect_port(&clsf,true,3,&print3,0); 
 
@@ -363,6 +417,19 @@ int main (int argc, char *argv[]) {
     return 0;
 
 }
+
+void setup_cicmpbp(Camkes_ICMPError& icmpbp,FileErrorHandler &feh ){
+    int re = 0;
+    Vector<String> icmpbp_config;
+    icmpbp_config.push_back(ip_addr);
+    icmpbp_config.push_back("parameterproblem");
+    re = Camkes_config::set_nports(&icmpbp,1,1);        
+    debugging("setting n ports for icmpbp",re);
+    re = icmpbp.configure(icmpbp_config,&feh);
+    debugging("finishing configuration for icmpbp",re);
+    Camkes_config::initialize_ports(&icmpbp,pin_v,pout_v);
+}
+
 void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh ){
     int re = 0;
     Vector<String> icmprd_config;
@@ -373,7 +440,32 @@ void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh ){
     debugging("setting n ports for icmprd",re);
     re = icmprd.configure(icmprd_config,&feh);
     debugging("finishing configuration for icmprd",re);
-    Camkes_config::initialize_ports(&icmprd,pin_v,pout_v2);
+    Camkes_config::initialize_ports(&icmprd,pin_v,pout_v);
+}
+
+void setup_cicmpttl(Camkes_ICMPError& icmpttl,FileErrorHandler &feh ){
+    int re = 0;
+    Vector<String> icmpttl_config;
+    icmpttl_config.push_back(ip_addr);
+    icmpttl_config.push_back("timeexceeded");
+    re = Camkes_config::set_nports(&icmpttl,1,1);        
+    debugging("setting n ports for icmpttl",re);
+    re = icmpttl.configure(icmpttl_config,&feh);
+    debugging("finishing configuration for icmpttl",re);
+    Camkes_config::initialize_ports(&icmpttl,pin_v,pout_v);
+}
+
+void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh ){
+    int re = 0;
+    Vector<String> icmpmf_config;
+    icmpmf_config.push_back(ip_addr);
+    icmpmf_config.push_back("unreachable");
+    icmpmf_config.push_back("needfrag");
+    re = Camkes_config::set_nports(&icmpmf,1,1);        
+    debugging("setting n ports for icmpmf",re);
+    re = icmpmf.configure(icmpmf_config,&feh);
+    debugging("finishing configuration for icmpmf",re);
+    Camkes_config::initialize_ports(&icmpmf,pin_v,pout_v);
 }
 
 void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh ){
@@ -476,4 +568,51 @@ void setup_queue(SimpleQueue& queue,FileErrorHandler &feh){
     //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
     debugging("attempting to initialize queue",re);
     Camkes_config::initialize(&queue,&feh);
+}
+
+void setup_fips(FixIPSrc& fips,FileErrorHandler &feh){
+    Vector<String> fips_config;
+    fips_config.push_back(ip_addr);
+    int re = Camkes_config::set_nports(&fips,1,1);
+    debugging("setting n ports for fips",re);
+    re = fips.configure(fips_config,&feh);
+    debugging("finishing configuration for fips",re);
+    Camkes_config::initialize_ports(&fips,pin_v,pout_v); //one input one output 
+    //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
+    debugging("attempting to initialize fips",re);
+    Camkes_config::initialize(&fips,&feh);
+}
+
+void setup_dipttl(DecIPTTL &dipttl, FileErrorHandler &feh){
+    //Vector<String> dipttl_config;
+    //fips_config.push_back(ip_addr);
+    int re = Camkes_config::set_nports(&dipttl,1,2);
+    debugging("setting n ports for dipttl",re);
+    //re = fips.configure(fips_config,&feh);
+    debugging("no configuration for dipttl",re);
+    Camkes_config::initialize_ports(&dipttl,pin_v,pout_v2); //one input one output 
+    //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
+    debugging("attempting to initialize dipttl",re);
+    Camkes_config::initialize(&dipttl,&feh);
+}
+
+void setup_ipf(IPFragmenter& ipf,FileErrorHandler &feh ){
+    Vector<String> ipf_config;
+    ipf_config.push_back("1500");//TODO make it flexible
+    int re = Camkes_config::set_nports(&ipf,1,1); 
+    debugging("setting n ports for ipf",re);
+    re = ipf.configure(ipf_config,&feh); 
+    debugging("finish configuration for ipf",re);
+    Camkes_config::initialize_ports(&ipf,pin_v,pout_v); //one input three output
+}
+
+void setup_arpQue(ARPQuerier& arpQue,FileErrorHandler &feh ){
+    Vector<String> arpQue_config;
+    arpQue_config.push_back(ip_addr);
+    arpQue_config.push_back(mac);
+    int re = Camkes_config::set_nports(&arpQue,2,1); 
+    debugging("setting n ports for arpQue",re);
+    re = arpQue.configure(arpQue_config,&feh); 
+    debugging("finish configuration for arpQue",re);
+    Camkes_config::initialize_ports(&arpQue,pin_v2,pout_v); //one input three output
 }

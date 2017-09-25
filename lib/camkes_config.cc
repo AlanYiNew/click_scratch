@@ -7,6 +7,13 @@
 #include "porttype.h"
 #include <click/camkes_config.hh>
 
+TimerSet Camkes_config::_timerset;
+
+TimerSet& Camkes_config::timer_set(){
+    return _timerset;
+}
+
+
 int Camkes_config::connect_port(Element* tar,bool isoutput, int port, Element* e, int e_port){
     return tar->connect_port(isoutput,port,e,e_port);
 }

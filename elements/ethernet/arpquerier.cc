@@ -29,6 +29,7 @@
 #include <click/error.hh>
 #include <click/glue.hh>
 #include <click/packet_anno.hh>
+#include <iostream>
 CLICK_DECLS
 
 ARPQuerier::ARPQuerier()
@@ -59,6 +60,9 @@ ARPQuerier::configure(Vector<String> &conf, ErrorHandler *errh)
     bool have_capacity, have_entry_capacity, have_entry_packet_capacity, have_capacity_slim_factor, have_timeout, have_broadcast,
 	broadcast_poll = false;
     _arpt = 0;
+    
+    
+    std::cout << "ARPQue-1" << std::endl;
     if (Args(this, errh).bind(conf)
 	.read("CAPACITY", capacity).read_status(have_capacity)
 	.read("ENTRY_CAPACITY", entry_capacity).read_status(have_entry_capacity)
@@ -72,6 +76,7 @@ ARPQuerier::configure(Vector<String> &conf, ErrorHandler *errh)
 	.consume() < 0)
 	return -1;
 
+    std::cout << "ARPQue0" << std::endl;
     if (!_arpt) {
 	Vector<String> subconf;
 	if (have_capacity)
@@ -85,11 +90,17 @@ ARPQuerier::configure(Vector<String> &conf, ErrorHandler *errh)
 	if (have_timeout)
 	    subconf.push_back("TIMEOUT " + timeout.unparse());
 	_arpt = new ARPTable;
-	_arpt->attach_router(router(), -1);
+#if !UNDER_CAMKES
+    _arpt->attach_router(router(), -1);
+#endif
+    std::cout << "ARQue11" << std::endl;
 	_arpt->configure(subconf, errh);
+    std::cout << "ARQue12" << std::endl;
 	_my_arpt = true;
     }
 
+
+    std::cout << "ARPQue1" << std::endl;
     IPAddress my_mask;
     if (conf.size() == 1)
 	conf.push_back(conf[0]);
@@ -99,12 +110,17 @@ ARPQuerier::configure(Vector<String> &conf, ErrorHandler *errh)
 	.complete() < 0)
 	return -1;
 
+
+    std::cout << "ARPQue2" << std::endl;
+
     if (!have_broadcast) {
 	_my_bcast_ip = _my_ip | ~my_mask;
 	if (_my_bcast_ip == _my_ip)
 	    _my_bcast_ip = 0xFFFFFFFFU;
     }
 
+
+    std::cout << "ARPQue3" << std::endl;
     _broadcast_poll = broadcast_poll;
     if ((uint32_t) poll_timeout.sec() >= (uint32_t) 0xFFFFFFFFU / CLICK_HZ)
 	_poll_timeout_j = 0;

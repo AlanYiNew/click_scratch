@@ -3,6 +3,7 @@
 #include <iostream>
 #include <click/packet.hh>
 #include <clicknet/ip.h>
+#include <click/timerset.hh>
 #include "porttype.h"
 
 class Camkes_proxy{
@@ -28,7 +29,14 @@ private:
 
 
 class Camkes_config{
+    private:
+        static TimerSet _timerset;
+    
     public:
+        
+        
+        static TimerSet& timer_set();
+
         static int connect_port(Element* tar,bool isoutput, int port, Element* e, int e_port);
 
         static void initialize_ports(Element* tar,const int* input_codes, const int* output_codes);

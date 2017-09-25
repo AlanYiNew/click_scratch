@@ -5,8 +5,16 @@
 #include <clicknet/ip.h>
 #include "porttype.h"
 #include <click/camkes_config.hh>
+#include <click/timer.hh>
 class Camkes_config{
+    private:
+        static TimerSet _timerset;
+    
     public:
+        static initialize() {TimerSet Camkes_config::_timerset;}
+
+        static TimerSet& timer_set() {return TimerSet::_timerset;}
+
         static int connect_port(Element* tar,bool isoutput, int port, Element* e, int e_port);
 
         static void initialize_ports(Element* tar,const int* input_codes, const int* output_codes);

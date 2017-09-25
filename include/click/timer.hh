@@ -135,6 +135,7 @@ class Timer { public:
 	    return _expiry_s;
     }
 
+
     /** @brief Return the Timer's associated Router. */
     inline Router *router() const {
 	return _owner->router();
@@ -152,7 +153,6 @@ class Timer { public:
 
     /** @brief Return the Timer's associated home thread ID. */
     int home_thread_id() const;
-
 
     /** @brief Initialize the timer.
      * @param owner the owner element
@@ -178,8 +178,9 @@ class Timer { public:
      * router ->@link Router::root_element root_element@endlink()).
      * However, it is better to explicitly associate timers with real
      * elements. */
+#if !UNDER_CAMKES
     void initialize(Router *router);
-
+#endif
 
     /** @brief Schedule the timer to fire at @a when_steady.
      * @param when_steady expiration time according to the steady clock

@@ -25,6 +25,8 @@
 #include <click/routerthread.hh>
 #include <click/task.hh>
 #include <click/heap.hh>
+#include <iostream>
+#include <click/camkes_config.hh>
 CLICK_DECLS
 
 /** @file timer.hh
@@ -228,11 +230,13 @@ Timer::Timer(const Timer &x)
 {
 }
 
+#if !UNDER_CAMKES
 void
 Timer::initialize(Router *router)
 {
     initialize(router->root_element());
 }
+#endif
 
 void
 Timer::initialize(Element *owner, bool quiet)
@@ -241,9 +245,10 @@ Timer::initialize(Element *owner, bool quiet)
     _owner = owner;
     if (unlikely(_hook.callback == do_nothing_hook && !_thunk) && !quiet)
 	click_chatter("initializing Timer %p{element} [%p], which does nothing", _owner, this);
-
+#if !UNDER_CAMKES
     int tid = owner->router()->home_thread_id(owner);
     _thread = owner->master()->thread(tid);
+#endif
 }
 
 int
@@ -259,8 +264,17 @@ void
 Timer::schedule_at_steady(const Timestamp &when)
 {
     // acquire lock, unschedule
+    std::cout << "steady" << std::endl;
     assert(_owner && initialized());
+    std::cout << "steady1" << std::endl;
+
+#if !UNDER_CAMKES
     TimerSet &ts = _thread->timer_set();
+#else
+    TimerSet &ts = Camkes_config::timer_set();
+#endif
+
+    std::cout << "steadg2" << std::endl;
     ts.lock_timers();
 
     // set expiration timer (ensure nonzero)

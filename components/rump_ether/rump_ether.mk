@@ -38,6 +38,10 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/standard/addressinfo.o \
 		$(SOURCE_DIR)/elements/ethernet/arpresponder.o \
 		$(SOURCE_DIR)/elements/ethernet/arpresponder.hh \
+		$(SOURCE_DIR)/elements/ethernet/arpquerier.o \
+		$(SOURCE_DIR)/elements/ethernet/arpquerier.hh \
+		$(SOURCE_DIR)/elements/ethernet/arptable.o \
+		$(SOURCE_DIR)/elements/ethernet/arptable.hh \
 		$(SOURCE_DIR)/elements/userlevel/fromdevice.o \
 		$(SOURCE_DIR)/elements/userlevel/fromdevice.hh \
 		$(SOURCE_DIR)/elements/userlevel/fakepcap.o \
@@ -64,6 +68,12 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/ip/ipgwoptions.o \
 		$(SOURCE_DIR)/elements/ip/ipnameinfo.hh \
 		$(SOURCE_DIR)/elements/ip/ipnameinfo.o \
+		$(SOURCE_DIR)/elements/ip/fixipsrc.hh \
+		$(SOURCE_DIR)/elements/ip/fixipsrc.o \
+		$(SOURCE_DIR)/elements/ip/decipttl.hh \
+		$(SOURCE_DIR)/elements/ip/decipttl.o \
+		$(SOURCE_DIR)/elements/ip/ipfragmenter.hh \
+		$(SOURCE_DIR)/elements/ip/ipfragmenter.o \
 		$(CLICK_LIBS)
 	@echo ${CURRENT_DIR}
 	$(RUMPRUN_CXX) -no-pie \

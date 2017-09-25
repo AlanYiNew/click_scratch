@@ -161,7 +161,7 @@ StaticNameDB::query(const String &name, void *value, size_t vsize)
     while (l < r) {
 	size_t m = l + (r - l) / 2;
 	int cmp = strcmp(namestr, _entries[m].name);
-	if (cmp == 0) {
+    if (cmp == 0) {
 	    *reinterpret_cast<uint32_t *>(value) = _entries[m].value;
 	    return true;
 	} else if (cmp < 0)
@@ -525,16 +525,14 @@ bool
 NameInfo::query(uint32_t type, const Element *e, const String &name, void *value, size_t vsize)
 {
     while (1) {
-        std::cout << type << " "<< e->class_name() << " " << name.c_str() << std::endl;
         NameDB *db = getdb(type, e, vsize, false);
-
+        std::cout << db << std::endl;
 
         while (db) {
             if (db->query(name, value, vsize)){
                 return true;
             }
             db = db->context_parent();
-
         }
 
         if (!e){

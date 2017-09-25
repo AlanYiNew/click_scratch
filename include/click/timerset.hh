@@ -8,6 +8,7 @@ CLICK_DECLS
 class Router;
 class RouterThread;
 class Timer;
+class TimerSet;
 
 class TimerSet { public:
 
@@ -30,7 +31,6 @@ class TimerSet { public:
     void run_timers(RouterThread *thread, Master *master);
 
     inline void fence();
-
   private:
 
     struct heap_element {
