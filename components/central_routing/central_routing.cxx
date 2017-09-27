@@ -71,9 +71,6 @@ void inline debugging(const char* s,int val){
 
 int main(int argc, char *argv[]) {
     
-    std::cout << "&&&" << db_buffer[2] << std::endl;
-    
-    std::cout << "&&&" << db_buffer[1] << std::endl;
     /* Click configuration */
     int re = 0;
     
@@ -88,8 +85,7 @@ int main(int argc, char *argv[]) {
     Strip strip;
     //ChceckIPHeader    
     CheckIPHeader cih;
-    //Print element
-    Print print;
+    
     //Discard element
     Discard discard;
     //GetIPAddress
@@ -103,14 +99,13 @@ int main(int argc, char *argv[]) {
         clir_config.push_back(rt[i]);
     }
     
-    std::cout << "####icmp buffer buf" << icmp_buffer_buf << std::endl;
     re = Camkes_config::set_nports(&clir,1,3); 
     debugging("setting n ports for clir",re);
     re = clir.configure(clir_config,&feh); 
     debugging("finish configuration for clir",re);
     const int clir_pout_v[NUM_COMPONENT+1] = {1,1,1};
     Camkes_config::initialize_ports(&clir,pin_v,clir_pout_v); //one input three output
-    Camkes_config::connect_port(&clir,true,0,&print,0);//true int Element int
+    Camkes_config::connect_port(&clir,true,0,&discard,0);//true int Element int
     
     //Configuring GetIPAddres
     Vector<String> gia_config;
@@ -142,16 +137,6 @@ int main(int argc, char *argv[]) {
     Camkes_config::initialize_ports(&cih,pin_v,pout_v); //one input one output
     Camkes_config::connect_port(&cih,true,0,&gia,0);//true int Element int
     
-    //Configuring print mainly for debgugging purpose
-    Vector<String> print_config;
-    print_config.push_back("ok");
-    re = Camkes_config::set_nports(&print,1,1);
-    debugging("setting n ports for print",re);
-    re = print.configure(print_config,&feh);
-    debugging("finishing configuration for print",re); 
-    Camkes_config::initialize_ports(&print,pin_v,pout_v); //one input one output
-    Camkes_config::connect_port(&print,true,0,&discard,0);
-
     //Configuring discard
     re = Camkes_config::set_nports(&discard,1,0);
     debugging("setting n ports for discard",re);
@@ -166,9 +151,7 @@ int main(int argc, char *argv[]) {
     };
 
     while(true) {
-        /* Wait for event */
-
-        
+        /* Wait for event */ 
 
         if (count > 0) {
             count--;

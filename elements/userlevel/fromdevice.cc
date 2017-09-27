@@ -506,6 +506,7 @@ FromDevice::emit_packet(WritablePacket *p, int extra_len, const Timestamp &ts)
 
 #if FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_NETMAP
 CLICK_ENDDECLS
+#if CAMKES_DEBUG
 void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
      struct ether_header *eth_header;
      eth_header = (struct ether_header *) packet;
@@ -513,12 +514,6 @@ void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
 
      
      auto ip = (struct sniff_ip*)(packet+sizeof(struct ether_header));
-     auto ddst = inet_ntoa(ip->ip_dst);
-     if (!strcmp(ddst,"10.13.1.252")) return; 
-     if (!strcmp(ddst,"10.13.1.152")) return;
-     if (!strcmp(ddst,"10.13.1.231")) return;
-     if (!strcmp(ddst,"10.13.1.212")) return;
-     const char* content = ((char*)ip) + sizeof(sniff_ip);
      if (ip->ip_p == 1){
          printf("ICMP");
          if (*content == 8){
@@ -526,25 +521,21 @@ void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
          }   else if (*content == 0){
              printf(" reply\n");
          }
-     }
+     }  else{
 
-     if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
-         printf("************IP\n");
-     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
-         return; 
-         printf("*************ARP\n");
-     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_REVARP) { 
-         return;
-         printf("************Reverse ARP\n");
-     }   else{ 
-         return;
-         printf("************Unknown type %x\n",ntohs(eth_header->ether_type));
-     }
-     
- 
-     
-     
-     
+         if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
+             printf("************IP\n");
+         } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
+             return; 
+             printf("*************ARP\n");
+         } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_REVARP) { 
+             return;
+             printf("************Reverse ARP\n");
+         }   else{ 
+             return;
+             printf("************Unknown type %x\n",ntohs(eth_header->ether_type));
+         }
+     } 
      
      printf("Grabbed a packet from ip_src: %s, eth_src: %s \n",inet_ntoa(ip->ip_src),
      ether_ntoa((const ether_addr*)(eth_header->ether_shost)));
@@ -554,7 +545,7 @@ void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
      printf("This packet has a length of %d \n",header->len);
     printf("Ethernet address length is %d\n\n",ETHER_HDR_LEN);
 }
-
+#endif
 
 extern "C" {
 void
@@ -563,9 +554,9 @@ FromDevice_get_packet(u_char* clientdata,
 		      const u_char* data)
 {
     FromDevice *fd = (FromDevice *) clientdata;
-
+#if CAMKES_DEBUG
     debugging_purpose(data,pkthdr); 
-
+#endif
 
 
     WritablePacket *p = Packet::make(fd->_headroom, data, pkthdr->caplen, 0);

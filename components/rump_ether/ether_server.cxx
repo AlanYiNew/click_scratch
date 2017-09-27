@@ -97,73 +97,6 @@ extern "C" {
 
 extern void click_export_elements();
 
-
-void inline debugging(const char* s,int val){
-    std::cout << "###### " << std::left <<std::setw(40) << s << ": " << val << " #####" << std::endl;
-}
-
-void debug_purpose(const u_char* packet,const struct pcap_pkthdr* header){
-    struct ether_header *eth_header;
-    eth_header = (struct ether_header *) packet;
-
-    if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
-        printf("IP\n");
-    } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
-        printf("ARP\n");
-    } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_REVARP) {
-        printf("Reverse ARP\n");
-    }   else{
-        printf("Unknown type %x\n",ntohs(eth_header->ether_type));
-    }
-
-    const struct sniff_ip *ip; /* The IP header */
-    const char* content = (char*)(ip + sizeof(sniff_ip));
-
-    ip = (struct sniff_ip*)(packet+sizeof(struct ether_header));
-    printf("PROTO %d",ip->ip_p);
-    if (ip->ip_p == 1){
-        printf("ICMP %x",ntohs(eth_header->ether_type));
-        if (*content == 8){
-            printf(" request\n");
-        }   else if (*content == 0){
-            printf(" reply\n");
-        }
-    } 
-
-    printf("Grabbed a packet from ip_src: %s, eth_src: %s \n",inet_ntoa(ip->ip_src),
-            ether_ntoa((const ether_addr*)(eth_header->ether_shost)));
-    printf("The packet has info as ip_dst: %s, eth_dst: %s\n",
-            inet_ntoa(ip->ip_dst),
-            ether_ntoa((const ether_addr*)(eth_header->ether_dhost)));
-    printf("This packet has a length of %d \n",header->len);
-    printf("Ethernet address length is %d\n\n",ETHER_HDR_LEN);
-
-
-}
-
-/* This function can be used as a callback for pcap_loop() */
-void my_packet_handler(
-        u_char *args,
-        const struct pcap_pkthdr* header,
-        const u_char* packet
-        ) {
-    struct ether_header *eth_header;
-    /* The packet is larger than the ether_header struct,
-     * but we just want to look at the first part of the packet
-     * that contains the header. We force the compiler
-     * to treat the pointer to the packet as just a pointer
-     * to the ether_header. The data payload of the packet comes
-     * after the headers. Different packet types have different header
-     * lengths though, but the ethernet header is always the same (14 bytes) */
-    eth_header = (struct ether_header *) packet;
-
-    Classifier * clsf = (Classifier *)args;
-    debug_purpose(packet,header);
-
-    Packet *p = Packet::make(packet,header->len);
-    clsf->push(0,p);
-}
-
 const int pin_v[1] = {1};//input direction
 const int pout_v[1] = {1};//output direction
 
@@ -186,17 +119,14 @@ void setup_ipf(IPFragmenter& ipf,FileErrorHandler &feh );
 void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh );
 void setup_arpQue(ARPQuerier& arpQue,FileErrorHandler &feh );
 void setup_db(DropBroadcasts& db, FileErrorHandler &feh);
-int count = 0;
-void get_packet(u_char* clientdata,
-        const struct pcap_pkthdr* pkthdr,
-        const u_char* data){
-    std::cout << "get " << count++ << "packet" << std::endl;
+void inline debugging(const char* s,int val){
+     std::cout << "###### " << std::left <<std::setw(40) << s << ": " << val << " #####" << std::endl;
 }
+
 
 int main (int argc, char *argv[]) {
 
     message_t * buffer_str = (message_t*)camkes_buffer;
-    std::cout << camkes_buffer << std::endl;    
 
 
     snprintf(buffer_str->content, PACKET_MAX_LEN, "Hello, World!");
@@ -212,7 +142,8 @@ int main (int argc, char *argv[]) {
     char errbuf[PCAP_ERRBUF_SIZE]; 
 
     pcap_t* descr;
-    //#####################################################################
+//#####################################################################
+#if CAMKES_DEBUG
     char *device;
     char ip[13];
     char subnet_mask[13];
@@ -259,7 +190,7 @@ int main (int argc, char *argv[]) {
     printf("Device: %s\n", device);
     printf("IP address: %s\n", ip);
     printf("Subnet mask: %s\n", subnet_mask);
-
+#endif
     //####################################################################
     // Click relervant code
 
@@ -373,54 +304,16 @@ int main (int argc, char *argv[]) {
     //Configuring cpaint
     setup_cpaint(cpaint,feh); 
 
-    //Configuring print0 to print2 mainly for debgugging purpose
-    Vector<String> print_config0;
-    print_config0.push_back("port0");
-    re = Camkes_config::set_nports(&print0,1,1);
-    debugging("setting n ports for print0",re);
-    re = print0.configure(print_config0,&feh);
-    debugging("finishing configuration for print0",re);
-
-    Camkes_config::initialize_ports(&print0,pin_v,pout_v); //one input one output
-    Camkes_config::connect_port(&print0,true,0,&queue,0);
-
-    Vector<String> print_config1;
-    print_config1.push_back("port1");
-    re = Camkes_config::set_nports(&print1,1,1);
-    debugging("setting n ports for print1",re);
-    re = print1.configure(print_config1,&feh);
-    debugging("finishing configuration for print",re);
-    Camkes_config::initialize_ports(&print1,pin_v,pout_v); //one input one output
-    Camkes_config::connect_port(&print1,true,0,&discard,0);
-
-    Vector<String> print_config2;
-    print_config2.push_back("db");
-    re = Camkes_config::set_nports(&print2,1,1);
-    debugging("setting n ports for print2",re);
-    re = print2.configure(print_config2,&feh);
-    debugging("finishing configuration for print",re);
-    Camkes_config::initialize_ports(&print2,pin_v,pout_v); //one input one output
-    Camkes_config::connect_port(&print2,true,0,&discard,0);
-
-    Vector<String> print_config3;
-    print_config3.push_back("port3");
-    re = Camkes_config::set_nports(&print3,1,1);
-    debugging("setting n ports for print3",re);
-    re = print3.configure(print_config3,&feh);
-    debugging("finishing configuration for print",re);
-    Camkes_config::initialize_ports(&print3,pin_v,pout_v); //one input one output
-    Camkes_config::connect_port(&print3,true,0,&discard,0); 
-
     //Configuring arp element
     setup_arpRes(arpRes,feh);  
-    Camkes_config::connect_port(&arpRes,true,0,&print0,0);//true int Elment int
+    Camkes_config::connect_port(&arpRes,true,0,&queue,0);//true int Elment int
 
     //Configuring classifer 
     setup_clsf(clsf,feh);
     Camkes_config::connect_port(&clsf,true,0,&arpRes,0);//true int Elment int
     Camkes_config::connect_port(&clsf,true,1,&arpQue,1);
     Camkes_config::connect_port(&clsf,true,2,&cpaint,0);
-    Camkes_config::connect_port(&clsf,true,3,&print3,0); 
+    Camkes_config::connect_port(&clsf,true,3,&discard,0);//other packet 
 
     //Configuring fromDevice
     setup_fDev(fDev,feh); 
@@ -574,7 +467,6 @@ void setup_fDev(FromDevice & fDev, FileErrorHandler & feh){
 
 void setup_cpaint(Camkes_Paint& cpaint,FileErrorHandler & feh){
     Vector<String> cpaint_config;
-    std::cout << camkes_id_attributes << std::endl;
     cpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
     int re = Camkes_config::set_nports(&cpaint,1,1);
     debugging("setting n ports for paint",re);

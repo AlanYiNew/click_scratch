@@ -517,7 +517,6 @@ NameInfo::query(uint32_t type, const Element *e, const String &name, void *value
 {
     while (1) {
         NameDB *db = getdb(type, e, vsize, false);
-        std::cout << db << std::endl;
 
         while (db) {
             if (db->query(name, value, vsize)){

@@ -57,7 +57,6 @@ ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
     bool use_fix_anno = true;
 
 
-    std::cout << NameInfo::T_ICMP_TYPE <<std::endl;
     if (Args(conf, this, errh)
 	.read_mp("SRC", src_ip)
 	.read_mp("TYPE", NamedIntArg(NameInfo::T_ICMP_TYPE), type)
