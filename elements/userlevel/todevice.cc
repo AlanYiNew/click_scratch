@@ -369,7 +369,7 @@ ToDevice::run_task(Task *)
 
     do {
 	if (!p) {
-        std::cout << class_name() << " pulling" << std::endl;
+        //std::cout << class_name() << " pulling" << std::endl;
 	    ++_pulls;
 	    if (!(p = input(0).pull()))
 		break;

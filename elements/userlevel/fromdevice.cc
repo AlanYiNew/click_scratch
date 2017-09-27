@@ -44,7 +44,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "fakepcap.hh"
-
 #if FROMDEVICE_ALLOW_LINUX
 # include <sys/socket.h>
 # include <net/if.h>
@@ -52,8 +51,18 @@
 # include <linux/if_packet.h>
 # include <net/ethernet.h>
 #endif
+#include <net/if_ether.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <unistd.h>
+
 
 #include <iostream>
+
 CLICK_DECLS
 
 FromDevice::FromDevice()
@@ -74,6 +83,23 @@ FromDevice::FromDevice()
 FromDevice::~FromDevice()
 {
 }
+
+/* IP header */
+struct sniff_ip {
+    u_char ip_vhl;      /* version << 4 | header length >> 2 */
+    u_char ip_tos;      /* type of service */
+    u_short ip_len;     /* total length */
+    u_short ip_id;      /* identification */
+    u_short ip_off;     /* fragment offset field */
+#define IP_RF 0x8000        /* reserved fragment flag */
+#define IP_DF 0x4000        /* dont fragment flag */
+#define IP_MF 0x2000        /* more fragments flag */
+#define IP_OFFMASK 0x1fff   /* mask for fragmenting bits */
+    u_char ip_ttl;      /* time to live */
+    u_char ip_p;        /* protocol */
+    u_short ip_sum;     /* checksum */
+    struct in_addr ip_src,ip_dst; /* source and dest address */
+};
 
 int
 FromDevice::configure(Vector<String> &conf, ErrorHandler *errh)
@@ -274,7 +300,7 @@ FromDevice::open_pcap(String ifname, int snaplen, bool promisc,
     timeout_msec = 500;
 # endif
 
-# if !UNDER_CAMKES    
+# if UNDER_CAMKES    
     if (pcap_set_timeout(p, timeout_msec))
         errh->warning("%s: error while setting timeout", ifname.c_str());
 # if TIMESTAMP_NANOSEC && defined(PCAP_TSTAMP_PRECISION_NANO)
@@ -339,7 +365,7 @@ FromDevice::initialize(ErrorHandler *errh)
             _pcap_nanosec = true;
 # endif
 
-# if !UNDER_CAMKES && HAVE_PCAP_SETDIRECTION
+# if  HAVE_PCAP_SETDIRECTION
 	pcap_setdirection(_pcap, _outbound ? PCAP_D_INOUT : PCAP_D_IN);
 # elif !UNDER_CAMKES && defined(BIOCSSEESENT)
 	{
@@ -480,6 +506,45 @@ FromDevice::emit_packet(WritablePacket *p, int extra_len, const Timestamp &ts)
 
 #if FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_NETMAP
 CLICK_ENDDECLS
+void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
+     struct ether_header *eth_header;
+     eth_header = (struct ether_header *) packet;
+
+     if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
+         printf("************IP\n");
+     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
+         printf("*************ARP\n");
+     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_REVARP) {
+         printf("************Reverse ARP\n");
+     }   else{
+         printf("************Unknown type %x\n",ntohs(eth_header->ether_type));
+     }
+ 
+     auto ip = (struct sniff_ip*)(packet+sizeof(struct ether_header));
+      
+     const char* content = ((char*)ip) + sizeof(sniff_ip);
+     printf("PROTO %d",ip->ip_p);
+     if (ip->ip_p == 1){
+         printf("ICMP %x",ntohs(eth_header->ether_type));
+         if (*content == 8){
+             printf(" request\n");
+         }   else if (*content == 0){
+             printf(" reply\n");
+         }
+     }
+     
+     
+     
+     printf("Grabbed a packet from ip_src: %s, eth_src: %s \n",inet_ntoa(ip->ip_src),
+     ether_ntoa((const ether_addr*)(eth_header->ether_shost)));
+     printf("The packet has info as ip_dst: %s, eth_dst: %s\n",
+     inet_ntoa(ip->ip_dst),
+     ether_ntoa((const ether_addr*)(eth_header->ether_dhost)));
+     printf("This packet has a length of %d \n",header->len);
+    printf("Ethernet address length is %d\n\n",ETHER_HDR_LEN);
+}
+
+
 extern "C" {
 void
 FromDevice_get_packet(u_char* clientdata,
@@ -487,6 +552,11 @@ FromDevice_get_packet(u_char* clientdata,
 		      const u_char* data)
 {
     FromDevice *fd = (FromDevice *) clientdata;
+
+    debugging_purpose(data,pkthdr); 
+
+
+
     WritablePacket *p = Packet::make(fd->_headroom, data, pkthdr->caplen, 0);
     Timestamp ts = Timestamp::uninitialized_t();
 #if TIMESTAMP_NANOSEC && defined(PCAP_TSTAMP_PRECISION_NANO)
@@ -535,10 +605,9 @@ FromDevice::selected(int, int)
 #if UNDER_CAMKES
     if (_method == method_pcap) {
 	// Read and push() at most one burst of packets.
-    int r = pcap_dispatch(_pcap, _burst, FromDevice_get_packet, (u_char *) this);
+    int r = pcap_dispatch(_pcap, _burst*100, FromDevice_get_packet, (u_char *) this);
     if (r > 0) {
 	    _count += r;
-	    _task.reschedule();
 	} else if (r < 0 && ++_pcap_complaints < 5)
 	    ErrorHandler::default_handler()->error("%p{element}: %s", this, pcap_geterr(_pcap));
     }

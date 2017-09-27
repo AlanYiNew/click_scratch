@@ -46,7 +46,6 @@ Camkes_StaticIPLookup::add_route(const IPRoute& route, bool set, IPRoute* old_ro
 	return errh->error("can't add routes dynamically");
     else
 #endif
-    std::cout << "beofreo add route" << std::endl;
     return Camkes_LinearIPLookup::add_route(route, set, old_route, errh);
 }
 

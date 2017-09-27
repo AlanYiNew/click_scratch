@@ -64,7 +64,6 @@ Camkes_ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
 
 
 
-    std::cout << NameInfo::T_ICMP_TYPE <<std::endl;
     if (Args(conf, this, errh)
 	.read_mp("SRC", src_ip)
 	.read_mp("TYPE", NamedIntArg(NameInfo::T_ICMP_TYPE), type)
@@ -85,7 +84,6 @@ Camkes_ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
 	|| code < 0 || code > 255)
 	return errh->error("argument 2 takes ICMP code (integer between 0 and 255)");
 
-    std::cout << errh->nerrors() <<std::endl;
     _src_ip = src_ip;
     _type = type;
     _code = code;
@@ -245,7 +243,6 @@ Camkes_ICMPError::simple_action(Packet *p)
 
   // prepare IP header; guaranteed that packet data is aligned
   nip = reinterpret_cast<click_ip *>(q->data());
-
   nip->ip_v = 4;
   nip->ip_tos = 0;		// XXX should be same as incoming datagram?
   nip->ip_id = htons(id);
@@ -324,13 +321,15 @@ Camkes_ICMPError::add_handlers()
 void
 Camkes_ICMPError::push(int port, Packet *p)
 {
-    std::cout << class_name() <<  " pushing" << std::endl;
-    p = simple_action(p);
-    Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf->content));
-    while (((volatile message_t*)_camkes_buf)->ready);
-    Camkes_config::packet_serialize(dst,p);        
-    _camkes_buf->ready = 1; 
+    p = simple_action(p);   
 
+    if (p != NULL){
+        Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf->content));
+        while (((volatile message_t*)_camkes_buf)->ready);
+        
+        Camkes_config::packet_serialize(dst,p);      
+        _camkes_buf->ready = 1; 
+    }
 }
 
 

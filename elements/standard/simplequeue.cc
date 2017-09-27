@@ -142,6 +142,7 @@ SimpleQueue::push(int, Packet *p)
     // and FullNoteQueue::push().
     Storage::index_type h = head(), t = tail(), nt = next_i(t);
 
+    std::cout << class_name() << "pushing" << std::endl;
     // should this stuff be in SimpleQueue::enq?
     if (nt != h) {
 	_q[t] = p;

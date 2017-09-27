@@ -170,7 +170,6 @@ StaticNameDB::query(const String &name, void *value, size_t vsize)
 	    l = m + 1;
     }
 
-    std::cout << "returning false" << std::endl;
     return false;
 }
 
@@ -349,7 +348,6 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
     while (l < r) {
         m = l + (r - l) / 2;
         if (type == _namedb_roots[m]->_type){
-            std::cout << "namedb0.3" << std::endl;
             goto found_root;
         }   else if (type < _namedb_roots[m]->_type){
             r = m;
@@ -359,7 +357,6 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
     }
     // type not found
     if (install == install_dynamic_sentinel()){
-        std::cout << "namedb1.1" << std::endl;
         install = new DynamicNameDB(type, prefix, vsize);
     }
     if (install) {
@@ -367,15 +364,12 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
         install->_installed = this;
         _namedbs.push_back(install);
         //TODO;
-        std::cout << "installing " << install->_type << std::endl;
         _namedb_roots.insert(_namedb_roots.begin() + l, install);
         return install;
     } else{
-        std::cout << "namedb1.5" << std::endl;
         return 0;
     }
 
-    std::cout << "namedb2" << std::endl;
   found_root:
     // walk tree to find prefix match; keep track of closest prefix
     db = _namedb_roots[m];
@@ -395,7 +389,6 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 	return closest;
     }
 
-    std::cout << "namedb3" << std::endl;
 
     // prefix not found
     if (install == install_dynamic_sentinel())
@@ -410,8 +403,6 @@ NameInfo::namedb(uint32_t type, size_t vsize, const String &prefix, NameDB *inst
 	*pp = install;
 	// adopt nodes that should be our children
 	pp = &install->_context_sibling;
-
-    std::cout << "namedb4" << std::endl;
 
 	while (*pp) {
 	    if (prefix.length() < (*pp)->_context.length()

@@ -93,6 +93,9 @@ IPFragmenter::fragment(Packet *p_in)
     int first_dlen = (_mtu - hlen) & ~7;
     int in_dlen = ntohs(ip_in->ip_len) - hlen;
 
+    
+
+
     if (((ip_in->ip_off & htons(IP_DF)) && _honor_df) || first_dlen < 8) {
 	if (_verbose || _drops < 5)
 	    click_chatter("IPFragmenter(%d) DF %p{ip_ptr} %p{ip_ptr} len=%d", _mtu, &ip_in->ip_src, &ip_in->ip_dst, p_in->length());
@@ -164,6 +167,7 @@ IPFragmenter::fragment(Packet *p_in)
 void
 IPFragmenter::push(int, Packet *p)
 {
+
     if (p->network_length() <= (int) _mtu)
 	output(0).push(p);
     else

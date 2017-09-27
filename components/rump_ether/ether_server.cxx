@@ -58,7 +58,7 @@
 #include <iostream>
 #include <iomanip>
 #include "elements/standard/dropbroadcasts.hh"
-#include "elements/standard/checkpaint.hh"
+#include "elements/standard/painttee.hh"
 #include "elements/camkes/camkes_icmperror.hh"
 #include "elements/ip/ipgwoptions.hh"
 #include "elements/ip/fixipsrc.hh"
@@ -80,6 +80,7 @@ extern "C" {
     const char * camkes_id_attributes;
     const char * ip_addr;
     const char * mac;
+    const char * proxy_arp[NUM_COMPONENT];//TODO NUM_COMPONENT-1
 }
 
 #pragma weak wm_val
@@ -91,7 +92,8 @@ extern "C" {
 #pragma weak camkes_id_attributes
 #pragma weak ip_addr
 #pragma weak mac
-#pragma weak icmp_buffer;
+#pragma weak icmp_buffer
+#pragma weak proxy_arp
 
 extern void click_export_elements();
 
@@ -113,11 +115,21 @@ void debug_purpose(const u_char* packet,const struct pcap_pkthdr* header){
     }   else{
         printf("Unknown type %x\n",ntohs(eth_header->ether_type));
     }
-    
-    const struct sniff_ip *ip; /* The IP header */
 
-    
+    const struct sniff_ip *ip; /* The IP header */
+    const char* content = (char*)(ip + sizeof(sniff_ip));
+
     ip = (struct sniff_ip*)(packet+sizeof(struct ether_header));
+    printf("PROTO %d",ip->ip_p);
+    if (ip->ip_p == 1){
+        printf("ICMP %x",ntohs(eth_header->ether_type));
+        if (*content == 8){
+            printf(" request\n");
+        }   else if (*content == 0){
+            printf(" reply\n");
+        }
+    } 
+
     printf("Grabbed a packet from ip_src: %s, eth_src: %s \n",inet_ntoa(ip->ip_src),
             ether_ntoa((const ether_addr*)(eth_header->ether_shost)));
     printf("The packet has info as ip_dst: %s, eth_dst: %s\n",
@@ -157,7 +169,7 @@ const int pout_v[1] = {1};//output direction
 
 const int pin_v2[2] = {1,1};
 const int pout_v2[2] = {1,1};
-void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh );
+void setup_paintTee(PaintTee& paintTee,FileErrorHandler &feh );
 void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh );
 void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh);
 void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh);
@@ -173,25 +185,34 @@ void setup_cicmpttl(Camkes_ICMPError& icmpttl,FileErrorHandler &feh );
 void setup_ipf(IPFragmenter& ipf,FileErrorHandler &feh );
 void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh );
 void setup_arpQue(ARPQuerier& arpQue,FileErrorHandler &feh );
+void setup_db(DropBroadcasts& db, FileErrorHandler &feh);
+int count = 0;
+void get_packet(u_char* clientdata,
+        const struct pcap_pkthdr* pkthdr,
+        const u_char* data){
+    std::cout << "get " << count++ << "packet" << std::endl;
+}
+
 int main (int argc, char *argv[]) {
+
     message_t * buffer_str = (message_t*)camkes_buffer;
     std::cout << camkes_buffer << std::endl;    
-    
-    
+
+
     snprintf(buffer_str->content, PACKET_MAX_LEN, "Hello, World!");
     printf("Sending string: %s\n", buffer_str->content);
     /* Signal the string reverse server and wait for response */
     buffer_str->ready = 1;
     camkes_ev_emit();
-    
+
     camkes_ev1_wait();
-    
+
     printf("%s\n", buffer_str);
 
     char errbuf[PCAP_ERRBUF_SIZE]; 
 
     pcap_t* descr;
-//#####################################################################
+    //#####################################################################
     char *device;
     char ip[13];
     char subnet_mask[13];
@@ -239,9 +260,9 @@ int main (int argc, char *argv[]) {
     printf("IP address: %s\n", ip);
     printf("Subnet mask: %s\n", subnet_mask);
 
-//####################################################################
-// Click relervant code
-    
+    //####################################################################
+    // Click relervant code
+
     //Discard packets
     Discard discard;
     //Todevice
@@ -267,7 +288,7 @@ int main (int argc, char *argv[]) {
     //DropBroadCasts
     DropBroadcasts db;
     //CheckPaint
-    CheckPaint checkpaint;
+    PaintTee paintTee;
     //ICMPError redirect
     Camkes_ICMPError cicmprd((message_t*)icmp_buffer);
     //ICMPError parameter problem
@@ -288,7 +309,7 @@ int main (int argc, char *argv[]) {
     ARPQuerier arpQue;
 
     int re = 0;
-   
+
     NameInfo::static_initialize();
     IPNameInfo::static_initialize();
 
@@ -300,7 +321,7 @@ int main (int argc, char *argv[]) {
     //setup arpQue
     setup_arpQue(arpQue,feh);
     Camkes_config::connect_port(&arpQue,true,0,&queue,0);
-    
+
     //setup ipf
     setup_ipf(ipf,feh);
     Camkes_config::connect_port(&ipf,true,0,&arpQue,0);
@@ -310,11 +331,11 @@ int main (int argc, char *argv[]) {
     setup_dipttl(dipttl,feh);
     Camkes_config::connect_port(&dipttl,true,0,&ipf,0);
     Camkes_config::connect_port(&dipttl,true,1,&cicmpttl,0);
-    
+
     //setuo fips
     setup_fips(fips,feh);
     Camkes_config::connect_port(&fips,true,0,&dipttl,0);
-    
+
     //setup ipgwoptions
     setup_ipgwoptions(ipgwoptions,feh);
     Camkes_config::connect_port(&ipgwoptions,true,0,&fips,0);
@@ -334,14 +355,15 @@ int main (int argc, char *argv[]) {
     setup_cicmpbp(cicmpbp,feh);
 
     //Configuring checkpaint
-    setup_checkpaint(checkpaint,feh); 
-    Camkes_config::connect_port(&checkpaint,true,0,&ipgwoptions,0);
-    Camkes_config::connect_port(&checkpaint,true,1,&cicmprd,0);
+    setup_paintTee(paintTee,feh); 
+    Camkes_config::connect_port(&paintTee,true,0,&ipgwoptions,0);
+    Camkes_config::connect_port(&paintTee,true,1,&cicmprd,0);
 
     //No configuration for dropbroadcast but just connect it
-    Camkes_config::connect_port(&db,true,0,&checkpaint,0);
+    setup_db(db,feh);
+    Camkes_config::connect_port(&db,true,0,&paintTee,0);
 
-    
+
     //Configuring discard
     re = Camkes_config::set_nports(&discard,1,0);
     debugging("setting n ports for discard",re);
@@ -350,7 +372,7 @@ int main (int argc, char *argv[]) {
 
     //Configuring cpaint
     setup_cpaint(cpaint,feh); 
-   
+
     //Configuring print0 to print2 mainly for debgugging purpose
     Vector<String> print_config0;
     print_config0.push_back("port0");
@@ -358,10 +380,10 @@ int main (int argc, char *argv[]) {
     debugging("setting n ports for print0",re);
     re = print0.configure(print_config0,&feh);
     debugging("finishing configuration for print0",re);
-    
+
     Camkes_config::initialize_ports(&print0,pin_v,pout_v); //one input one output
     Camkes_config::connect_port(&print0,true,0,&queue,0);
-   
+
     Vector<String> print_config1;
     print_config1.push_back("port1");
     re = Camkes_config::set_nports(&print1,1,1);
@@ -403,14 +425,14 @@ int main (int argc, char *argv[]) {
     //Configuring fromDevice
     setup_fDev(fDev,feh); 
     Camkes_config::connect_port(&fDev,true,0,&clsf,0);
-    
+
     //Configuring toDevice 
     setup_tDev(tDev,fDev,feh);
     Camkes_config::connect_port(&tDev,false,0,&queue,0);    
-    
+
     //Configuring queue 
     setup_queue(queue,feh); 
- 
+
     Camkes_proxy cp[1] = {{&db,(message_t*)db_buffer}};    
     Camkes_config::start_pcap_dispatch(&fDev,&tDev,cp,1);
 
@@ -468,15 +490,15 @@ void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh ){
     Camkes_config::initialize_ports(&icmpmf,pin_v,pout_v);
 }
 
-void setup_checkpaint(CheckPaint& checkpaint,FileErrorHandler &feh ){
+void setup_paintTee(PaintTee& paintTee,FileErrorHandler &feh ){
     int re = 0;
-    Vector<String> checkpaint_config;
-    checkpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
-    debugging("setting n ports for checkpaint",re);
-    re = Camkes_config::set_nports(&checkpaint,1,2);       
-    re = checkpaint.configure(checkpaint_config,&feh);
-    debugging("finishing configuration for checkpaint",re);
-    Camkes_config::initialize_ports(&checkpaint,pin_v,pout_v2);
+    Vector<String> paintTee_config;
+    paintTee_config.push_back(String("COLOR ") + String(camkes_id_attributes));
+    debugging("setting n ports for paintTee",re);
+    re = Camkes_config::set_nports(&paintTee,1,2);       
+    re = paintTee.configure(paintTee_config,&feh);
+    debugging("finishing configuration for paintTee",re);
+    Camkes_config::initialize_ports(&paintTee,pin_v,pout_v2);
 
 }
 
@@ -494,6 +516,11 @@ void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh){
 void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh){
     Vector<String> arpRes_config;
     arpRes_config.push_back(String(ip_addr) + String(" ") + String(mac));
+    //TODO NUM_COMPONENTS-1
+    for (int i = 0; i < NUM_COMPONENT; i++){
+        arpRes_config.push_back(proxy_arp[i]);
+    }
+
     int re = Camkes_config::set_nports(&arpRes,1,1); 
     debugging("setting n ports for arpResponder",re);
     re = arpRes.configure(arpRes_config,&feh); 
@@ -547,6 +574,7 @@ void setup_fDev(FromDevice & fDev, FileErrorHandler & feh){
 
 void setup_cpaint(Camkes_Paint& cpaint,FileErrorHandler & feh){
     Vector<String> cpaint_config;
+    std::cout << camkes_id_attributes << std::endl;
     cpaint_config.push_back(String("COLOR ") + String(camkes_id_attributes));
     int re = Camkes_config::set_nports(&cpaint,1,1);
     debugging("setting n ports for paint",re);
@@ -615,4 +643,10 @@ void setup_arpQue(ARPQuerier& arpQue,FileErrorHandler &feh ){
     re = arpQue.configure(arpQue_config,&feh); 
     debugging("finish configuration for arpQue",re);
     Camkes_config::initialize_ports(&arpQue,pin_v2,pout_v); //one input three output
+}
+
+void setup_db(DropBroadcasts& db, FileErrorHandler &feh){
+    int re = Camkes_config::set_nports(&db,1,1); 
+    debugging("setting n ports for db",re);
+    Camkes_config::initialize_ports(&db,pin_v,pout_v); //one input three output
 }

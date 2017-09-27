@@ -263,7 +263,7 @@ Camkes_LinearIPLookup::push(int, Packet *p)
         //camkes proxy
         Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf[e.port]->content));
         while (((volatile message_t*)_camkes_buf)->ready);
-        Camkes_config::packet_serialize(dst,p);        
+        Camkes_config::packet_serialize(dst,p);
         _camkes_buf[e.port]->ready = 1;
     }   else{
         //this machine

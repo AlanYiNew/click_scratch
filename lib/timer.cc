@@ -264,9 +264,7 @@ void
 Timer::schedule_at_steady(const Timestamp &when)
 {
     // acquire lock, unschedule
-    std::cout << "steady" << std::endl;
     assert(_owner && initialized());
-    std::cout << "steady1" << std::endl;
 
 #if !UNDER_CAMKES
     TimerSet &ts = _thread->timer_set();
@@ -274,7 +272,6 @@ Timer::schedule_at_steady(const Timestamp &when)
     TimerSet &ts = Camkes_config::timer_set();
 #endif
 
-    std::cout << "steadg2" << std::endl;
     ts.lock_timers();
 
     // set expiration timer (ensure nonzero)

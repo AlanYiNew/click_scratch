@@ -44,12 +44,14 @@ DecIPTTL::configure(Vector<String> &conf, ErrorHandler *errh)
 Packet *
 DecIPTTL::simple_action(Packet *p)
 {
+    
     assert(p->has_network_header());
     if (!_active)
 	return p;
     const click_ip *ip_in = p->ip_header();
     if (!_multicast && IPAddress(ip_in->ip_dst).is_multicast())
 	return p;
+
 
     if (ip_in->ip_ttl <= 1) {
 	++_drops;

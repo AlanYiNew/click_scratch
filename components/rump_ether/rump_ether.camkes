@@ -31,5 +31,5 @@ component rumprun_ether {
     attribute string camkes_id_attributes;
     attribute string ip_addr;
     attribute string mac;
-
+    attribute string proxy_arp[];
 }

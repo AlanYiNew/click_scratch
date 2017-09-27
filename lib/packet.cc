@@ -480,7 +480,9 @@ Packet::alloc_data(uint32_t headroom, uint32_t length, uint32_t tailroom)
 	n = min_buffer_length;
     }
 # if CLICK_USERLEVEL || CLICK_MINIOS
+
     unsigned char *d = new unsigned char[n];
+
     if (!d)
 	return false;
     _head = d;
@@ -712,7 +714,6 @@ Packet::expensive_uniqueify(int32_t extra_headroom, int32_t extra_tailroom,
 			    bool free_on_failure)
 {
     assert(extra_headroom >= (int32_t)(-headroom()) && extra_tailroom >= (int32_t)(-tailroom()));
-
 #if CLICK_LINUXMODULE
 
     struct sk_buff *nskb = skb();
@@ -730,6 +731,7 @@ Packet::expensive_uniqueify(int32_t extra_headroom, int32_t extra_tailroom,
         kfree_skb(nskb);
         return NULL;
     }
+
 
     // success, so kill the clone from above
     if (!free_on_failure)
@@ -855,11 +857,15 @@ Packet::expensive_push(uint32_t nbytes)
 {
   static int chatter = 0;
   if (headroom() < nbytes && chatter < 5) {
+
     click_chatter("expensive Packet::push; have %d wanted %d",
                   headroom(), nbytes);
+
     chatter++;
   }
+  
   if (WritablePacket *q = expensive_uniqueify((nbytes + 128) & ~3, 0, true)) {
+
 #ifdef CLICK_LINUXMODULE	/* Linux kernel module */
     __skb_push(q->skb(), nbytes);
 #else				/* User-space and BSD kernel module */

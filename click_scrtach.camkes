@@ -43,7 +43,7 @@ assembly {
      connection seL4MultiSharedData conn0(from rump_ether0.camkes_buffer, to routing.buffer);
      connection seL4MultiSharedData conn1(from rump_ether1.camkes_buffer, to routing.buffer);
 
-      connection seL4MultiSharedData icmp0(from rump_ether0.icmp_buffer, to routing.icmp_buffer);
+     connection seL4MultiSharedData icmp0(from rump_ether0.icmp_buffer, to routing.icmp_buffer);
      connection seL4MultiSharedData icmp1(from rump_ether1.icmp_buffer, to routing.icmp_buffer);    
 
      connection seL4MultiNotification simpleEvent1(from rump_ether0.camkes_ev, to routing.ev);
@@ -65,16 +65,16 @@ assembly {
  }
 
  configuration {
-    rump_ether0.rump_config = { "rump_net": 4,
+    rump_ether0.rump_config = { "rump_net": 2,
                                 "rumprunbake_config": "sel4_ethernet", 
                                 "cmdline": "echo 6666",
                                 "pci_config_interface" : "pci_config",
                                 "eth_irq_interface" : "eth_irq",
-                                "eth_irq_number" : 11,
-                                "wm_val" : "wm4",
+                                "eth_irq_number" : 10,
+                                "wm_val" : "wm1",
                                 "addr" : "192.168.2.98",
                                 "mask" : "24",
-                                "interfaces_to_expose": ["mac","ip_addr","camkes_buffer", "camkes_ev", "camkes_ev1","wm_val","db_buffer","camkes_id_attributes"] };
+                                "interfaces_to_expose": ["mac","ip_addr","camkes_buffer", "camkes_ev", "camkes_ev1","wm_val","db_buffer","camkes_id_attributes","proxy_arp","icmp_buffer"] };
 
     rump_ether1.rump_config = { "rump_net": 2,
                                 "rumprunbake_config": "sel4_ethernet",
@@ -85,34 +85,35 @@ assembly {
                                 "wm_val" : "wm0",
                                 "addr" : "192.168.1.98",
                                 "mask" : "24",
-                                "interfaces_to_expose": ["mac","ip_addr","camkes_buffer", "camkes_ev", "camkes_ev1","wm_val","db_buffer","camkes_id_attributes"] };
+                                "interfaces_to_expose": ["mac","ip_addr","camkes_buffer", "camkes_ev", "camkes_ev1","wm_val","db_buffer","camkes_id_attributes", "proxy_arp", "icmp_buffer"] };
 
     routing.rump_config = {     "rump_net": 4,
                                 "rumprunbake_config": "sel4_generic", 
                                 "cmdline": "echo 6666",
-                                "interfaces_to_expose":["ev","ev1","ev2","buffer","ip_addr1","rt","db_buffer"]};
+                                "interfaces_to_expose":["ev","ev1","ev2","buffer","ip_addr1","ip_addr2","rt","db_buffer","icmp_buffer"]};
 
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether0, 0)
     RUMPRUN_COMPONENT_CONFIGURATION(rump_ether1, 1)
     RUMPRUN_COMPONENT_CONFIGURATION(routing, 2)
     
 
-    rump_ether0.wm_val = "wm4";
+    rump_ether0.wm_val = "wm1";
     rump_ether1.wm_val = "wm0";
 
     //Maybe better to change them into array
     routing.ip_addr1 = "192.168.1.98/24";
     //Change xx to the interface value
-    //routing.ip_addr0 = "192.168.0.xx/24";   
-    //routing.ip_addr2 = "192.168.2.xx/24";   
+    routing.ip_addr0 = "192.168.2.98/24";   
+    //routing.ip_addr2 = "192.168.3.98/24";   
  
     //memory mapped region for xxxxx,xxxxx,native ethernet card
-    rump_ether0.untyped_mmios = ["0xfebc0000:17", "0xf7f39000:12", "0xf7f00000:17"];
+    //rump_ether0.untyped_mmios = ["0xfebc0000:17", "0xf7f39000:12", "0xf7f00000:17"];
     
     //wm0:0xf7b00000
     //wm1:0xf7a00000
     //wm2:0xf7900000
     rump_ether1.untyped_mmios = ["0xf7b00000:20"];
+    rump_ether0.untyped_mmios = ["0xf7a00000:20"];
 
     //These attributes are kind of id please make them consistent
     rump_ether0.db_buffer_attributes = "0";
@@ -121,8 +122,8 @@ assembly {
     rump_ether0.camkes_buffer_attributes = "0";
     rump_ether1.camkes_buffer_attributes = "1";
 
-    rump_erher0.camkes_id_attributes = "0";
-    rump_ether1.camkes_id_attributes = "1";
+    rump_ether0.camkes_id_attributes = "2";//USE for COLOR
+    rump_ether1.camkes_id_attributes = "1";//USE for COLOR
 
     rump_ether0.icmp_buffer_attributes = "0";
     rump_ether1.icmp_buffer_attributes = "1";
@@ -132,6 +133,17 @@ assembly {
    
     rump_ether0.mac = "00:1b:21:41:25:57";
     rump_ether1.mac = "00:1b:21:41:25:56";
+
+    rump_ether0.proxy_arp = [
+        "192.168.1.0/24 00:1b:21:41:25:57",
+        "192.168.3.0/24 00:1b:21:41:25:57"
+    ];
+
+    rump_ether1.proxy_arp =[
+        "192.168.2.0/24 00:1b:21:41:25:56",
+        "192.168.3.0/24 00:1b:21:41:25:56"
+    ];
+
  
     //Define static routing table
     //0 to this machine 
@@ -157,21 +169,21 @@ assembly {
     routing.rt = ["192.168.1.0/32 0",
                   "192.168.1.98/32 0",
                   "192.168.1.255/32 0",
-    //              "192.168.2.0/32 0"
-    //              "192.168.2.98/32 0",
-    //              "192.168.2.255/32 0",
+                  "192.168.2.0/32 0",
+                  "192.168.2.98/32 0",
+                  "192.168.2.255/32 0",
     //              "192.168.3.0/32 0"
     //              "192.168.3.98/32 0",
     //              "192.168.3.255/32 0",
                   "192.168.1.0/24 1",
-    //              "192.168.2.0/24 2",
+                  "192.168.2.0/24 2",
     //              "192.168.3.0/24 3"
                  ];
  
     eth0.irq_irq_type = "pci";
     eth0.irq_irq_ioapic = 0;
-    eth0.irq_irq_ioapic_pin = 20;
-    eth0.irq_irq_vector = 20;
+    eth0.irq_irq_ioapic_pin = 17;
+    eth0.irq_irq_vector = 10;
 
     eth1.irq_irq_type = "pci";
     eth1.irq_irq_ioapic = 0;

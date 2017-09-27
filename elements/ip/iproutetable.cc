@@ -103,9 +103,7 @@ IPRouteTable::cast(const char *name)
 int
 IPRouteTable::configure(Vector<String> &conf, ErrorHandler *errh)
 {
-    for (int i = 0 ; i < conf.size(); i++){
-        std::cout << "addr: "<<conf[i].c_str() << std::endl;
-    }
+   
     
     int r = 0, r1, eexist = 0;
     IPRoute route;

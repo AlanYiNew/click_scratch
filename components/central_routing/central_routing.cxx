@@ -44,7 +44,7 @@ extern "C" {
     void* buffer_buf(int); 
     void ev1_emit(void);
     void ev2_emit(void);
-//    const char *ip_addr0;
+    const char *ip_addr0;
     const char *ip_addr1;
 //    const char *ip_addr2;
     const char * rt[RT_NUM_ENTRY];
@@ -58,6 +58,7 @@ extern "C" {
 #pragma weak db_buffer_buf
 #pragma weak ev_wait
 #pragma weak ip_addr1
+#pragma weak ip_addr0
 #pragma weak rt
 #pragma weak icmp_buffer_buf
 
@@ -70,7 +71,9 @@ void inline debugging(const char* s,int val){
 
 int main(int argc, char *argv[]) {
     
+    std::cout << "&&&" << db_buffer[2] << std::endl;
     
+    std::cout << "&&&" << db_buffer[1] << std::endl;
     /* Click configuration */
     int re = 0;
     
@@ -100,13 +103,13 @@ int main(int argc, char *argv[]) {
         clir_config.push_back(rt[i]);
     }
     
-
-    re = Camkes_config::set_nports(&clir,1,2); 
+    std::cout << "####icmp buffer buf" << icmp_buffer_buf << std::endl;
+    re = Camkes_config::set_nports(&clir,1,3); 
     debugging("setting n ports for clir",re);
     re = clir.configure(clir_config,&feh); 
     debugging("finish configuration for clir",re);
-    const int clir_pout_v[NUM_COMPONENT+1] = {1,1};
-    Camkes_config::initialize_ports(&clir,pin_v,pout_v); //one input three output
+    const int clir_pout_v[NUM_COMPONENT+1] = {1,1,1};
+    Camkes_config::initialize_ports(&clir,pin_v,clir_pout_v); //one input three output
     Camkes_config::connect_port(&clir,true,0,&print,0);//true int Element int
     
     //Configuring GetIPAddres
@@ -131,7 +134,7 @@ int main(int argc, char *argv[]) {
 
     //Configuring cih
     Vector<String> cih_config;//At the moment hard code a vector to configure it
-    cih_config.push_back(String("INTERFACES ") + ip_addr1);
+    cih_config.push_back(String("INTERFACES ") + ip_addr1 + " " + ip_addr0);
     re = Camkes_config::set_nports(&cih,1,1);
     debugging("setting n ports for cih",re);
     re = cih.configure(cih_config,&feh);
@@ -157,18 +160,26 @@ int main(int argc, char *argv[]) {
 
     int count = 2;
     int c = 0;
-    Camkes_proxy_m cp[2] = {{&clir,icmp_buffer_buf,2},
-        {&strip,buffer_buf,2}};
+    Camkes_proxy_m cp[2] = {
+        {&clir,icmp_buffer_buf,2},
+        {&strip,buffer_buf,2}
+    };
+
     while(true) {
         /* Wait for event */
 
-        ev_wait();
         
-        std::cout << "unblocked by id:" << c << std::endl; 
-          
-        message_t * message  = ((message_t *)buffer_buf(c));
 
-        if (count-- > 0) {
+        if (count > 0) {
+            count--;
+            
+            ev_wait();
+        
+            std::cout << "unblocked by id:" << c << std::endl; 
+          
+            message_t * message  = ((message_t *)buffer_buf(c));
+            
+            
             char *buffer_str;
             for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c=(c+1)%NUM_COMPONENT){
                 std::cout << "component: " << c << " ready: " << ((message_t *)buffer_buf(c))->ready << std::endl;
@@ -210,8 +221,8 @@ extern "C"{
         //section[0] = (message_t*)buffer0;
         //section[1] = (message_t*)buffer1;
 
-        db_buffer[1] = db_buffer_buf(0);
-        db_buffer[2] = db_buffer_buf(1);
+        db_buffer[1] = db_buffer_buf(1);
+        db_buffer[2] = db_buffer_buf(0);
 
 
         //May get rid of this later;

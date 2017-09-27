@@ -70,8 +70,6 @@ ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
 	return -1;
 
 
-    std::cout << errh->nerrors() <<std::endl;
-    std::cout << "configuring 1" << class_name() << std::endl;
 
     if (type < 0 || type > 255)
 	return errh->error("ICMP type must be between 0 and 255");

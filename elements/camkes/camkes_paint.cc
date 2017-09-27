@@ -48,7 +48,6 @@ Camkes_Paint::configure(Vector<String> &conf, ErrorHandler *errh)
 
 void Camkes_Paint::push(int port, Packet *p)
 { 
-    std::cout << class_name() <<  " pushing" << std::endl;
     p = simple_action(p);
     
     

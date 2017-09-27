@@ -60,8 +60,8 @@ click: $(cfiles) $(hfiles) \
 		$(SOURCE_DIR)/elements/camkes/camkes_paint.hh \
 		$(SOURCE_DIR)/elements/standard/dropbroadcasts.hh \
 		$(SOURCE_DIR)/elements/standard/dropbroadcasts.o \
-		$(SOURCE_DIR)/elements/standard/checkpaint.hh \
-		$(SOURCE_DIR)/elements/standard/checkpaint.o \
+		$(SOURCE_DIR)/elements/standard/painttee.hh \
+		$(SOURCE_DIR)/elements/standard/painttee.o \
 		$(SOURCE_DIR)/elements/camkes/camkes_icmperror.hh \
 		$(SOURCE_DIR)/elements/camkes/camkes_icmperror.o \
 		$(SOURCE_DIR)/elements/ip/ipgwoptions.hh \
