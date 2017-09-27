@@ -257,8 +257,7 @@ Camkes_LinearIPLookup::push(int, Packet *p)
 
     const IPRoute &e = _t[ei];
     if (e.gw)
-	p->set_dst_ip_anno(e.gw);
-
+	p->set_dst_ip_anno(e.gw); 
     if (e.port != 0){
         //camkes proxy
         Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf[e.port]->content));

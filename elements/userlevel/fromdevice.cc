@@ -59,7 +59,7 @@
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <unistd.h>
-
+#include <cstring>
 
 #include <iostream>
 
@@ -510,28 +510,39 @@ void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
      struct ether_header *eth_header;
      eth_header = (struct ether_header *) packet;
 
-     if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
-         printf("************IP\n");
-     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
-         printf("*************ARP\n");
-     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_REVARP) {
-         printf("************Reverse ARP\n");
-     }   else{
-         printf("************Unknown type %x\n",ntohs(eth_header->ether_type));
-     }
- 
+
+     
      auto ip = (struct sniff_ip*)(packet+sizeof(struct ether_header));
-      
+     auto ddst = inet_ntoa(ip->ip_dst);
+     if (!strcmp(ddst,"10.13.1.252")) return; 
+     if (!strcmp(ddst,"10.13.1.152")) return;
+     if (!strcmp(ddst,"10.13.1.231")) return;
+     if (!strcmp(ddst,"10.13.1.212")) return;
      const char* content = ((char*)ip) + sizeof(sniff_ip);
-     printf("PROTO %d",ip->ip_p);
      if (ip->ip_p == 1){
-         printf("ICMP %x",ntohs(eth_header->ether_type));
+         printf("ICMP");
          if (*content == 8){
              printf(" request\n");
          }   else if (*content == 0){
              printf(" reply\n");
          }
      }
+
+     if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {
+         printf("************IP\n");
+     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_ARP) {
+         return; 
+         printf("*************ARP\n");
+     } else  if (ntohs(eth_header->ether_type) == ETHERTYPE_REVARP) { 
+         return;
+         printf("************Reverse ARP\n");
+     }   else{ 
+         return;
+         printf("************Unknown type %x\n",ntohs(eth_header->ether_type));
+     }
+     
+ 
+     
      
      
      
