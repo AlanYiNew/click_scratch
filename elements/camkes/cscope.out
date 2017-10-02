@@ -1,4 +1,4 @@
-cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/elements/camkes               0000052622
+cscope 15 /thesis/camkes-rumprun/projects/camkes/apps/click_scratch/elements/camkes               0000052735
 	@camkes_classifier.cc
 
 21 
@@ -1099,7 +1099,7 @@ pÜt
 p
 );
 
-260 
+261 
 Pack‘
 * 
 d¡
@@ -1111,15 +1111,21 @@ _ÿmkes_buf
 cÚ‹Á
 ));
 
-261 ((vŞ©
+262 ià(((vŞ©
 mes§ge_t
 *)
 _ÿmkes_buf
 )->
 »ady
-);
+){
 
-262 
+263 
+p
+->
+	`kl
+();
+
+266 
 Camkes_cÚfig
 ::
 	`·ck‘_£rŸlize
@@ -1129,23 +1135,23 @@ d¡
 p
 );
 
-263 
+267 
 _ÿmkes_buf
 ->
 »ady
  = 1;
 
-264 
+268 
 p
 ->
 	`kl
 ();
 
-266 
+270 
 	}
 }
 
-269 
+272 
 	gCamkes_CÏssif›r
 ::
 	$Camkes_CÏssif›r
@@ -1155,21 +1161,21 @@ mes§ge_t
 _ÿmkes_buf
 ){
 
-270 
+273 
 this
 ->
 _ÿmkes_buf
  = _camkes_buf;
 
-271 
+274 
 	}
 }
 
-273 
+276 
 CLICK_ENDDECLS
 
 
-274 
+277 
 	$ELEMENT_REQUIRES
 (
 Alignm’tInfo
@@ -1177,13 +1183,13 @@ Alignm’tInfo
 CÏssifiÿtiÚ
 )
 
-275 
+278 
 	$EXPORT_ELEMENT
 (
 Camkes_CÏssif›r
 )
 
-276 
+279 
 	`ELEMENT_MT_SAFE
 (
 Camkes_CÏssif›r
@@ -2703,15 +2709,21 @@ _ÿmkes_buf
 cÚ‹Á
 ));
 
-328 ((vŞ©
+328 ià(((vŞ©
 mes§ge_t
 *)
 _ÿmkes_buf
 )->
 »ady
-);
+){
 
-330 
+329 
+p
+->
+	`kl
+();
+
+333 
 Camkes_cÚfig
 ::
 	`·ck‘_£rŸlize
@@ -2721,33 +2733,33 @@ d¡
 p
 );
 
-331 
+334 
 _ÿmkes_buf
 ->
 »ady
  = 1;
 
-332 
+335 
 p
 ->
 	`kl
 ();
 
-334 
+337 
 	}
 }
 
-337 
+340 
 CLICK_ENDDECLS
 
 
-338 
+341 
 	$EXPORT_ELEMENT
 (
 Camkes_ICMPE¼Ü
 )
 
-339 
+342 
 	`ELEMENT_MT_SAFE
 (
 Camkes_ICMPE¼Ü
@@ -6127,15 +6139,21 @@ pÜt
 cÚ‹Á
 ));
 
-264 ((vŞ©
+264 ià(((vŞ©
 mes§ge_t
 *)
 _ÿmkes_buf
 )->
 »ady
-);
+){
 
 265 
+p
+->
+	`kl
+();
+
+268 
 Camkes_cÚfig
 ::
 	`·ck‘_£rŸlize
@@ -6145,13 +6163,13 @@ d¡
 p
 );
 
-266 
+269 
 p
 ->
 	`kl
 ();
 
-267 
+270 
 _ÿmkes_buf
 [
 e
@@ -6161,7 +6179,7 @@ pÜt
 »ady
  = 1;
 
-270 
+273 
 	`ouut
 (
 e
@@ -6173,21 +6191,21 @@ pÜt
 p
 );
 
-272 
+275 
 	}
 }
 
-274 
+277 
 CLICK_ENDDECLS
 
 
-275 
+278 
 	$ELEMENT_REQUIRES
 (
 Camkes_IPRou‹TabË
 )
 
-276 
+279 
 	`EXPORT_ELEMENT
 (
 Camkes_Lš—rIPLookup
@@ -6843,15 +6861,21 @@ _ÿmkes_buf
 cÚ‹Á
 ));
 
-57 ((vŞ©
+57 ià(((vŞ©
 mes§ge_t
 *)
 _ÿmkes_buf
 )->
 »ady
-);
+){
 
 58 
+p
+->
+	`kl
+();
+
+61 
 Camkes_cÚfig
 ::
 	`·ck‘_£rŸlize
@@ -6861,27 +6885,27 @@ d¡
 p
 );
 
-59 
+62 
 _ÿmkes_buf
 ->
 »ady
  = 1;
 
-60 
+63 
 p
 ->
 	`kl
 ();
 
-63 
+66 
 	}
 }
 
-66 
+69 
 Pack‘
  *
 
-67 
+70 
 	gCamkes_Pašt
 ::
 	$sim¶e_aùiÚ
@@ -6891,7 +6915,7 @@ Pack‘
 p
 )
 
-69 
+72 
 p
 ->
 	`£t_ªno_u8
@@ -6901,21 +6925,21 @@ _ªno
 _cŞÜ
 );
 
-70  
+73  
 p
 ;
 
-71 
+74 
 	}
 }
 
-74 
+77 
 	gCamkes_Pašt
 ::
 	$add_hªdËrs
 ()
 
-76 
+79 
 	`add_d©a_hªdËrs
 ("cŞÜ", 
 HªdËr
@@ -6927,21 +6951,21 @@ OP_WRITE
 _cŞÜ
 );
 
-77 
+80 
 	}
 }
 
-79 
+82 
 CLICK_ENDDECLS
 
 
-80 
+83 
 	$EXPORT_ELEMENT
 (
 Pašt
 )
 
-81 
+84 
 	`ELEMENT_MT_SAFE
 (
 Pašt
@@ -7519,15 +7543,21 @@ i
 cÚ‹Á
 ));
 
-51 ((vŞ©
+51 ià(((vŞ©
 mes§ge_t
 *)
 _ÿmkes_buf
 )->
 »ady
-);
+){
 
 52 
+p
+->
+	`kl
+();
+
+55 
 Camkes_cÚfig
 ::
 	`·ck‘_£rŸlize
@@ -7537,7 +7567,7 @@ d¡
 p
 );
 
-53 
+56 
 _ÿmkes_buf
 [
 i
@@ -7545,27 +7575,27 @@ i
 »ady
  = 1;
 
-55 
+58 
 p
 ->
 	`kl
 ();
 
-56 
+59 
 	}
 }
 
-62 
+65 
 	gPuÎCamkes_T“
 ::
 	$PuÎCamkes_T“
 ()
 
-64 
+67 
 	}
 }
 
-67 
+70 
 PuÎCamkes_T“
 ::
 cÚfigu»
@@ -7581,13 +7611,13 @@ E¼ÜHªdËr
 ”rh
 )
 
-69 
+72 
 	gn
  = 
 nouuts
 ();
 
-70 ià(
+73 ià(
 Args
 (
 cÚf
@@ -7603,13 +7633,13 @@ n
 com¶‘e
 () < 0)
 
-72 ià(
+75 ià(
 	gn
  !ğ(è
 nouuts
 ())
 
-73  
+76  
 ”rh
 ->
 ”rÜ
@@ -7617,17 +7647,17 @@ nouuts
 nouuts
 (),‚outputs());
 
-77 
+80 
 Pack‘
  *
 
-78 
+81 
 	gPuÎCamkes_T“
 ::
 	$puÎ
 ()
 
-80 
+83 
 Pack‘
  *
 p
@@ -7637,23 +7667,23 @@ p
 	`puÎ
 ();
 
-81 ià(
+84 ià(
 p
 ) {
 
-82 
+85 
 n
  = 
 	`nouuts
 ();
 
-83 
+86 
 i
  = 1; i < 
 n
 ; i++)
 
-84 ià(
+87 ià(
 Pack‘
  *
 q
@@ -7663,7 +7693,7 @@ p
 	`şÚe
 ())
 
-85 
+88 
 	`ouut
 (
 i
@@ -7673,19 +7703,19 @@ i
 q
 );
 
-87  
+90  
 p
 ;
 
-88 
+91 
 	}
 }
 
-90 
+93 
 CLICK_ENDDECLS
 
 
-91 
+94 
 	$EXPORT_ELEMENT
 (
 Camkes_T“
@@ -7693,13 +7723,13 @@ Camkes_T“
 PuÎT“
 )
 
-92 
+95 
 	$ELEMENT_MT_SAFE
 (
 Camkes_T“
 )
 
-93 
+96 
 	`ELEMENT_MT_SAFE
 (
 PuÎCamkes_T“

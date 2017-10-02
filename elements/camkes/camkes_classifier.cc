@@ -257,8 +257,12 @@ Camkes_Classifier::push(int, Packet *p)
    if (port != 1){
       checked_output_push(port, p);
    }    else{
+        //Camkes proxy
         Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf->content));
-        while (((volatile message_t*)_camkes_buf)->ready);
+        if (((volatile message_t*)_camkes_buf)->ready){
+            p->kill();
+            return;
+        }
         Camkes_config::packet_serialize(dst,p); 
         _camkes_buf->ready = 1;
         p->kill();
