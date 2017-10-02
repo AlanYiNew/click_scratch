@@ -516,11 +516,7 @@ void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
      auto ip = (struct sniff_ip*)(packet+sizeof(struct ether_header));
      if (ip->ip_p == 1){
          printf("ICMP");
-         if (*content == 8){
-             printf(" request\n");
-         }   else if (*content == 0){
-             printf(" reply\n");
-         }
+         
      }  else{
 
          if (ntohs(eth_header->ether_type) == ETHERTYPE_IP) {

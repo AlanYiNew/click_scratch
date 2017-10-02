@@ -1,7 +1,7 @@
 #pragma once
 #include <buffer.h>
-#define RT_NUM_ENTRY 8
-#define NUM_COMPONENT 2
+#define RT_NUM_ENTRY 12
+#define NUM_COMPONENT 3
 typedef struct message{
    int ready;
    char content[PACKET_BUFSIZE-sizeof(int)];//4:the size of ready

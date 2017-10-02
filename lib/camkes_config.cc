@@ -55,6 +55,7 @@ void Camkes_config::start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy
 
 //Mashalling
 int Camkes_config::packet_serialize(Packet * dst,Packet *src){
+    
     memcpy(dst,src,sizeof(Packet));
     dst->_head = reinterpret_cast<unsigned char*>(dst) + sizeof(Packet);
     //I made the shared memory buffer the size of 4096 - sizeof(int) - sizeof(Packet). It should still be far greater than any buffer_length() whose max value normally may just be 2048
@@ -65,11 +66,11 @@ int Camkes_config::packet_serialize(Packet * dst,Packet *src){
     memcpy(dst->_data,src->data(),src->length());
     dst->_tail = dst->_data + src->length();
     dst->copy_annotations(src);
+    
     if (src->mac_header())
-        dst->set_mac_header(dst->data() + src->mac_header_offset() ); 
+        dst->set_mac_header(dst->data() + src->mac_header_offset() );
     if (src->network_header())
         dst->set_network_header(dst->data() + src->network_header_offset(), src->network_header_length()); 
-
 }
 
 
@@ -114,20 +115,21 @@ void Camkes_config::recycle(Packet * p){
     delete p;
 }
 
-Camkes_proxy::Camkes_proxy(Element * elemm, message_t * bufferr):elem(elemm),buffer(bufferr){}
+Camkes_proxy::Camkes_proxy(Element * elemm, message_t * bufferr,int portt):elem(elemm),buffer(bufferr),port(portt){}
 void Camkes_proxy::push(){
     if (((volatile message_t*)buffer)->ready){
         Packet * p;
         Camkes_config::deserialize_packet(p,(void*)(&(buffer->content)));
         buffer->ready = 0;
-        elem->push(0,p);
+        elem->push(port,p);
     }
 }
 
-Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func ,int nclient){
+Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func ,int nclient,int port){
     this->func = func; 
     this->elem = elemm;
     this->nclient = nclient; 
+    this->port = port;
 }
 
 void Camkes_proxy_m::push(){
@@ -136,7 +138,7 @@ void Camkes_proxy_m::push(){
             Packet * p;
             Camkes_config::deserialize_packet(p,(void*)(&(((message_t*)func(i))->content)));
             ((message_t*)func(i))->ready = 0;
-            elem->push(0,p);
+            elem->push(port,p);
         }
     }
 }

@@ -328,7 +328,8 @@ Camkes_ICMPError::push(int port, Packet *p)
         while (((volatile message_t*)_camkes_buf)->ready);
         
         Camkes_config::packet_serialize(dst,p);      
-        _camkes_buf->ready = 1; 
+        _camkes_buf->ready = 1;
+        p->kill(); 
     }
 }
 

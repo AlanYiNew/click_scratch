@@ -78,7 +78,6 @@ ICMPError::configure(Vector<String> &conf, ErrorHandler *errh)
 	|| code < 0 || code > 255)
 	return errh->error("argument 2 takes ICMP code (integer between 0 and 255)");
 
-    std::cout << errh->nerrors() <<std::endl;
     _src_ip = src_ip;
     _type = type;
     _code = code;

@@ -23,6 +23,8 @@ component rumprun_ether {
     dataport message_t camkes_buffer;
     dataport message_t db_buffer;
     dataport message_t icmp_buffer;    
+    dataport message_t aq_recvbuffer;
+    dataport message_t aq_sendbuffer;
     emits SomethingHappenedEvent camkes_ev;
     consumes SomethingHappenedEvent camkes_ev1;
     //attribute string server_global_endpoint;

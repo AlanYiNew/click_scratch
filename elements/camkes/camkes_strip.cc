@@ -44,7 +44,7 @@ void Camkes_Strip::push(int port, Packet *p)
     p = simple_action(p);
     
     if (p){
-        //camkes proxy
+        //TODO This does not work, but I don't need to use this. Please refer to other file. camkes proxy
         memcpy(_camkes_buf->content,p->data(),p->length());
         _camkes_buf->len = p->length();
         _camkes_buf->ready = 1;

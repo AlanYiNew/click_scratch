@@ -14,22 +14,12 @@
 #include <rumprun_camkes.h>
 
 import <rumprun.camkes>;
-component central_routing {
+component aq_broadcast {
     include "porttype.h";
     RUMPRUN_COMPONENT_DEFINITION()
     uses PCIConfig pci_config;
     control;
-    dataport message_t buffer;
-    dataport message_t db_buffer;
-    dataport message_t icmp_buffer;
-    consumes SomethingHappenedEvent ev;
+    dataport message_t aqb_sendbuffer;
+    dataport message_t aqb_recvbuffer;
 
-    //output buffer and output downstream event
-    emits SomethingHappenedEvent ev1;
-    emits SomethingHappenedEvent ev2;
-    emits SomethingHappenedEvent ev3;
-    attribute string ip_addr0;
-    attribute string ip_addr1;
-    //attribute string ip_addr2;
-    attribute string rt[];
 }

@@ -19,7 +19,7 @@
  */
 
 #include <click/config.h>
-#include "classifier.hh"
+#include "camkes_classifier.hh"
 #include <click/glue.hh>
 #include <click/error.hh>
 #include <click/confparse.hh>
@@ -29,14 +29,15 @@
 #endif
 #include <click/standard/alignmentinfo.hh>
 #include <iostream>
+#include <click/camkes_config.hh>
 CLICK_DECLS
 
-Classifier::Classifier()
+Camkes_Classifier::Camkes_Classifier()
 {
 }
 
 Classification::Wordwise::Program
-Classifier::empty_program(ErrorHandler *errh) const
+Camkes_Classifier::empty_program(ErrorHandler *errh) const
 {
     // set align offset
     int c, o;
@@ -47,7 +48,7 @@ Classifier::empty_program(ErrorHandler *errh) const
 #if !HAVE_INDIFFERENT_ALIGNMENT
 	if (errh) {
 	    errh->warning("alignment unknown, but machine is sensitive to alignment");
-	    void *&x = router()->force_attachment("Classifier alignment warning");
+	    void *&x = router()->force_attachment("Camkes_Classifier alignment warning");
 	    if (!x) {
 		x = (void *) this;
 		errh->message("(%s must be told how its input packets are aligned in memory.\n"
@@ -81,7 +82,7 @@ update_value_mask(int c, int shift, int &value, int &mask)
 }
 
 void
-Classifier::parse_program(Classification::Wordwise::Program &prog,
+Camkes_Classifier::parse_program(Classification::Wordwise::Program &prog,
 			  Vector<String> &conf, ErrorHandler *errh)
 {
     Vector<int> tree = prog.init_subtree();
@@ -221,7 +222,7 @@ Classifier::parse_program(Classification::Wordwise::Program &prog,
 }
 
 int
-Classifier::configure(Vector<String> &conf, ErrorHandler *errh)
+Camkes_Classifier::configure(Vector<String> &conf, ErrorHandler *errh)
 {
     if (conf.size() != noutputs())
 	return errh->error("need %d arguments, one per output port", noutputs());
@@ -237,26 +238,38 @@ Classifier::configure(Vector<String> &conf, ErrorHandler *errh)
 }
 
 String
-Classifier::program_string(Element *element, void *)
+Camkes_Classifier::program_string(Element *element, void *)
 {
-    Classifier *c = static_cast<Classifier *>(element);
+    Camkes_Classifier *c = static_cast<Camkes_Classifier *>(element);
     return c->_prog.unparse();
 }
 
 void
-Classifier::add_handlers()
+Camkes_Classifier::add_handlers()
 {
-    add_read_handler("program", Classifier::program_string, 0, Handler::CALM);
+    add_read_handler("program", Camkes_Classifier::program_string, 0, Handler::CALM);
 }
 
 void
-Classifier::push(int, Packet *p)
+Camkes_Classifier::push(int, Packet *p)
 {
-    std::cout << class_name() << " header length " << p->has_network_header() << " "<<p->network_header_length() << std::endl; 
-    checked_output_push(_prog.match(p), p);
+   int port =  _prog.match(p);
+   if (port != 1){
+      checked_output_push(port, p);
+   }    else{
+        Packet* dst = reinterpret_cast<Packet*>(&(_camkes_buf->content));
+        while (((volatile message_t*)_camkes_buf)->ready);
+        Camkes_config::packet_serialize(dst,p); 
+        _camkes_buf->ready = 1;
+        p->kill();
+   }
+}
+
+Camkes_Classifier::Camkes_Classifier(message_t * _camkes_buf){
+    this->_camkes_buf = _camkes_buf;
 }
 
 CLICK_ENDDECLS
 ELEMENT_REQUIRES(AlignmentInfo Classification)
-EXPORT_ELEMENT(Classifier)
-ELEMENT_MT_SAFE(Classifier)
+EXPORT_ELEMENT(Camkes_Classifier)
+ELEMENT_MT_SAFE(Camkes_Classifier)

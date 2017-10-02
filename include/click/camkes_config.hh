@@ -10,21 +10,23 @@ class Camkes_proxy{
     private:
     Element * elem;
     message_t * buffer;
+    int port;
     public:
-        Camkes_proxy(Element * elemm, message_t * bufferr);
+        Camkes_proxy(Element * elemm, message_t * bufferr,int port = 0);
+        Camkes_proxy() = default;
         void push();
 };
 
 class Camkes_proxy_m{
 public:
     using buf_func_t = void* (*)(int);
-    Camkes_proxy_m(Element * elemm, buf_func_t  func,int nclient);
+    Camkes_proxy_m(Element * elemm, buf_func_t  func,int nclient,int port = 0);
     void push();
 private:
     Element * elem;
     buf_func_t func;
     int nclient;
-
+    int port;
 };
 
 

@@ -2892,6 +2892,7 @@ Element::local_llrpc(unsigned command, void *data)
 void
 Element::push(int port, Packet *p)
 {
+
     p = simple_action(p);
     if (p){
 	    output(port).push(p);

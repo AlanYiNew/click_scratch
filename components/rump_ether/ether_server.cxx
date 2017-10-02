@@ -47,7 +47,7 @@
 #include <click/config.h>
 #include <click/element.hh>
 #include <click/error.hh>
-#include "elements/standard/classifier.hh"
+#include "elements/camkes/camkes_classifier.hh"
 #include "elements/standard/print.hh"
 #include "elements/ethernet/arpresponder.hh"
 #include "elements/userlevel/fromdevice.hh"
@@ -65,7 +65,7 @@
 #include "elements/ip/ipnameinfo.hh"
 #include "elements/ip/decipttl.hh"
 #include "elements/ip/ipfragmenter.hh"
-#include <click/nameinfo.hh>"
+#include <click/nameinfo.hh>
 #include "elements/ethernet/arpquerier.hh"
 
 /* XXX: CAmkES symbols that are linked in after this file is compiled.
@@ -74,13 +74,15 @@ extern "C" {
     void *camkes_buffer;
     void camkes_ev_emit(void); 
     void camkes_ev1_wait(void);
+    void *aq_sendbuffer;
+    void *aq_recvbuffer;
     const char * wm_val;
     void *db_buffer;
     void *icmp_buffer;
     const char * camkes_id_attributes;
     const char * ip_addr;
     const char * mac;
-    const char * proxy_arp[NUM_COMPONENT];//TODO NUM_COMPONENT-1
+    const char * proxy_arp[NUM_COMPONENT-1];
 }
 
 #pragma weak wm_val
@@ -94,6 +96,9 @@ extern "C" {
 #pragma weak mac
 #pragma weak icmp_buffer
 #pragma weak proxy_arp
+#pragma weak aq_sendbuffer
+#pragma weak aq_recvbuffer
+
 
 extern void click_export_elements();
 
@@ -106,7 +111,7 @@ void setup_paintTee(PaintTee& paintTee,FileErrorHandler &feh );
 void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh );
 void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh);
 void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh);
-void setup_clsf(Classifier &clsf,FileErrorHandler &feh);
+void setup_cclsf(Camkes_Classifier &clsf,FileErrorHandler &feh);
 void setup_tDev(ToDevice & tDev,FromDevice & fDev, FileErrorHandler & feh);
 void setup_fDev(FromDevice & fDev, FileErrorHandler & feh);
 void setup_cpaint(Camkes_Paint& cpaint,FileErrorHandler & feh);
@@ -129,15 +134,15 @@ int main (int argc, char *argv[]) {
     message_t * buffer_str = (message_t*)camkes_buffer;
 
 
-    snprintf(buffer_str->content, PACKET_MAX_LEN, "Hello, World!");
-    printf("Sending string: %s\n", buffer_str->content);
+    //snprintf(buffer_str->content, PACKET_MAX_LEN, "Hello, World!");
+    //printf("Sending string: %s\n", buffer_str->content);
     /* Signal the string reverse server and wait for response */
-    buffer_str->ready = 1;
-    camkes_ev_emit();
+    //buffer_str->ready = 1;
+    //camkes_ev_emit();
 
-    camkes_ev1_wait();
+    //camkes_ev1_wait();
 
-    printf("%s\n", buffer_str);
+    //printf("%s\n", buffer_str);
 
     char errbuf[PCAP_ERRBUF_SIZE]; 
 
@@ -201,7 +206,7 @@ int main (int argc, char *argv[]) {
     //Arp element
     ARPResponder arpRes;
     //Classifier
-    Classifier clsf;
+    Camkes_Classifier cclsf((message_t*)aq_recvbuffer);
     //FromDevice
     FromDevice fDev;
     //Fullnotequeue
@@ -309,15 +314,15 @@ int main (int argc, char *argv[]) {
     Camkes_config::connect_port(&arpRes,true,0,&queue,0);//true int Elment int
 
     //Configuring classifer 
-    setup_clsf(clsf,feh);
-    Camkes_config::connect_port(&clsf,true,0,&arpRes,0);//true int Elment int
-    Camkes_config::connect_port(&clsf,true,1,&arpQue,1);
-    Camkes_config::connect_port(&clsf,true,2,&cpaint,0);
-    Camkes_config::connect_port(&clsf,true,3,&discard,0);//other packet 
+    setup_cclsf(cclsf,feh);
+    Camkes_config::connect_port(&cclsf,true,0,&arpRes,0);//true int Elment int
+    Camkes_config::connect_port(&cclsf,true,1,&arpQue,1);
+    Camkes_config::connect_port(&cclsf,true,2,&cpaint,0);
+    Camkes_config::connect_port(&cclsf,true,3,&discard,0);//other packet 
 
     //Configuring fromDevice
     setup_fDev(fDev,feh); 
-    Camkes_config::connect_port(&fDev,true,0,&clsf,0);
+    Camkes_config::connect_port(&fDev,true,0,&cclsf,0);
 
     //Configuring toDevice 
     setup_tDev(tDev,fDev,feh);
@@ -326,8 +331,9 @@ int main (int argc, char *argv[]) {
     //Configuring queue 
     setup_queue(queue,feh); 
 
-    Camkes_proxy cp[1] = {{&db,(message_t*)db_buffer}};    
-    Camkes_config::start_pcap_dispatch(&fDev,&tDev,cp,1);
+    Camkes_proxy cp[2] = {{&db,(message_t*)db_buffer},
+                          {&arpQue,(message_t*)aq_recvbuffer,1}};    
+    Camkes_config::start_pcap_dispatch(&fDev,&tDev,cp,2);
 
     return 0;
 
@@ -409,8 +415,7 @@ void setup_ipgwoptions(IPGWOptions & ipgwoptions,FileErrorHandler &feh){
 void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh){
     Vector<String> arpRes_config;
     arpRes_config.push_back(String(ip_addr) + String(" ") + String(mac));
-    //TODO NUM_COMPONENTS-1
-    for (int i = 0; i < NUM_COMPONENT; i++){
+    for (int i = 0; i < NUM_COMPONENT-1; i++){
         arpRes_config.push_back(proxy_arp[i]);
     }
 
@@ -423,7 +428,7 @@ void setup_arpRes(ARPResponder &arpRes,FileErrorHandler &feh){
     Camkes_config::initialize_ports(&arpRes,arpRes_in_v,arpRes_out_v); //one input three output
 }
 
-void setup_clsf(Classifier &clsf,FileErrorHandler &feh){
+void setup_cclsf(Camkes_Classifier &clsf,FileErrorHandler &feh){
     //For etherType infomration look at here https://en.wikipedia.org/wiki/EtherType
     Vector<String> clsf_config;//At the moment hard code a vector to configure it
     clsf_config.push_back("12/0806 20/0001");
@@ -485,7 +490,6 @@ void setup_queue(SimpleQueue& queue,FileErrorHandler &feh){
     const int queue_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
     const int queue_out_v[1] = {2};
     Camkes_config::initialize_ports(&queue,queue_in_v,queue_out_v); //one input one output 
-    //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
     debugging("attempting to initialize queue",re);
     Camkes_config::initialize(&queue,&feh);
 }
@@ -498,7 +502,6 @@ void setup_fips(FixIPSrc& fips,FileErrorHandler &feh){
     re = fips.configure(fips_config,&feh);
     debugging("finishing configuration for fips",re);
     Camkes_config::initialize_ports(&fips,pin_v,pout_v); //one input one output 
-    //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
     debugging("attempting to initialize fips",re);
     Camkes_config::initialize(&fips,&feh);
 }

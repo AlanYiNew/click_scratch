@@ -44,9 +44,10 @@ extern "C" {
     void* buffer_buf(int); 
     void ev1_emit(void);
     void ev2_emit(void);
+    void ev3_emit(void);
     const char *ip_addr0;
     const char *ip_addr1;
-//    const char *ip_addr2;
+    const char *ip_addr2;
     const char * rt[RT_NUM_ENTRY];
     void* db_buffer_buf(int);
     void* icmp_buffer_buf(int);
@@ -54,11 +55,13 @@ extern "C" {
 
 #pragma weak ev1_emit
 #pragma weak ev2_emit
+#pragma weak ev3_emit
 #pragma weak buffer_buf
 #pragma weak db_buffer_buf
 #pragma weak ev_wait
 #pragma weak ip_addr1
 #pragma weak ip_addr0
+#pragma weak ip_addr2
 #pragma weak rt
 #pragma weak icmp_buffer_buf
 
@@ -99,11 +102,11 @@ int main(int argc, char *argv[]) {
         clir_config.push_back(rt[i]);
     }
     
-    re = Camkes_config::set_nports(&clir,1,3); 
+    re = Camkes_config::set_nports(&clir,1,NUM_COMPONENT+1); 
     debugging("setting n ports for clir",re);
     re = clir.configure(clir_config,&feh); 
     debugging("finish configuration for clir",re);
-    const int clir_pout_v[NUM_COMPONENT+1] = {1,1,1};
+    const int clir_pout_v[NUM_COMPONENT+1] = {1,1,1,1};
     Camkes_config::initialize_ports(&clir,pin_v,clir_pout_v); //one input three output
     Camkes_config::connect_port(&clir,true,0,&discard,0);//true int Element int
     
@@ -143,49 +146,19 @@ int main(int argc, char *argv[]) {
     Camkes_config::initialize_ports(&discard,pin_v,NULL);//We don't have output port putting in_v is fine
     debugging("No configuration call to discard",0); 
 
-    int count = 2;
+    int count = NUM_COMPONENT;
     int c = 0;
     Camkes_proxy_m cp[2] = {
-        {&clir,icmp_buffer_buf,2},
-        {&strip,buffer_buf,2}
+        {&clir,icmp_buffer_buf,NUM_COMPONENT},
+        {&strip,buffer_buf,NUM_COMPONENT}
     };
 
     while(true) {
         /* Wait for event */ 
 
-        if (count > 0) {
-            count--;
-            
-            ev_wait();
         
-            std::cout << "unblocked by id:" << c << std::endl; 
-          
-            message_t * message  = ((message_t *)buffer_buf(c));
-            
-            
-            char *buffer_str;
-            for (c = 0;c < NUM_COMPONENT && !((message_t *)buffer_buf(c))->ready; c=(c+1)%NUM_COMPONENT){
-                std::cout << "component: " << c << " ready: " << ((message_t *)buffer_buf(c))->ready << std::endl;
-            }
-            
-            buffer_str = (char*)&(message->content); 
-            int len = strnlen(buffer_str, PACKET_MAX_LEN);
-            for (int i = 0; i < len / 2; ++i) {
-                int swap_idx = len - i - 1;
-                char tmp = buffer_str[i];
-                buffer_str[i] = buffer_str[swap_idx];
-                buffer_str[swap_idx] = tmp;
-            }
-            printf("result strng:%s\n",buffer_str);
-        
-            ((message_t *)buffer_buf(c))->ready=0;
-        
-            /* Signal to client that we are finished */
-            ev_func[c]();  
-        }   else {
-            //A function detects if a pakcet is injected in the corresponding buffer
-            Camkes_config::start_proxy(cp,2); 
-        }
+         //A function detects if a pakcet is injected in the corresponding buffer
+         Camkes_config::start_proxy(cp,2); 
         
        
         
@@ -206,10 +179,11 @@ extern "C"{
 
         db_buffer[1] = db_buffer_buf(1);
         db_buffer[2] = db_buffer_buf(0);
-
+        db_buffer[3] = db_buffer_buf(2);
 
         //May get rid of this later;
         ev_func[0] = ev1_emit;
         ev_func[1] = ev2_emit;
+        ev_func[2] = ev3_emit;
     }
 }
