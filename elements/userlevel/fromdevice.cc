@@ -503,7 +503,6 @@ FromDevice::emit_packet(WritablePacket *p, int extra_len, const Timestamp &ts)
 	checked_output_push(1, p);
 }
 #endif
-
 #if FROMDEVICE_ALLOW_PCAP || FROMDEVICE_ALLOW_NETMAP
 CLICK_ENDDECLS
 #if CAMKES_DEBUG

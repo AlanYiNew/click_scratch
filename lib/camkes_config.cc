@@ -32,18 +32,23 @@ void Camkes_config::initialize(Element* tar, ErrorHandler * eh){
 
 
 
-void Camkes_config::start_proxy(Camkes_proxy_m *cp,int num){
+void Camkes_config::start_proxy(Camkes_proxy_m *cp,int num,eventfunc_t wait_endpoint){
     while (true){
+        if (wait_endpoint){
+            wait_endpoint();
+        }
         _timerset.run_timers();
-
         for (int i = 0; i < num; i++){
             cp[i].push();
         }
     }
 }
 
-void Camkes_config::start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy * cp,int num){
+void Camkes_config::start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy * cp,int num,eventfunc_t wait_endpoint){
     while (true){
+        if (wait_endpoint){
+            wait_endpoint();
+        }
         for (int i = 0 ; i < num ;i++){
             cp[i].push();
         }

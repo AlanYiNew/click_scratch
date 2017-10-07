@@ -21,5 +21,9 @@ component aq_broadcast {
     control;
     dataport message_t aqb_sendbuffer;
     dataport message_t aqb_recvbuffer;
+    consumes SomethingHappenedEvent ev;
+    emits SomethingHappenedEvent ev2ether0;
+    emits SomethingHappenedEvent ev2ether1;
+    emits SomethingHappenedEvent ev2ether2;
 
 }

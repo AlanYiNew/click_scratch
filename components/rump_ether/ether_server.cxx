@@ -72,8 +72,8 @@
    They need to be marked as weak and this is the current hacky way it is done */
 extern "C" {
     void *camkes_buffer;
-    void camkes_ev_emit(void); 
-    void camkes_ev1_wait(void);
+    void ev2routing_emit(void); 
+    void ev_wait(void);
     void *aq_sendbuffer;
     void *aq_recvbuffer;
     const char * wm_val;
@@ -83,12 +83,13 @@ extern "C" {
     const char * ip_addr;
     const char * mac;
     const char * proxy_arp[NUM_COMPONENT-1];
+    void ev2aq_emit(void);
 }
 
 #pragma weak wm_val
 #pragma weak camkes_buffer
-#pragma weak camkes_ev_emit
-#pragma weak camkes_ev1_wait
+#pragma weak ev2routing_emit
+#pragma weak ev_wait
 #pragma weak strip_push_port
 #pragma weak db_buffer
 #pragma weak camkes_id_attributes
@@ -98,7 +99,7 @@ extern "C" {
 #pragma weak proxy_arp
 #pragma weak aq_sendbuffer
 #pragma weak aq_recvbuffer
-
+#pragma weak ev2aq_emit
 
 extern void click_export_elements();
 
@@ -206,13 +207,13 @@ int main (int argc, char *argv[]) {
     //Arp element
     ARPResponder arpRes;
     //Classifier
-    Camkes_Classifier cclsf((message_t*)aq_recvbuffer);
+    Camkes_Classifier cclsf;
     //FromDevice
     FromDevice fDev;
     //Fullnotequeue
     SimpleQueue queue;
     //paint element used for icmp
-    Camkes_Paint cpaint((message_t*)camkes_buffer);
+    Camkes_Paint cpaint;
     //print 0
     Print print0;
     //print 1
@@ -226,13 +227,13 @@ int main (int argc, char *argv[]) {
     //CheckPaint
     PaintTee paintTee;
     //ICMPError redirect
-    Camkes_ICMPError cicmprd((message_t*)icmp_buffer);
+    Camkes_ICMPError cicmprd;
     //ICMPError parameter problem
-    Camkes_ICMPError cicmpbp((message_t*)icmp_buffer);
+    Camkes_ICMPError cicmpbp;
     //ICMPError ttl 
-    Camkes_ICMPError cicmpttl((message_t*)icmp_buffer);
+    Camkes_ICMPError cicmpttl;
     //ICMPError must flag 
-    Camkes_ICMPError cicmpmf((message_t*)icmp_buffer); 
+    Camkes_ICMPError cicmpmf; 
     //IPGWOptions
     IPGWOptions ipgwoptions;
     //IPFixSrc
@@ -316,7 +317,7 @@ int main (int argc, char *argv[]) {
     //Configuring classifer 
     setup_cclsf(cclsf,feh);
     Camkes_config::connect_port(&cclsf,true,0,&arpRes,0);//true int Elment int
-    Camkes_config::connect_port(&cclsf,true,1,&arpQue,1);
+    //Camkes_config::connect_port(&cclsf,true,1,&arpQue,1);
     Camkes_config::connect_port(&cclsf,true,2,&cpaint,0);
     Camkes_config::connect_port(&cclsf,true,3,&discard,0);//other packet 
 
@@ -333,7 +334,7 @@ int main (int argc, char *argv[]) {
 
     Camkes_proxy cp[2] = {{&db,(message_t*)db_buffer},
                           {&arpQue,(message_t*)aq_recvbuffer,1}};    
-    Camkes_config::start_pcap_dispatch(&fDev,&tDev,cp,2);
+    Camkes_config::start_pcap_dispatch(&fDev,&tDev,cp,2,NULL);
 
     return 0;
 
@@ -349,6 +350,12 @@ void setup_cicmpbp(Camkes_ICMPError& icmpbp,FileErrorHandler &feh ){
     re = icmpbp.configure(icmpbp_config,&feh);
     debugging("finishing configuration for icmpbp",re);
     Camkes_config::initialize_ports(&icmpbp,pin_v,pout_v);
+
+    message_t* buffer[1] = {(message_t*)icmp_buffer};
+    eventfunc_t ev[1] = {ev2routing_emit};
+    
+    icmpbp.setup_proxy(buffer,ev,1);
+
 }
 
 void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh ){
@@ -362,6 +369,10 @@ void setup_cicmprd(Camkes_ICMPError& icmprd,FileErrorHandler &feh ){
     re = icmprd.configure(icmprd_config,&feh);
     debugging("finishing configuration for icmprd",re);
     Camkes_config::initialize_ports(&icmprd,pin_v,pout_v);
+    message_t* buffer[1] = {(message_t*)icmp_buffer};
+    eventfunc_t ev[1] = {ev2routing_emit};
+    
+    icmprd.setup_proxy(buffer,ev,1);
 }
 
 void setup_cicmpttl(Camkes_ICMPError& icmpttl,FileErrorHandler &feh ){
@@ -374,6 +385,11 @@ void setup_cicmpttl(Camkes_ICMPError& icmpttl,FileErrorHandler &feh ){
     re = icmpttl.configure(icmpttl_config,&feh);
     debugging("finishing configuration for icmpttl",re);
     Camkes_config::initialize_ports(&icmpttl,pin_v,pout_v);
+    message_t* buffer[1] = {(message_t*)icmp_buffer};
+    eventfunc_t ev[1] = {ev2routing_emit};
+    
+    icmpttl.setup_proxy(buffer,ev,1);
+
 }
 
 void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh ){
@@ -387,6 +403,11 @@ void setup_cicmpmf(Camkes_ICMPError& icmpmf,FileErrorHandler &feh ){
     re = icmpmf.configure(icmpmf_config,&feh);
     debugging("finishing configuration for icmpmf",re);
     Camkes_config::initialize_ports(&icmpmf,pin_v,pout_v);
+    message_t* buffer[1] = {(message_t*)icmp_buffer};
+    eventfunc_t ev[1] = {ev2routing_emit};
+    
+    icmpmf.setup_proxy(buffer,ev,1);
+
 }
 
 void setup_paintTee(PaintTee& paintTee,FileErrorHandler &feh ){
@@ -442,6 +463,9 @@ void setup_cclsf(Camkes_Classifier &clsf,FileErrorHandler &feh){
     const int clsf_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
     const int clsf_out_v[4] = {1,1,1,1};
     Camkes_config::initialize_ports(&clsf,clsf_in_v,clsf_out_v); //one input four output
+    message_t* buffer[4] = {NULL,(message_t*)aq_recvbuffer,NULL,NULL};
+    eventfunc_t event[4] = {NULL,ev2aq_emit,NULL,NULL};
+    clsf.setup_proxy(buffer,event,4);
 }
 
 void setup_tDev(ToDevice & tDev,FromDevice & fDev, FileErrorHandler & feh){
@@ -478,6 +502,10 @@ void setup_cpaint(Camkes_Paint& cpaint,FileErrorHandler & feh){
     re = cpaint.configure(cpaint_config,&feh);
     debugging("finishing configuration for paint",re);
     Camkes_config::initialize_ports(&cpaint,pin_v,pout_v); //one input one output
+    message_t* buffer[1] = {(message_t*)camkes_buffer};
+    eventfunc_t ev[1] = {ev2routing_emit};
+    
+    cpaint.setup_proxy(buffer,ev,1);
 }
 
 void setup_queue(SimpleQueue& queue,FileErrorHandler &feh){
@@ -507,14 +535,10 @@ void setup_fips(FixIPSrc& fips,FileErrorHandler &feh){
 }
 
 void setup_dipttl(DecIPTTL &dipttl, FileErrorHandler &feh){
-    //Vector<String> dipttl_config;
-    //fips_config.push_back(ip_addr);
     int re = Camkes_config::set_nports(&dipttl,1,2);
     debugging("setting n ports for dipttl",re);
-    //re = fips.configure(fips_config,&feh);
     debugging("no configuration for dipttl",re);
     Camkes_config::initialize_ports(&dipttl,pin_v,pout_v2); //one input one output 
-    //Camkes_config::connect_port(&tDev,true,0,&clsf,0);
     debugging("attempting to initialize dipttl",re);
     Camkes_config::initialize(&dipttl,&feh);
 }

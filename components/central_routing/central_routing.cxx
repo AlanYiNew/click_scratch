@@ -42,9 +42,9 @@ extern "C" {
     //message_t *section[NUM_COMPONENT];
     void ev_wait(void);
     void* buffer_buf(int); 
-    void ev1_emit(void);
-    void ev2_emit(void);
-    void ev3_emit(void);
+    void ev2ether0_emit(void);
+    void ev2ether1_emit(void);
+    void ev2ether2_emit(void);
     const char *ip_addr0;
     const char *ip_addr1;
     const char *ip_addr2;
@@ -53,9 +53,9 @@ extern "C" {
     void* icmp_buffer_buf(int);
 }
 
-#pragma weak ev1_emit
-#pragma weak ev2_emit
-#pragma weak ev3_emit
+#pragma weak ev2ether0_emit
+#pragma weak ev2ether1_emit
+#pragma weak ev2ether2_emit
 #pragma weak buffer_buf
 #pragma weak db_buffer_buf
 #pragma weak ev_wait
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     //GetIPAddress
     GetIPAddress gia;
     //LookIPRoute
-    Camkes_StaticIPLookup clir(reinterpret_cast<message_t**>(db_buffer));
+    Camkes_StaticIPLookup clir;
 
     //Configuring StaticIPRoute
     Vector<String> clir_config;
@@ -109,7 +109,13 @@ int main(int argc, char *argv[]) {
     const int clir_pout_v[NUM_COMPONENT+1] = {1,1,1,1};
     Camkes_config::initialize_ports(&clir,pin_v,clir_pout_v); //one input three output
     Camkes_config::connect_port(&clir,true,0,&discard,0);//true int Element int
-    
+    message_t* buffer[4] = {NULL,
+                            (message_t*)db_buffer_buf(1),
+                            (message_t*)db_buffer_buf(0),
+                            (message_t*)db_buffer_buf(2)};
+    eventfunc_t ev[4] = {NULL, ev2ether1_emit,ev2ether0_emit,ev2ether2_emit}; 
+    clir.setup_proxy(buffer,ev,4);
+
     //Configuring GetIPAddres
     Vector<String> gia_config;
     gia_config.push_back("OFFSET 16");
@@ -158,7 +164,7 @@ int main(int argc, char *argv[]) {
 
         
          //A function detects if a pakcet is injected in the corresponding buffer
-         Camkes_config::start_proxy(cp,2); 
+         Camkes_config::start_proxy(cp,2,ev_wait); 
         
        
         
@@ -171,19 +177,4 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-extern "C"{
-    void pre_init(){
-        //too lazy to write a template to generalise this, so use pre_init to hack this portion
-        //section[0] = (message_t*)buffer0;
-        //section[1] = (message_t*)buffer1;
 
-        db_buffer[1] = db_buffer_buf(1);
-        db_buffer[2] = db_buffer_buf(0);
-        db_buffer[3] = db_buffer_buf(2);
-
-        //May get rid of this later;
-        ev_func[0] = ev1_emit;
-        ev_func[1] = ev2_emit;
-        ev_func[2] = ev3_emit;
-    }
-}
