@@ -260,8 +260,10 @@ Camkes_Classifier::push(int, Packet *p)
         Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content));
         if (((volatile message_t*)proxy_buffer[port])->ready){
             p->kill();
+            Camkes_config::drop++;
             return;
         }
+        //while (((volatile message_t*)proxy_buffer[port])->ready);
         Camkes_config::packet_serialize(dst,p); 
         proxy_buffer[port]->ready = 1;
         proxy_event[port]();

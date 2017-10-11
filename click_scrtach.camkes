@@ -99,8 +99,8 @@ assembly {
 
  configuration {
     rump_ether0.rump_config = { "rump_net": 2,
-                                "rumprunbake_config": "sel4_ethernet", 
-                                "cmdline": "echo diver component 0",
+                                "cmdline": "echo 1",
+                                "rumprunbake_config" : "sel4_ethernet", 
                                 "pci_config_interface" : "pci_config",
                                 "eth_irq_interface" : "eth_irq",
                                 "eth_irq_number" : 10,
@@ -110,8 +110,8 @@ assembly {
                                 "interfaces_to_expose": ["mac","ip_addr","camkes_buffer", "ev2routing", "ev","wm_val","db_buffer","camkes_id_attributes","proxy_arp","icmp_buffer","aq_sendbuffer","aq_recvbuffer","ev2aq"] };
 
     rump_ether1.rump_config = { "rump_net": 2,
-                                "rumprunbake_config": "sel4_ethernet",
-                                "cmdline": "echo driver component 1",
+                                "cmdline": "echo 1",
+                                "rumprunbake_config" : "sel4_ethernet",
                                 "pci_config_interface" : "pci_config",
                                 "eth_irq_interface" : "eth_irq",
                                 "eth_irq_number" : 11,
@@ -121,8 +121,8 @@ assembly {
                                 "interfaces_to_expose": ["mac","ip_addr","camkes_buffer", "ev2routing", "ev","wm_val","db_buffer","camkes_id_attributes", "proxy_arp", "icmp_buffer","aq_sendbuffer","aq_recvbuffer","ev2aq"] };
 
     rump_ether2.rump_config = { "rump_net": 2,
-                                "rumprunbake_config": "sel4_ethernet", 
-                                "cmdline": "echo driver component 2",
+                                "cmdline": "echo 1",
+                                "rumprunbake_config" : "sel4_ethernet", 
                                 "pci_config_interface" : "pci_config",
                                 "eth_irq_interface" : "eth_irq",
                                 "eth_irq_number" : 5,

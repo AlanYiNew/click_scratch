@@ -33,9 +33,9 @@ private:
 class Camkes_config{
     private:
         static TimerSet _timerset;
-    
+            
     public:
-        
+        static int drop;
         
         static TimerSet& timer_set();
 

@@ -50,6 +50,7 @@ ELEMENTS_OBJS :=$(patsubst %.cc,%.o,$(ELEMENTS_CCFILES))
 		-I${SOURCE_DIR} \
 		-I ${RUMP_BUILD_DIR}/x86_64/rumprun/rumprun-x86_64/include/c++ \
 		-include ${SOURCE_DIR}/include/click/config.h \
+		-I${SOURCE_DIR}/elements/include \
 		-DCLCIK_USERLEVEL \
 		-DHAVE_IP6 \
 		-DHAVE_PCAP \

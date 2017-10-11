@@ -8,6 +8,7 @@
 #include <click/camkes_config.hh>
 
 TimerSet Camkes_config::_timerset;
+int Camkes_config::drop = 0;
 
 TimerSet& Camkes_config::timer_set(){
     return _timerset;
