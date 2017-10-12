@@ -256,17 +256,8 @@ Camkes_Classifier::push(int, Packet *p)
    int port =  _prog.match(p);
    if (proxy_buffer[port] == NULL){
       checked_output_push(port, p);
-   }    else{
-        Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content));
-        if (((volatile message_t*)proxy_buffer[port])->ready){
-            p->kill();
-            Camkes_config::drop++;
-            return;
-        }
-        //while (((volatile message_t*)proxy_buffer[port])->ready);
-        Camkes_config::packet_serialize(dst,p); 
-        proxy_buffer[port]->ready = 1;
-        proxy_event[port]();
+   }    else{ 
+        Camkes_config::proxy_push(p,port,proxy_buffer,proxy_event); 
         p->kill();
    }
 }

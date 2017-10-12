@@ -31,6 +31,31 @@ void Camkes_config::initialize(Element* tar, ErrorHandler * eh){
     tar->initialize(eh);
 }
 
+int count_temp =500000;
+void Camkes_config::proxy_push(Packet * p,int port, message_t**proxy_buffer,eventfunc_t* proxy_event){
+    if (!((volatile message_t*)proxy_buffer[port])->ready){
+        Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content));
+        //while (((volatile message_t*)proxy_buffer[port])->ready);
+        Camkes_config::packet_serialize(dst,p); 
+        proxy_buffer[port]->ready = 1;
+        proxy_event[port]();    
+        return;
+    }   else if (!((volatile message_t*)proxy_buffer[port])->ready2){
+        Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content2));
+        //while (((volatile message_t*)proxy_buffer[port])->ready);
+        Camkes_config::packet_serialize(dst,p); 
+        proxy_buffer[port]->ready2 = 1;
+        proxy_event[port]();    
+        return;
+    }   else {
+        //Camkes_config::drop++;
+        //if (Camkes_config::drop >= count_temp){
+        //    count_temp+=500000;
+        //    printf("drop:%d\n",Camkes_config::drop);
+        //} 
+    }
+   
+}
 
 
 void Camkes_config::start_proxy(Camkes_proxy_m *cp,int num,eventfunc_t wait_endpoint){
@@ -61,7 +86,7 @@ void Camkes_config::start_pcap_dispatch(Element* recv,Element* send,Camkes_proxy
 
 //Mashalling
 int Camkes_config::packet_serialize(Packet * dst,Packet *src){
-    
+
     memcpy(dst,src,sizeof(Packet));
     dst->_head = reinterpret_cast<unsigned char*>(dst) + sizeof(Packet);
     //I made the shared memory buffer the size of 4096 - sizeof(int) - sizeof(Packet). It should still be far greater than any buffer_length() whose max value normally may just be 2048
@@ -72,7 +97,7 @@ int Camkes_config::packet_serialize(Packet * dst,Packet *src){
     memcpy(dst->_data,src->data(),src->length());
     dst->_tail = dst->_data + src->length();
     dst->copy_annotations(src);
-    
+
     if (src->mac_header())
         dst->set_mac_header(dst->data() + src->mac_header_offset() );
     if (src->network_header() && src->has_transport_header())
@@ -101,7 +126,7 @@ void Camkes_config::deserialize_packet(Packet* &dst,void* src){
 
     dst = Packet::make(p->headroom(),p->data(),p->length(),p->tailroom()); 
     dst->copy_annotations(p);
-     
+
     if (p->mac_header())
         dst->set_mac_header(dst->data() + mac_offset ); 
     if (p->network_header() && hth)
@@ -114,12 +139,13 @@ void Camkes_config::deserialize_packet(Packet* &dst,void* src){
     //        std::cout << ".";
     //}
     //std::cout << std::endl;
-    
+
 }
 
 void Camkes_config::recycle(Packet * p){
     delete p;
 }
+
 
 Camkes_proxy::Camkes_proxy(Element * elemm, message_t * bufferr,int portt):elem(elemm),buffer(bufferr),port(portt){}
 void Camkes_proxy::push(){
@@ -127,6 +153,14 @@ void Camkes_proxy::push(){
         Packet * p;
         Camkes_config::deserialize_packet(p,(void*)(&(buffer->content)));
         buffer->ready = 0;
+        elem->push(port,p);
+    }
+    
+    if (((volatile message_t*)buffer)->ready2){
+        Packet * p;
+        Camkes_config::deserialize_packet(p,(void*)(&(buffer->content2)));
+        buffer->ready2 = 0;
+        
         elem->push(port,p);
     }
 }
@@ -140,11 +174,19 @@ Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func 
 
 void Camkes_proxy_m::push(){
     for (int i = 0; i < nclient; i++){
-        if (((message_t*)func(i))->ready){
+        if (((volatile message_t*)func(i))->ready){
             Packet * p;
             Camkes_config::deserialize_packet(p,(void*)(&(((message_t*)func(i))->content)));
             ((message_t*)func(i))->ready = 0;
             elem->push(port,p);
+        
+        }
+
+        if (((volatile message_t*)func(i))->ready2){
+            Packet * p;
+            Camkes_config::deserialize_packet(p,(void*)(&(((message_t*)func(i))->content2)));
+            ((message_t*)func(i))->ready2 = 0;
+            elem->push(port,p); 
         }
     }
 }

@@ -58,6 +58,9 @@ class Camkes_config{
         static void recycle(Packet * p);
 
         static void start_proxy(Camkes_proxy_m *cp,int num,eventfunc_t wait_endpoint = NULL);
+
+        
+        static void proxy_push(Packet * p,int port, message_t**proxy_buffer,eventfunc_t* proxy_event);
 };
 
 

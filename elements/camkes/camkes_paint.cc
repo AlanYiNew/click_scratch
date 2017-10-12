@@ -55,16 +55,7 @@ void Camkes_Paint::push(int port, Packet *p)
         if (proxy_buffer[0] == NULL){
             checked_output_push(port,p);
         }   else {Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content));
-            if (((volatile message_t*)proxy_buffer[port])->ready){
-                p->kill();
-                Camkes_config::drop++;
-                
-                return;
-            }
-            //while (((volatile message_t*)proxy_buffer[port])->ready);
-            Camkes_config::packet_serialize(dst,p); 
-            proxy_buffer[port]->ready = 1;
-            proxy_event[port]();
+            Camkes_config::proxy_push(p,port,proxy_buffer,proxy_event); 
             p->kill();
         }
     }

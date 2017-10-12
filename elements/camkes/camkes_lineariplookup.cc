@@ -265,23 +265,7 @@ Camkes_LinearIPLookup::push(int, Packet *p)
     if (e.gw)
 	p->set_dst_ip_anno(e.gw); 
     if (proxy_buffer[e.port]){
-        Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[e.port]->content));
-        if (((volatile message_t*)proxy_buffer[e.port])->ready){
-            Camkes_config::drop++;
-            p->kill();
-            return;
-        }
-        
-        if (Camkes_config::drop >temp){
-
-            printf("drop%d\n",Camkes_config::drop);
-            temp+=3000;
-        }
-
-        //while (((volatile message_t*)proxy_buffer[e.port])->ready);
-        Camkes_config::packet_serialize(dst,p); 
-        proxy_buffer[e.port]->ready = 1;
-        proxy_event[e.port]();
+        Camkes_config::proxy_push(p,e.port,proxy_buffer,proxy_event);        
         p->kill();
     }   else{
         //this machine

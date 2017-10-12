@@ -677,7 +677,7 @@ FromDevice::selected(int, int)
 #if UNDER_CAMKES
     if (_method == method_pcap) {
 	// Read and push() at most one burst of packets.
-    int r = pcap_dispatch(_pcap, _burst*100, FromDevice_get_packet, (u_char *) this);
+    int r = pcap_dispatch(_pcap, 1, FromDevice_get_packet, (u_char *) this);
     if (r > 0) {
 	    _count += r;
 	} else if (r < 0 && ++_pcap_complaints < 5)
