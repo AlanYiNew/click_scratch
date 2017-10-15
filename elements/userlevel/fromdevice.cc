@@ -605,7 +605,7 @@ void debugging_purpose(const u_char* packet,const struct pcap_pkthdr* header){
                     double avg = accu/10;
                     double temp = 0;
                     for (int i = 0 ; i < 10; ++ i){
-                        temp += data[i]*data[i];
+                        temp += (data[i]-avg)*(data[i]-avg);
                     }
                     accu = 0;   
                     printf("average:%lf stddev:%lf\n===========\n",avg,sqrt(temp/10));
