@@ -463,7 +463,7 @@ void setup_cclsf(Camkes_Classifier &clsf,FileErrorHandler &feh){
     const int clsf_in_v[1] = {1};//0:Bidirectional 1:push 2:pull
     const int clsf_out_v[4] = {1,1,1,1};
     Camkes_config::initialize_ports(&clsf,clsf_in_v,clsf_out_v); //one input four output
-    message_t* buffer[4] = {NULL,(message_t*)aq_recvbuffer,NULL,NULL};
+    message_t* buffer[4] = {NULL,(message_t*)aq_sendbuffer,NULL,NULL};
     eventfunc_t event[4] = {NULL,ev2aq_emit,NULL,NULL};
     clsf.setup_proxy(buffer,event,4);
 }

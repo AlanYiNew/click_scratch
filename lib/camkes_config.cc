@@ -35,24 +35,10 @@ int count_temp =500000;
 void Camkes_config::proxy_push(Packet * p,int port, message_t**proxy_buffer,eventfunc_t* proxy_event){
     if (!((volatile message_t*)proxy_buffer[port])->ready){
         Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content));
-        //while (((volatile message_t*)proxy_buffer[port])->ready);
         Camkes_config::packet_serialize(dst,p); 
         proxy_buffer[port]->ready = 1;
         proxy_event[port]();    
         return;
-    }   else if (!((volatile message_t*)proxy_buffer[port])->ready2){
-        Packet* dst = reinterpret_cast<Packet*>(&(proxy_buffer[port]->content2));
-        //while (((volatile message_t*)proxy_buffer[port])->ready);
-        Camkes_config::packet_serialize(dst,p); 
-        proxy_buffer[port]->ready2 = 1;
-        proxy_event[port]();    
-        return;
-    }   else {
-        //Camkes_config::drop++;
-        //if (Camkes_config::drop >= count_temp){
-        //    count_temp+=500000;
-        //    printf("drop:%d\n",Camkes_config::drop);
-        //} 
     }
    
 }
@@ -105,7 +91,6 @@ int Camkes_config::packet_serialize(Packet * dst,Packet *src){
 }
 
 
-
 //vtable realted. Be careful.Demarshalling 
 void Camkes_config::deserialize_packet(Packet* &dst,void* src){
     Packet * p = reinterpret_cast<Packet*>(src);  
@@ -146,23 +131,20 @@ void Camkes_config::recycle(Packet * p){
     delete p;
 }
 
-
+/*=====================================================
+ *                                                   *
+ *  Cmakes_porxy (deal with one to one connection)   *
+ *                                                   *
+ ====================================================*/
 Camkes_proxy::Camkes_proxy(Element * elemm, message_t * bufferr,int portt):elem(elemm),buffer(bufferr),port(portt){}
+
 void Camkes_proxy::push(){
     if (((volatile message_t*)buffer)->ready){
         Packet * p;
         Camkes_config::deserialize_packet(p,(void*)(&(buffer->content)));
         buffer->ready = 0;
         elem->push(port,p);
-    }
-    
-    if (((volatile message_t*)buffer)->ready2){
-        Packet * p;
-        Camkes_config::deserialize_packet(p,(void*)(&(buffer->content2)));
-        buffer->ready2 = 0;
-        
-        elem->push(port,p);
-    }
+    }   
 }
 
 Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func ,int nclient,int port){
@@ -172,6 +154,11 @@ Camkes_proxy_m::Camkes_proxy_m(Element * elemm, Camkes_proxy_m::buf_func_t func 
     this->port = port;
 }
 
+/*=====================================================
+ *                                                   *
+ *  Cmakes_porxy_m (deal with one to many connection)   *
+ *                                                   *
+ ====================================================*/
 void Camkes_proxy_m::push(){
     for (int i = 0; i < nclient; i++){
         if (((volatile message_t*)func(i))->ready){
@@ -180,13 +167,6 @@ void Camkes_proxy_m::push(){
             ((message_t*)func(i))->ready = 0;
             elem->push(port,p);
         
-        }
-
-        if (((volatile message_t*)func(i))->ready2){
-            Packet * p;
-            Camkes_config::deserialize_packet(p,(void*)(&(((message_t*)func(i))->content2)));
-            ((message_t*)func(i))->ready2 = 0;
-            elem->push(port,p); 
         }
     }
 }

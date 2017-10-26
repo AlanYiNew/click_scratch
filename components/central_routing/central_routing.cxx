@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 
     //Configuring cih
     Vector<String> cih_config;//At the moment hard code a vector to configure it
-    cih_config.push_back(String("INTERFACES ") + ip_addr1 + " " + ip_addr0);
+    cih_config.push_back(String("INTERFACES ") + ip_addr1 + " " + ip_addr0 + " " + ip_addr2);
     re = Camkes_config::set_nports(&cih,1,1);
     debugging("setting n ports for cih",re);
     re = cih.configure(cih_config,&feh);

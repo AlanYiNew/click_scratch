@@ -30,6 +30,6 @@ component central_routing {
     emits SomethingHappenedEvent ev2ether2;
     attribute string ip_addr0;
     attribute string ip_addr1;
-    //attribute string ip_addr2;
+    attribute string ip_addr2;
     attribute string rt[];
 }

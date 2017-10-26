@@ -322,7 +322,8 @@ FromDevice::open_pcap(String ifname, int snaplen, bool promisc,
         errh->warning("%s: error while setting promisc", ifname.c_str());
     if (pcap_set_buffer_size(p,snaplen))
         errh->warning("%s: error while setting buffer size", ifname.c_str()); 
-    if (pcap_set_tstamp_type(p, PCAP_TSTAMP_HOST))
+    //if (pcap_set_tstamp_type(p, PCAP_TSTAMP_HOST))
+    if (pcap_set_tstamp_type(p,PCAP_TSTAMP_ADAPTER_UNSYNCED))
         errh->warning("%s: error while setting tstamp type", ifname.c_str());
     
     // set timeout
